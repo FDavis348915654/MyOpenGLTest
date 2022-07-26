@@ -1,0 +1,88 @@
+﻿  hello.cpp
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(532): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(533): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(538): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(539): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(540): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(541): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(343): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(344): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(349): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(350): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(351): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(352): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+  DrawSimpleTriangle.cpp
+  DrawSimpleTriangle_10.cpp
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_10.h(182): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_10.h(183): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_10.h(364): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_10.h(365): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_10.h(370): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_10.h(371): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_10.h(372): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_10.h(373): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+  DrawSimpleTriangle_11.cpp
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_11.h(299): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_11.h(300): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_11.h(305): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_11.h(306): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_11.h(307): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_11.h(308): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+  DrawSimpleTriangle_12.cpp
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_12.h(397): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_12.h(398): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_12.h(403): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_12.h(404): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_12.h(405): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_12.h(406): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+  DrawSimpleTriangle_13.cpp
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(532): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(533): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(538): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(539): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(540): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_13.h(541): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+  DrawSimpleTriangle_14.cpp
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(343): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(344): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(349): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(350): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(351): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_14.h(352): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+  DrawSimpleTriangle_2.cpp
+  DrawSimpleTriangle_3.cpp
+  DrawSimpleTriangle_4.cpp
+  DrawSimpleTriangle_5.cpp
+  DrawSimpleTriangle_6.cpp
+  DrawSimpleTriangle_7.cpp
+  DrawSimpleTriangle_8.cpp
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_8.h(450): warning C4244: “-=”: 从“double”转换到“GLfloat”，可能丢失数据
+  DrawSimpleTriangle_9.cpp
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_9.h(358): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_9.h(359): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_9.h(364): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_9.h(365): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_9.h(366): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_9.h(367): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+d:\wmworkspace\openglworkspace\myopengltest\myopengltest\drawsimpletriangle_9.h(393): warning C4244: “-=”: 从“double”转换到“GLfloat”，可能丢失数据
+  SimpleDrawTestBase.cpp
+  stb_image_output.cpp
+  正在生成代码...
+LINK : warning LNK4098: 默认库“LIBCMT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
+glfw3.lib(context.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(context.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(init.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(init.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(input.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(input.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(monitor.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(monitor.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(vulkan.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(vulkan.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(window.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(window.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(win32_init.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(win32_init.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(win32_joystick.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(win32_joystick.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(win32_monitor.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(win32_monitor.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(win32_time.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(win32_time.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(win32_thread.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(win32_thread.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(win32_window.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(win32_window.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(wgl_context.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(wgl_context.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(egl_context.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(egl_context.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glfw3.lib(osmesa_context.obj) : warning LNK4099: 未找到 PDB“glfw.pdb”(使用“glfw3.lib(osmesa_context.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\glfw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glew32s.lib(glew.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“glew32s.lib(glew.obj)”或在“D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+  MyOpenGLTest.vcxproj -> D:\WMWorkspace\OpenGLWorkspace\MyOpenGLTest\Debug\MyOpenGLTest.exe
