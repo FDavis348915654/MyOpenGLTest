@@ -38,8 +38,8 @@ public:
 		// 编译着色器
 		Shader myShader("../res/Shaders/default.vs", "../res/Shaders/default.frag");
 		Shader myShader2("../res/Shaders/default.vs", "../res/Shaders/default_2.frag");
-		program[0] = myShader.program;
-		program[1] = myShader2.program;
+		program[0] = myShader.ID;
+		program[1] = myShader2.ID;
 		// 生成 VBO
 		glGenBuffers(2, VBO);
 		// 创建 VAO

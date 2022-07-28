@@ -30,7 +30,7 @@ public:
 		};
 		// 编译着色器
 		Shader myShader("../res/Shaders/default.vs", "../res/Shaders/default.frag");
-		program = myShader.program;
+		program = myShader.ID;
 
 		// 生成 VBO
 		GLuint VBO;

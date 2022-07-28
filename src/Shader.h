@@ -17,7 +17,7 @@ class Shader
 {
 public:
 	// Shader Program
-	unsigned int program;
+	unsigned int ID;
 
 	Shader() {}
 	// constructor generates the shader on the fly
@@ -67,11 +67,11 @@ public:
 		glCompileShader(fragment);
 		checkCompileErrors(fragment, "FRAGMENT");
 		// shader Program
-		program = glCreateProgram();
-		glAttachShader(program, vertex);
-		glAttachShader(program, fragment);
-		glLinkProgram(program);
-		checkCompileErrors(program, "PROGRAM");
+		ID = glCreateProgram();
+		glAttachShader(ID, vertex);
+		glAttachShader(ID, fragment);
+		glLinkProgram(ID);
+		checkCompileErrors(ID, "PROGRAM");
 		// delete the shaders as they're linked into our program now and no longer necessary
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
@@ -81,35 +81,35 @@ public:
 	// ------------------------------------------------------------------------
 	void use()
 	{
-		glUseProgram(program);
+		glUseProgram(ID);
 	}
 	// utility uniform functions
 	// ------------------------------------------------------------------------
 	void setBool(const std::string &name, bool value) const
 	{
-		glUniform1i(glGetUniformLocation(program, name.c_str()), (int)value);
+		glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 	}
 	// ------------------------------------------------------------------------
 	void setInt(const std::string &name, int value) const
 	{
-		glUniform1i(glGetUniformLocation(program, name.c_str()), value);
+		glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 	}
 	// ------------------------------------------------------------------------
 	void setFloat(const std::string &name, float value) const
 	{
-		glUniform1f(glGetUniformLocation(program, name.c_str()), value);
+		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 	}
 	void setMatrix4fv(const std::string &name, GLsizei count, GLboolean transpose, const GLfloat* value) const
 	{
-		glUniformMatrix4fv(glGetUniformLocation(program, name.c_str()), count, transpose, value);
+		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), count, transpose, value);
 	}
 	void setVec3(const std::string &name, float x, float y, float z) const
 	{
-		glUniform3f(glGetUniformLocation(program, name.c_str()), x, y, z);
+		glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
 	}
 	void setVec3(const std::string &name, glm::vec3 pos) const
 	{
-		glUniform3f(glGetUniformLocation(program, name.c_str()), pos.x, pos.y, pos.z);
+		glUniform3f(glGetUniformLocation(ID, name.c_str()), pos.x, pos.y, pos.z);
 	}
 
 private:

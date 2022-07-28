@@ -110,7 +110,7 @@ public:
 
 		// 编译着色器
 		Shader myShader("../res/Shaders/test_1_coordinate.vs", "../res/Shaders/test_1_trans.frag");
-		program[0] = myShader.program;
+		program[0] = myShader.ID;
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO

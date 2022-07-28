@@ -51,11 +51,11 @@ public:
 		Shader myShader_3("../res/Shaders/someColor.vs", "../res/Shaders/someColor.frag");
 		Shader myShader_4("../res/Shaders/someColor_1.vs", "../res/Shaders/someColor.frag");
 		Shader myShader_5("../res/Shaders/someColor_2.vs", "../res/Shaders/someColor_2.frag");
-		program[0] = myShader.program;
-		program[1] = myShader_2.program;
-		program[2] = myShader_3.program;
-		program[3] = myShader_4.program;
-		program[4] = myShader_5.program;
+		program[0] = myShader.ID;
+		program[1] = myShader_2.ID;
+		program[2] = myShader_3.ID;
+		program[3] = myShader_4.ID;
+		program[4] = myShader_5.ID;
 		// 位置值可以随时获取
 		vertextColorLocation = glGetUniformLocation(program[1], "outColor");
 		//offsetPosLocation = glGetUniformLocation(program[3], "offsetPos");

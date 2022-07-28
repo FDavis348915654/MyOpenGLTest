@@ -68,12 +68,12 @@ public:
 
 		// 编译着色器
 		Shader myShader("../res/Shaders/test_1_texture.vs", "../res/Shaders/test_1_texture.frag");
-		program[0] = myShader.program;
+		program[0] = myShader.ID;
 		Shader myShader_1("../res/Shaders/test_1_texture.vs", "../res/Shaders/test_2_texture.frag"); // 两个纹理混合
-		program[1] = myShader_1.program;
+		program[1] = myShader_1.ID;
 		// 第 4 题, 使用一个uniform变量作为mix函数的第三个参数来改变两个纹理可见度，使用上和下键来改变箱子或笑脸的可见度
 		Shader myShader_2("../res/Shaders/test_1_texture.vs", "../res/Shaders/test_3_texture.frag");
-		program[2] = myShader_2.program;
+		program[2] = myShader_2.ID;
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
