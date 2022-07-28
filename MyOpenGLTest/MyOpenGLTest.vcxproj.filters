@@ -66,6 +66,9 @@
     <ClCompile Include="DrawSimpleTriangle_14.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdPartyLibs\Libs\glew32.dll">
@@ -128,6 +131,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DrawSimpleTriangle_14.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
