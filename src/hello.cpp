@@ -22,8 +22,9 @@
 //#include "../MyOpenGLTest/DrawSimpleTriangle_10.h"
 //#include "../MyOpenGLTest/DrawSimpleTriangle_11.h"
 //#include "../MyOpenGLTest/DrawSimpleTriangle_12.h"
-#include "../MyOpenGLTest/DrawSimpleTriangle_13.h"
+//#include "../MyOpenGLTest/DrawSimpleTriangle_13.h"
 #include "../MyOpenGLTest/DrawSimpleTriangle_14.h"
+#include "../MyOpenGLTest/DrawSimpleTriangle_15.h"
 
 // Function prototypes
 // °´¼ü»Øµ÷
@@ -58,7 +59,8 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_11 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_12 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_13 obj(WIDTH, HEIGHT);
-DrawSimpleTriangle_14 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_14 obj(WIDTH, HEIGHT);
+DrawSimpleTriangle_15 obj(WIDTH, HEIGHT);
 
 // The MAIN function, from here we start the application and run the game loop
 int main()

@@ -134,6 +134,7 @@
     <ClCompile Include="DrawSimpleTriangle_12.cpp" />
     <ClCompile Include="DrawSimpleTriangle_13.cpp" />
     <ClCompile Include="DrawSimpleTriangle_14.cpp" />
+    <ClCompile Include="DrawSimpleTriangle_15.cpp" />
     <ClCompile Include="DrawSimpleTriangle_2.cpp" />
     <ClCompile Include="DrawSimpleTriangle_3.cpp" />
     <ClCompile Include="DrawSimpleTriangle_4.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="DrawSimpleTriangle_8.cpp" />
     <ClCompile Include="DrawSimpleTriangle_9.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="SimpleDrawTestBase.cpp" />
     <ClCompile Include="stb_image_output.cpp" />
   </ItemGroup>
@@ -160,6 +162,7 @@
     <ClInclude Include="DrawSimpleTriangle_12.h" />
     <ClInclude Include="DrawSimpleTriangle_13.h" />
     <ClInclude Include="DrawSimpleTriangle_14.h" />
+    <ClInclude Include="DrawSimpleTriangle_15.h" />
     <ClInclude Include="DrawSimpleTriangle_2.h" />
     <ClInclude Include="DrawSimpleTriangle_3.h" />
     <ClInclude Include="DrawSimpleTriangle_4.h" />
@@ -169,6 +172,7 @@
     <ClInclude Include="DrawSimpleTriangle_8.h" />
     <ClInclude Include="DrawSimpleTriangle_9.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="SimpleDrawTestBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
