@@ -111,6 +111,7 @@ public:
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.frag"); // 用于显示光源的小白块
 		shader[1] = Shader("../res/Shaders/lesson_05_model.vs", "../res/Shaders/lesson_05_model.frag");
+		shader[2] = Shader("../res/Shaders/lesson_05_model.vs", "../res/Shaders/lesson_05_model_light.frag");
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -173,8 +174,6 @@ public:
 		};
 		// 光源颜色(环境光)
 		glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // 光源颜色
-		// 练习题一, 你能通过调节光照属性变量，（大概地）重现最后一张图片上不同的氛围吗？
-		//glm::vec3 lightColor(0.3f, 0.4f, 1.0f); // 光源颜色
 		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // 漫反射
 		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // 环境光
 		// 点光源衰减系数
@@ -202,88 +201,60 @@ public:
 			shader[1].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader[1].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(0.0f, -1.0f, -1.0f));
+			model = glm::translate(model, glm::vec3(1.0f, -1.0f, -1.0f));
 			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 			shader[1].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
 
 			ourModel.Draw(shader[1]);
 		}
 
-		// 绘制 box
-		if (false) {
-			shader[1].use();
+		// 绘制纳米生化装
+		if (true) {
+			shader[2].use();
+			shader[2].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[2].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(0.0f, -1.0f, -1.0f));
+			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			shader[2].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+			shader[2].setFloat("shininess", 32.0f);
 
-			shader[1].setInt("material.diffuse", 0);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture[0]);
-			shader[1].setInt("material.specular", 1);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, texture[1]);
-			shader[1].setFloat("material.shininess", 32.0f);
-
-			glBindVertexArray(VAO[1]);
-
-			shader[1].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
-			shader[1].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
-			shader[1].setVec3("viewPos", camera->Position);
-
-			shader[1].setVec3("dirLight.direction", lightDir);
-			shader[1].setVec3("dirLight.ambient", ambientColor);
-			shader[1].setVec3("dirLight.diffuse", diffuseColor);
-			shader[1].setVec3("dirLight.specular", lightColor);
+			shader[2].setVec3("viewPos", camera->Position);
+			shader[2].setVec3("dirLight.direction", lightDir);
+			shader[2].setVec3("dirLight.ambient", ambientColor);
+			shader[2].setVec3("dirLight.diffuse", diffuseColor);
+			shader[2].setVec3("dirLight.specular", lightColor);
 
 			for (int i = 0; i < sizeof(pointLightPositions) / sizeof(glm::vec3); i++) {
 				sprintf_s(str, "pointLights[%d].%s", i, "position");
-				shader[1].setVec3(str, pointLightPositions[i]);
+				shader[2].setVec3(str, pointLightPositions[i]);
 				sprintf_s(str, "pointLights[%d].%s", i, "constant");
-				shader[1].setFloat(str, lightConstant);
+				shader[2].setFloat(str, lightConstant);
 				sprintf_s(str, "pointLights[%d].%s", i, "linear");
-				shader[1].setFloat(str, lightLinear);
+				shader[2].setFloat(str, lightLinear);
 				sprintf_s(str, "pointLights[%d].%s", i, "quadratic");
-				shader[1].setFloat(str, lightQuadratic);
+				shader[2].setFloat(str, lightQuadratic);
 				sprintf_s(str, "pointLights[%d].%s", i, "ambient");
-				shader[1].setVec3(str, ambientColor);
+				shader[2].setVec3(str, ambientColor);
 				sprintf_s(str, "pointLights[%d].%s", i, "diffuse");
-				shader[1].setVec3(str, diffuseColor);
+				shader[2].setVec3(str, diffuseColor);
 				sprintf_s(str, "pointLights[%d].%s", i, "specular");
-				shader[1].setVec3(str, lightColor);
+				shader[2].setVec3(str, lightColor);
 			}
 
-			shader[1].setVec3("spotLight.position", camera->Position);
-			shader[1].setVec3("spotLight.direction", camera->Front);
-			shader[1].setFloat("spotLight.cutOff", glm::cos(glm::radians(8.5f)));
-			shader[1].setFloat("spotLight.outerCutOff", glm::cos(glm::radians(13.5f)));
-			shader[1].setVec3("spotLight.ambient", ambientColor);
-			shader[1].setVec3("spotLight.diffuse", diffuseColor);
-			shader[1].setVec3("spotLight.specular", lightColor);
-			shader[1].setBool("useSpotLight", useSpotLight);
+			shader[2].setVec3("spotLight.position", camera->Position);
+			shader[2].setVec3("spotLight.direction", camera->Front);
+			shader[2].setFloat("spotLight.cutOff", glm::cos(glm::radians(8.5f)));
+			shader[2].setFloat("spotLight.outerCutOff", glm::cos(glm::radians(13.5f)));
+			shader[2].setVec3("spotLight.ambient", ambientColor);
+			shader[2].setVec3("spotLight.diffuse", diffuseColor);
+			shader[2].setVec3("spotLight.specular", lightColor);
+			shader[2].setBool("useSpotLight", useSpotLight);
 
-			glm::vec3 cubePositions[] = {
-				glm::vec3(0.0f,  0.0f,  0.0f),
-				glm::vec3(2.0f,  5.0f, -15.0f),
-				glm::vec3(-1.5f, -2.2f, -2.5f),
-				glm::vec3(-3.8f, -2.0f, -12.3f),
-				glm::vec3(2.4f, -0.4f, -3.5f),
-				glm::vec3(-1.7f,  3.0f, -7.5f),
-				glm::vec3(1.3f, -2.0f, -2.5f),
-				glm::vec3(1.5f,  2.0f, -2.5f),
-				glm::vec3(1.5f,  0.2f, -1.5f),
-				glm::vec3(-1.3f,  1.0f, -1.5f)
-			};
-
-			for (int i = 0; i < sizeof(cubePositions) / sizeof(glm::vec3); i++) {
-				glm::mat4 model;
-				model = glm::translate(model, cubePositions[i]);
-				GLfloat angle = 20.0f * i;
-				GLfloat step = 0.0f;
-				//if (0 == i % 3) {
-				//	step = (GLfloat)glfwGetTime() * 20.0f;
-				//}
-				model = glm::rotate(model, step + angle, glm::vec3(1.0f, 0.3f, 0.5f));
-				shader[1].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
-				glDrawArrays(GL_TRIANGLES, 0, 36);
-			}
+			ourModel.Draw(shader[2]);
 		}
+
+		
 	}
 
 	virtual void OnOverRender() {

@@ -234,8 +234,8 @@ public:
 
 			shader[1].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader[1].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
-			shader[1].setVec3("viewPos", camera->Position);
 
+			shader[1].setVec3("viewPos", camera->Position);
 			shader[1].setVec3("dirLight.direction", lightDir);
 			shader[1].setVec3("dirLight.ambient", ambientColor);
 			shader[1].setVec3("dirLight.diffuse", diffuseColor);
