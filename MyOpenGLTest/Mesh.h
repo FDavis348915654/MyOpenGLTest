@@ -69,6 +69,7 @@ public:
 		unsigned int heightNr = 1;
 		for (unsigned int i = 0; i < textures.size(); i++)
 		{
+			// 激活对应纹理单元
 			glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
 			// retrieve texture number (the N in diffuse_textureN)
 			std::string number;
@@ -101,7 +102,7 @@ private:
 	// render data 
 	unsigned int VBO, EBO;
 
-	// initializes all the buffer objects/arrays
+	// initializes all the buffer objects/arrays // 传入顶点数据
 	void setupMesh()
 	{
 		// create buffers/arrays

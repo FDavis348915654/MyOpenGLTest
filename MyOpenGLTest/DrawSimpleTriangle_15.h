@@ -195,26 +195,26 @@ public:
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		// 绘制纳米生化装
+		// 绘制纳米生化装, 基础版
 		if (true) {
 			shader[1].use();
 			shader[1].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader[1].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(1.0f, -1.0f, -1.0f));
+			model = glm::translate(model, glm::vec3(1.0f, -1.5f, -1.0f));
 			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 			shader[1].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
 
 			ourModel.Draw(shader[1]);
 		}
 
-		// 绘制纳米生化装
+		// 绘制纳米生化装, 多光源版
 		if (true) {
 			shader[2].use();
 			shader[2].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader[2].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(0.0f, -1.0f, -1.0f));
+			model = glm::translate(model, glm::vec3(0.0f, -1.5f, -1.0f));
 			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 			shader[2].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
 			shader[2].setFloat("shininess", 32.0f);

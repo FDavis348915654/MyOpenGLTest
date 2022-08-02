@@ -65,7 +65,7 @@ private:
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
 		std::vector<Texture> textures;
-
+		// 顶点坐标
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
 			Vertex vertex;
 			glm::vec3 vector;
@@ -88,14 +88,14 @@ private:
 			}
 			vertices.push_back(vertex);
 		}
-
+		// 顶点法线
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
 			aiFace face = mesh->mFaces[i];
 			for (unsigned int j = 0; j < face.mNumIndices; j++) {
 				indices.push_back(face.mIndices[j]);
 			}
 		}
-
+		// 漫反射/镜面纹理
 		if (mesh->mMaterialIndex >= 0) {
 			aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 			std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
@@ -111,6 +111,7 @@ private:
 			aiString str;
 			mat->GetTexture(type, i, &str);
 			bool skip = false;
+			// 遍历缓存, 如果有缓存就直接使用缓存
 			for (unsigned int j = 0; j < textures_loaded.size(); j++) {
 				if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0) {
 					textures.push_back(textures_loaded[j]);
@@ -118,6 +119,7 @@ private:
 					break;
 				}
 			}
+			// 如果没有缓存才需要去加载
 			if (!skip) {
 				Texture texture;
 				texture.id = TextureFromFile(str.C_Str(), directory);
