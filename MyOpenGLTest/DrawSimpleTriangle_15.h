@@ -16,12 +16,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.h"
+#include "Model.h"
 #include "stb_image.h"
 #include "SimpleDrawTestBase.h"
 #include "Camera.h"
-
-// 加载图片
-unsigned int loadTexture(unsigned int textureID, char const * path);
 
 class DrawSimpleTriangle_15 : public SimpleDrawTestBase
 {
@@ -52,6 +50,8 @@ public:
 	bool useSpotLight = true;
 
 	float deltaTime = 0.0f;
+
+	Model ourModel;
 
 	DrawSimpleTriangle_15(GLuint screenWidth, GLuint screenHeight) {
 		this->screenWidth = screenWidth;
@@ -110,7 +110,7 @@ public:
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.frag"); // 用于显示光源的小白块
-		shader[1] = Shader("../res/Shaders/lesson_04_light_multiple.vs", "../res/Shaders/lesson_04_light_multiple.frag");
+		shader[1] = Shader("../res/Shaders/lesson_05_model.vs", "../res/Shaders/lesson_05_model.frag");
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -121,12 +121,6 @@ public:
 		glGenTextures(10, texture);
 		// 加载的图像默认上下翻转
 		stbi_set_flip_vertically_on_load(true);
-
-		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
-		loadTexture(texture[0], "../res/Texture/container2.png");
-
-		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
-		loadTexture(texture[1], "../res/Texture/container2_specular.png");
 
 		{ // 设置顶点属性 // 灯
 			// Vertex Array Object
@@ -140,23 +134,7 @@ public:
 			glBindVertexArray(0);
 		}
 
-		{ // 设置顶点属性 // Box
-			// Vertex Array Object
-			glBindVertexArray(VAO[1]);
-			// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
-			glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-			// vertex
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-			glEnableVertexAttribArray(0);
-			// uv
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-			glEnableVertexAttribArray(1);
-			// texture coords
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-			glEnableVertexAttribArray(2);
-			glBindVertexArray(0);
-		}
+		ourModel = Model("../res/nanosuit/nanosuit.obj");
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
@@ -218,8 +196,21 @@ public:
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		// 绘制 box
+		// 绘制纳米生化装
 		if (true) {
+			shader[1].use();
+			shader[1].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[1].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(0.0f, -1.0f, -1.0f));
+			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			shader[1].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+
+			ourModel.Draw(shader[1]);
+		}
+
+		// 绘制 box
+		if (false) {
 			shader[1].use();
 
 			shader[1].setInt("material.diffuse", 0);

@@ -19,14 +19,16 @@
 
 #include "Shader.h"
 #include "Mesh.h"
+#include "stb_image.h"
 
 unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false);
-unsigned int loadTexture(unsigned int textureID, char const * path);
+unsigned int LoadTexture(unsigned int textureID, char const * path);
 
 class Model
 {
 public:
-	Model(char *path) {
+	Model() {}
+	Model(std::string const &path) {
 		loadModel(path);
 	}
 	void Draw(Shader shader) {
@@ -128,14 +130,3 @@ private:
 		return textures;
 	}
 };
-
-unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma)
-{
-	std::string filename = std::string(path);
-	filename = directory + '/' + filename;
-
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
-
-	return loadTexture(textureID, filename.c_str());
-}
