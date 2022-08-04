@@ -253,8 +253,6 @@ public:
 
 			ourModel.Draw(shader[2]);
 		}
-
-		
 	}
 
 	virtual void OnOverRender() {
