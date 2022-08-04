@@ -121,6 +121,8 @@ public:
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.frag");
+		//shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test_show_depth.frag"); // 显示深度值
+		//shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test_show_linear_depth.frag"); // 显示线性深度值
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -166,6 +168,20 @@ public:
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
+		// 禁用深度缓冲写入
+		//glDepthMask(GL_FALSE);
+		/*
+		函数	描述
+		GL_ALWAYS	永远通过深度测试
+		GL_NEVER	永远不通过深度测试
+		GL_LESS		在片段深度值小于缓冲的深度值时通过测试
+		GL_EQUAL	在片段深度值等于缓冲区的深度值时通过测试
+		GL_LEQUAL	在片段深度值小于等于缓冲区的深度值时通过测试
+		GL_GREATER	在片段深度值大于缓冲区的深度值时通过测试
+		GL_NOTEQUAL	在片段深度值不等于缓冲区的深度值时通过测试
+		GL_GEQUAL	在片段深度值大于等于缓冲区的深度值时通过测试
+		*/
+		glDepthFunc(GL_LESS);
 	}
 
 	virtual void OnPreRender(float deltaTime) {
@@ -193,11 +209,11 @@ public:
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture[0]);
 		shader[0].setInt("texture_diffuse1", 0);
-		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
 		shader[0].setMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(2.0f, 0.001f, 0.0f));
 		shader[0].setMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		// floor
