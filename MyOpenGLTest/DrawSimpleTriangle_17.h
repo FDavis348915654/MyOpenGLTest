@@ -166,7 +166,7 @@ public:
 		loadTexture(texture[1], "../res/Texture/container2_specular.png");
 
 		// 开启深度测试
-		//glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
 		// 禁用深度缓冲写入
 		//glDepthMask(GL_FALSE);
 		/*
@@ -182,7 +182,7 @@ public:
 		*/
 		glDepthFunc(GL_LESS);
 
-		//glEnable(GL_STENCIL_TEST);
+		glEnable(GL_STENCIL_TEST);
 		/*
 			如何更新缓冲。这就需要glStencilOp这个函数了。
 			glStencilOp(GLenum sfail, GLenum dpfail, GLenum dppass)一共包含三个选项，我们能够设定每个选项应该采取的行为：
@@ -202,18 +202,18 @@ public:
 			GL_DECR_WRAP	与GL_DECR一样，但如果模板值小于0则将其设置为最大值
 			GL_INVERT	按位翻转当前的模板缓冲值
 		*/
-		//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	}
 
 	virtual void OnPreRender(float deltaTime) {
 		this->deltaTime = deltaTime;
 
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-		glEnable(GL_STENCIL_TEST);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-		glStencilMask(0xFF);
-		glStencilFunc(GL_ALWAYS, 0, 0xFF);
+		//glEnable(GL_DEPTH_TEST);
+		//glDepthFunc(GL_LESS);
+		//glEnable(GL_STENCIL_TEST);
+		//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		//glStencilMask(0xFF);
+		//glStencilFunc(GL_ALWAYS, 0, 0xFF);
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -241,7 +241,7 @@ public:
 
 		glStencilFunc(GL_ALWAYS, 1, 0xFF); // 所有的片段都应该更新模板缓冲
 		glStencilMask(0xFF); // 启用模板缓冲写入
-		{ // cubes
+		{ // cubes // 正常画这个箱子, 只不过测试通过时会写入模板缓冲
 			shader[0].use();
 			shader[0].setMat4("view", view);
 			shader[0].setMat4("projection", projection);
@@ -259,20 +259,16 @@ public:
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // 模板值不等于 1 的时候测试通过
 		glStencilMask(0x00); // 禁止模板缓冲的写入
-		glDisable(GL_DEPTH_TEST);
-
+		glDisable(GL_DEPTH_TEST); // 禁用深度缓冲
 		{ // cubes
-			float scale = 1.1f;
+			float scale = 1.05f;
 			shader[1].use();
 			shader[1].setMat4("view", view);
 			shader[1].setMat4("projection", projection);
 			glm::mat4 model = glm::mat4(1.0f);
 			glBindVertexArray(VAO[0]);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture[0]);
-			shader[1].setInt("texture_diffuse1", 0);
 			model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
 			model = glm::scale(model, glm::vec3(scale, scale, scale));
 			shader[1].setMat4("model", model);
@@ -283,6 +279,9 @@ public:
 			shader[1].setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+		glEnable(GL_DEPTH_TEST); // 启用深度缓冲
+		glStencilMask(0xFF); // 每一位写入模板缓冲时都保持原样
+		glStencilFunc(GL_ALWAYS, 0, 0xFF); // 这一句貌似没有用
 
 		glBindVertexArray(0);
 	}
