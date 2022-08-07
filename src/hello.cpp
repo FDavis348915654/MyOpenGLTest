@@ -27,6 +27,7 @@
 #include "../MyOpenGLTest/DrawSimpleTriangle_15.h"
 #include "../MyOpenGLTest/DrawSimpleTriangle_16.h"
 #include "../MyOpenGLTest/DrawSimpleTriangle_17.h"
+#include "../MyOpenGLTest/DrawSimpleTriangle_18.h"
 
 // Function prototypes
 // 按键回调
@@ -40,7 +41,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 // 打印顶点属性上限
 void ShowMaxVertex();
 // 加载图片
-unsigned int loadTexture(unsigned int textureID, char const * path);
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT);
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -64,7 +65,8 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_14 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_15 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_16 obj(WIDTH, HEIGHT);
-DrawSimpleTriangle_17 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_17 obj(WIDTH, HEIGHT);
+DrawSimpleTriangle_18 obj(WIDTH, HEIGHT);
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
@@ -177,7 +179,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 // utility function for loading a 2D texture from file
 // ---------------------------------------------------
-unsigned int loadTexture(unsigned int textureID, char const * path)
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT)
 {
 	int width, height, nrComponents;
 	unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
@@ -195,8 +197,8 @@ unsigned int loadTexture(unsigned int textureID, char const * path)
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapS);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

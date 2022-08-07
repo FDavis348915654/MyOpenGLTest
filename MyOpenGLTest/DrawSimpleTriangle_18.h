@@ -1,5 +1,5 @@
 /*
-	深度测试
+	混合
 */
 #pragma once
 #include <string>
@@ -24,7 +24,7 @@
 // 加载图片
 unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT);
 
-class DrawSimpleTriangle_16 : public SimpleDrawTestBase
+class DrawSimpleTriangle_18 : public SimpleDrawTestBase
 {
 public:
 	// Vertex Array Object, VAO
@@ -54,14 +54,14 @@ public:
 
 	float deltaTime = 0.0f;
 
-	DrawSimpleTriangle_16(GLuint screenWidth, GLuint screenHeight) {
+	DrawSimpleTriangle_18(GLuint screenWidth, GLuint screenHeight) {
 		this->screenWidth = screenWidth;
 		this->screenHeight = screenHeight;
 		aspect = (GLfloat)screenWidth / (GLfloat)screenHeight;
 	}
 
 	virtual void OnInitRender(GLFWwindow* window) {
-		glfwSetWindowTitle(window, "DrawSimpleTriangle_16");
+		glfwSetWindowTitle(window, "DrawSimpleTriangle_18");
 		camera = new Camera((glm::vec3(0.0f, 0.0f, 3.0f)));
 		//std::cout << "call PreRender()" << std::endl;
 		float cubeVertices[] = {
@@ -118,11 +118,20 @@ public:
 			-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
 			 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
 		};
+		float transparentVertices[] = {
+			// positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+			0.0f,  0.5f,  0.0f,  0.0f,  1.0f - 0.0f,
+			0.0f, -0.5f,  0.0f,  0.0f,  1.0f - 1.0f,
+			1.0f, -0.5f,  0.0f,  1.0f,  1.0f - 1.0f,
+
+			0.0f,  0.5f,  0.0f,  0.0f,  1.0f - 0.0f,
+			1.0f, -0.5f,  0.0f,  1.0f,  1.0f - 1.0f,
+			1.0f,  0.5f,  0.0f,  1.0f,  1.0f - 0.0f
+		};
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.frag");
-		//shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test_show_depth.frag"); // 显示深度值
-		//shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test_show_linear_depth.frag"); // 显示线性深度值
+		shader[1] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test.frag"); // 草丛
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -160,26 +169,40 @@ public:
 			glBindVertexArray(0);
 		}
 
+		{ // 设置顶点属性 // 草丛
+			// Vertex Array Object
+			glBindVertexArray(VAO[2]);
+			// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+			glBindVertexArray(0);
+		}
+
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
 		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT);
-
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
 		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT);
+		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 草丛
+		loadTexture(texture[2], "../res/Texture/grass.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
 		// 禁用深度缓冲写入
 		//glDepthMask(GL_FALSE);
 		/*
-		函数	描述
-		GL_ALWAYS	永远通过深度测试
-		GL_NEVER	永远不通过深度测试
-		GL_LESS		在片段深度值小于缓冲的深度值时通过测试
-		GL_EQUAL	在片段深度值等于缓冲区的深度值时通过测试
-		GL_LEQUAL	在片段深度值小于等于缓冲区的深度值时通过测试
-		GL_GREATER	在片段深度值大于缓冲区的深度值时通过测试
-		GL_NOTEQUAL	在片段深度值不等于缓冲区的深度值时通过测试
-		GL_GEQUAL	在片段深度值大于等于缓冲区的深度值时通过测试
+			函数	描述
+			GL_ALWAYS	永远通过深度测试
+			GL_NEVER	永远不通过深度测试
+			GL_LESS		在片段深度值小于缓冲的深度值时通过测试
+			GL_EQUAL	在片段深度值等于缓冲区的深度值时通过测试
+			GL_LEQUAL	在片段深度值小于等于缓冲区的深度值时通过测试
+			GL_GREATER	在片段深度值大于缓冲区的深度值时通过测试
+			GL_NOTEQUAL	在片段深度值不等于缓冲区的深度值时通过测试
+			GL_GEQUAL	在片段深度值大于等于缓冲区的深度值时通过测试
 		*/
 		glDepthFunc(GL_LESS);
 	}
@@ -187,42 +210,70 @@ public:
 	virtual void OnPreRender(float deltaTime) {
 		this->deltaTime = deltaTime;
 
-		// z 缓冲
-		if (true) {
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		}
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
 	virtual void OnRender() {
 		char str[256];
 		//std::cout << "call OnRender()" << std::endl;
-		glm::mat4 model = glm::mat4(1.0f);
+
 		glm::mat4 view = camera->GetViewMatrix();
 		glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
-		
-		shader[0].use();
-		shader[0].setMat4("view", view);
-		shader[0].setMat4("projection", projection);
-		// cubes
-		glBindVertexArray(VAO[0]);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture[0]);
-		shader[0].setInt("texture_diffuse1", 0);
-		model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
-		shader[0].setMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(2.0f, 0.001f, 0.0f));
-		shader[0].setMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		// floor
-		glBindVertexArray(VAO[1]);
-		glBindTexture(GL_TEXTURE_2D, texture[1]);
-		shader[0].setInt("texture_diffuse1", 0);
-		model = glm::mat4(1.0f);
-		shader[0].setMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		{ // floor
+			shader[0].use();
+			shader[0].setMat4("view", view);
+			shader[0].setMat4("projection", projection);
+			glBindVertexArray(VAO[1]);
+			glBindTexture(GL_TEXTURE_2D, texture[1]);
+			shader[0].setInt("texture_diffuse1", 0);
+			glm::mat4 model = glm::mat4(1.0f);
+			shader[0].setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+		}
+
+		{ // cubes
+			shader[0].use();
+			shader[0].setMat4("view", view);
+			shader[0].setMat4("projection", projection);
+			glm::mat4 model = glm::mat4(1.0f);
+			glBindVertexArray(VAO[0]);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture[0]);
+			shader[0].setInt("texture_diffuse1", 0);
+			model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
+			shader[0].setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(2.0f, 0.001f, 0.0f));
+			shader[0].setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
+		{ // grass
+			std::vector<glm::vec3> vegetation;
+			vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
+			vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
+			vegetation.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
+			vegetation.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
+			vegetation.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
+			shader[1].use();
+			shader[1].setMat4("view", view);
+			shader[1].setMat4("projection", projection);
+			glBindVertexArray(VAO[2]);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture[2]);
+			shader[1].setInt("texture_diffuse1", 0);
+			glm::mat4 model = glm::mat4(1.0f);
+			for (unsigned int i = 0; i < vegetation.size(); i++) {
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, vegetation[i]);
+				shader[1].setMat4("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+			}
+		}
+
 		glBindVertexArray(0);
 	}
 

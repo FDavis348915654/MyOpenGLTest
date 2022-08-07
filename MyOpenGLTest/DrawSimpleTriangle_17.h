@@ -22,7 +22,7 @@
 #include "Camera.h"
 
 // 加载图片
-unsigned int loadTexture(unsigned int textureID, char const * path);
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT);
 
 class DrawSimpleTriangle_17 : public SimpleDrawTestBase
 {
@@ -160,10 +160,10 @@ public:
 		}
 
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
-		loadTexture(texture[0], "../res/Texture/container2.png");
+		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT);
 
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
-		loadTexture(texture[1], "../res/Texture/container2_specular.png");
+		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT);
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
