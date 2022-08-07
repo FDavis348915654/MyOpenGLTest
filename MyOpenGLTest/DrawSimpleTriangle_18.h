@@ -4,6 +4,7 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <map>
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -132,6 +133,7 @@ public:
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.frag");
 		shader[1] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test.frag"); // 草丛
+		shader[2] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test_1.frag"); // 玻璃窗
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -188,6 +190,8 @@ public:
 		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 草丛
 		loadTexture(texture[2], "../res/Texture/grass.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 玻璃窗
+		loadTexture(texture[3], "../res/Texture/blending_transparent_window.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
@@ -205,6 +209,9 @@ public:
 			GL_GEQUAL	在片段深度值大于等于缓冲区的深度值时通过测试
 		*/
 		glDepthFunc(GL_LESS);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	virtual void OnPreRender(float deltaTime) {
@@ -251,7 +258,7 @@ public:
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		{ // grass
+		if (false) { // grass
 			std::vector<glm::vec3> vegetation;
 			vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
 			vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
@@ -272,6 +279,42 @@ public:
 				shader[1].setMat4("model", model);
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 			}
+		}
+
+		if (true) { // window
+			std::vector<glm::vec3> windows;
+			windows.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
+			windows.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
+			windows.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
+			windows.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
+			windows.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
+			shader[2].use();
+			shader[2].setMat4("view", view);
+			shader[2].setMat4("projection", projection);
+			glBindVertexArray(VAO[2]);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture[3]);
+			shader[2].setInt("texture_diffuse1", 0);
+			glm::mat4 model = glm::mat4(1.0f);
+			std::map<float, glm::vec3> sorted;
+			// 半透明物体需按举例排序渲染, 先渲染远处的
+			for (unsigned int i = 0; i < windows.size(); i++) {
+				float distance = glm::length(camera->Position - windows[i]);
+				sorted[distance] = windows[i];
+			}
+			for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, it->second);
+				shader[2].setMat4("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+			}
+			// 如果不排序, 那么靠近相机的玻璃就会覆盖远离相机的玻璃
+			//for (unsigned int i = 0; i < windows.size(); i++) {
+			//	model = glm::mat4(1.0f);
+			//	model = glm::translate(model, windows[i]);
+			//	shader[1].setMat4("model", model);
+			//	glDrawArrays(GL_TRIANGLES, 0, 6);
+			//}
 		}
 
 		glBindVertexArray(0);
