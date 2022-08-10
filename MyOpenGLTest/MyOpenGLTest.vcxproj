@@ -138,6 +138,7 @@
     <ClCompile Include="DrawSimpleTriangle_16.cpp" />
     <ClCompile Include="DrawSimpleTriangle_17.cpp" />
     <ClCompile Include="DrawSimpleTriangle_18.cpp" />
+    <ClCompile Include="DrawSimpleTriangle_19.cpp" />
     <ClCompile Include="DrawSimpleTriangle_2.cpp" />
     <ClCompile Include="DrawSimpleTriangle_3.cpp" />
     <ClCompile Include="DrawSimpleTriangle_4.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="DrawSimpleTriangle_16.h" />
     <ClInclude Include="DrawSimpleTriangle_17.h" />
     <ClInclude Include="DrawSimpleTriangle_18.h" />
+    <ClInclude Include="DrawSimpleTriangle_19.h" />
     <ClInclude Include="DrawSimpleTriangle_2.h" />
     <ClInclude Include="DrawSimpleTriangle_3.h" />
     <ClInclude Include="DrawSimpleTriangle_4.h" />
