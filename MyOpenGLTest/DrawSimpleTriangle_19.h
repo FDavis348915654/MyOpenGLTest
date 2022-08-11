@@ -120,15 +120,26 @@ public:
 			 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
 		};
 		float transparentVertices[] = {
-			// positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
-			0.0f,  0.5f,  0.0f,  0.0f,  1.0f - 0.0f,
-			0.0f, -0.5f,  0.0f,  0.0f,  1.0f - 1.0f,
-			1.0f, -0.5f,  0.0f,  1.0f,  1.0f - 1.0f,
+			// positions         // texture Coords
+			0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
+			0.0f, -0.5f,  0.0f,  0.0f,  0.0f,
+			1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
 
-			0.0f,  0.5f,  0.0f,  0.0f,  1.0f - 0.0f,
-			1.0f, -0.5f,  0.0f,  1.0f,  1.0f - 1.0f,
-			1.0f,  0.5f,  0.0f,  1.0f,  1.0f - 0.0f
+			0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
+			1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
+			1.0f,  0.5f,  0.0f,  1.0f,  1.0f
 		};
+		// 练习题 你能够重新定义顶点数据，将每个三角形设置为顺时针顺序，并将顺时针的三角形设置为正向面，仍将场景渲染出来吗？
+		//float transparentVertices[] = {
+		//	// positions         // texture Coords
+		//	0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
+		//	1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
+		//	0.0f, -0.5f,  0.0f,  0.0f,  0.0f,
+
+		//	0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
+		//	1.0f,  0.5f,  0.0f,  1.0f,  1.0f,
+		//	1.0f, -0.5f,  0.0f,  1.0f,  0.0f
+		//};
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.frag");
@@ -227,6 +238,10 @@ public:
 			glCullFace的初始值是GL_BACK。
 		*/
 		glCullFace(GL_BACK);
+
+		// 练习题 你能够重新定义顶点数据，将每个三角形设置为顺时针顺序，并将顺时针的三角形设置为正向面，仍将场景渲染出来吗？
+		//glFrontFace(GL_CW);
+
 	}
 
 	virtual void OnPreRender(float deltaTime) {
@@ -273,7 +288,7 @@ public:
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		if (false) { // grass
+		if (true) { // grass
 			std::vector<glm::vec3> vegetation;
 			vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
 			vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
@@ -296,7 +311,7 @@ public:
 			}
 		}
 
-		if (true) { // window
+		if (false) { // window
 			glDisable(GL_CULL_FACE);
 			std::vector<glm::vec3> windows;
 			windows.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
