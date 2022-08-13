@@ -29,6 +29,7 @@
 #include "../MyOpenGLTest/DrawSimpleTriangle_17.h"
 #include "../MyOpenGLTest/DrawSimpleTriangle_18.h"
 #include "../MyOpenGLTest/DrawSimpleTriangle_19.h"
+#include "../MyOpenGLTest/DrawSimpleTriangle_20.h"
 
 // Function prototypes
 // °´¼ü»Øµ÷
@@ -50,12 +51,12 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
-//DrawSimpleTriangle obj;
-//DrawSimpleTriangle_2 obj;
-//DrawSimpleTriangle_3 obj;
-//DrawSimpleTriangle_4 obj;
-//DrawSimpleTriangle_5 obj;
-//DrawSimpleTriangle_6 obj;
+//DrawSimpleTriangle obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_2 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_3 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_4 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_5 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_6 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_7 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_8 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_9 obj(WIDTH, HEIGHT);
@@ -68,7 +69,8 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_16 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_17 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_18 obj(WIDTH, HEIGHT);
-DrawSimpleTriangle_19 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_19 obj(WIDTH, HEIGHT);
+DrawSimpleTriangle_20 obj(WIDTH, HEIGHT);
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
