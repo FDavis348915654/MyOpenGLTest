@@ -40,6 +40,12 @@ public:
 	Shader shader[10];
 	// camera
 	Camera* camera;
+	// Framebuffer Object // 帧缓冲对象
+	unsigned int fbo;
+	// Renderbuffer Object // 渲染缓冲对象
+	unsigned int rbo;
+	// 纹理附件
+	unsigned int texColorBuffer;
 
 	GLuint screenWidth;
 	GLuint screenHeight;
@@ -55,6 +61,8 @@ public:
 
 	float deltaTime = 0.0f;
 
+	int effectType = 0;
+
 	DrawSimpleTriangle_20(GLuint screenWidth, GLuint screenHeight) {
 		this->screenWidth = screenWidth;
 		this->screenHeight = screenHeight;
@@ -66,48 +74,48 @@ public:
 		camera = new Camera((glm::vec3(0.0f, 0.0f, 3.0f)));
 		//std::cout << "call PreRender()" << std::endl;
 		float cubeVertices[] = {
-			// positions          // texture Coords
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+			// Back face
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // Bottom-left
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right         
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+			// Front face
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+			// Left face
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-left
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+			// Right face
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right         
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left     
+			// Bottom face
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, // top-left
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+			// Top face
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right     
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left        
 		};
 		float planeVertices[] = {
 			// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
@@ -129,22 +137,22 @@ public:
 			1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
 			1.0f,  0.5f,  0.0f,  1.0f,  1.0f
 		};
-		// 练习题 你能够重新定义顶点数据，将每个三角形设置为顺时针顺序，并将顺时针的三角形设置为正向面，仍将场景渲染出来吗？
-		//float transparentVertices[] = {
-		//	// positions         // texture Coords
-		//	0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
-		//	1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
-		//	0.0f, -0.5f,  0.0f,  0.0f,  0.0f,
+		float quadVertices[] = {
+			// positions   // texCoords
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			-1.0f, -1.0f,  0.0f, 0.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
 
-		//	0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
-		//	1.0f,  0.5f,  0.0f,  1.0f,  1.0f,
-		//	1.0f, -0.5f,  0.0f,  1.0f,  0.0f
-		//};
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+			 1.0f,  1.0f,  1.0f, 1.0f
+		};
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.frag");
 		shader[1] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test.frag"); // 草丛
 		shader[2] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test_1.frag"); // 玻璃窗
+		shader[3] = Shader("../res/Shaders/lesson_09_framebuffers.vs", "../res/Shaders/lesson_09_framebuffers.frag"); // 屏幕
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -195,6 +203,19 @@ public:
 			glBindVertexArray(0);
 		}
 
+		{ // 屏幕
+			// Vertex Array Object
+			glBindVertexArray(VAO[3]);
+			// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[3]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+			glBindVertexArray(0);
+		}
+
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
 		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
@@ -226,7 +247,7 @@ public:
 
 		// 定义正面是顺时针还是逆时针
 		// 默认值是GL_CCW，它代表的是逆时针的环绕顺序，另一个选项是GL_CW，它（显然）代表的是顺时针顺序
-		glFrontFace(GL_CCW);
+		//glFrontFace(GL_CCW);
 
 		glEnable(GL_CULL_FACE);
 		/*
@@ -237,11 +258,52 @@ public:
 			GL_FRONT_AND_BACK：剔除正向面和背向面。
 			glCullFace的初始值是GL_BACK。
 		*/
-		glCullFace(GL_BACK);
+		//glCullFace(GL_BACK);
 
-		// 练习题 你能够重新定义顶点数据，将每个三角形设置为顺时针顺序，并将顺时针的三角形设置为正向面，仍将场景渲染出来吗？
-		//glFrontFace(GL_CW);
+		// 创建一个帧缓冲对象 // Framebuffer Object
+		glGenFramebuffers(1, &fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+		{ // Framebuffer Object // 纹理附件
+			glGenTextures(1, &texColorBuffer);
+			glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screenWidth, screenHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			/*
+				glFrameBufferTexture2D有以下的参数：
+					target：帧缓冲的目标（绘制、读取或者两者皆有）
+					attachment：我们想要附加的附件类型。当前我们正在附加一个颜色附件。注意最后的0意味着我们可以附加多个颜色附件。我们将在之后的教程中提到。
+					textarget：你希望附加的纹理类型
+					texture：要附加的纹理本身
+					level：多级渐远纹理的级别。我们将它保留为0。
+			*/
+			// 将它附加到当前绑定的帧缓冲对象
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
+
+			// 将一个深度和模板缓冲附加为一个纹理到帧缓冲
+			//glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, screenWidth, screenHeight, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texColorBuffer, 0);
+		}
+
+		{ // Renderbuffer Object // 渲染缓冲对象
+			glGenRenderbuffers(1, &rbo);
+			glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+			// 创建一个深度和模板渲染缓冲对象
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
+			glBindRenderbuffer(GL_RENDERBUFFER, 0);
+			// 将渲染缓冲对象附加到帧缓冲的深度和模板附件上
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+		}
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// 线框模式(Wireframe Mode)
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
 	virtual void OnPreRender(float deltaTime) {
@@ -255,10 +317,17 @@ public:
 		char str[256];
 		//std::cout << "call OnRender()" << std::endl;
 
+		// 第一处理阶段(Pass)
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 我们现在不使用模板缓冲
+		glEnable(GL_DEPTH_TEST);
+
 		glm::mat4 view = camera->GetViewMatrix();
 		glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
 
 		{ // floor
+			glDisable(GL_CULL_FACE);
 			shader[0].use();
 			shader[0].setMat4("view", view);
 			shader[0].setMat4("projection", projection);
@@ -268,6 +337,7 @@ public:
 			glm::mat4 model = glm::mat4(1.0f);
 			shader[0].setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
+			glEnable(GL_CULL_FACE);
 		}
 
 		{ // cubes
@@ -289,6 +359,7 @@ public:
 		}
 
 		if (true) { // grass
+			glDisable(GL_CULL_FACE);
 			std::vector<glm::vec3> vegetation;
 			vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
 			vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
@@ -309,6 +380,7 @@ public:
 				shader[1].setMat4("model", model);
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 			}
+			glEnable(GL_CULL_FACE);
 		}
 
 		if (false) { // window
@@ -349,7 +421,17 @@ public:
 			glEnable(GL_CULL_FACE);
 		}
 
-		glBindVertexArray(0);
+		// 第二处理阶段
+		glBindFramebuffer(GL_FRAMEBUFFER, 0); // 返回默认
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		shader[3].use();
+		shader[3].setInt("effectType", effectType);
+		glBindVertexArray(VAO[3]);
+		glDisable(GL_DEPTH_TEST);
+		glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 
 	virtual void OnOverRender() {
@@ -363,6 +445,9 @@ public:
 		{
 			if (key == GLFW_KEY_F) {
 				useSpotLight = !useSpotLight;
+			}
+			if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
+				effectType = key - GLFW_KEY_0;
 			}
 		}
 	}

@@ -66,48 +66,48 @@ public:
 		camera = new Camera((glm::vec3(0.0f, 0.0f, 3.0f)));
 		//std::cout << "call PreRender()" << std::endl;
 		float cubeVertices[] = {
-			// positions          // texture Coords
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+			// Back face
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // Bottom-left
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right         
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+			// Front face
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+			// Left face
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-left
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+			// Right face
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right         
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left     
+			// Bottom face
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, // top-left
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+			// Top face
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right     
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left        
 		};
 		float planeVertices[] = {
 			// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
@@ -259,6 +259,7 @@ public:
 		glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
 
 		{ // floor
+			glDisable(GL_CULL_FACE);
 			shader[0].use();
 			shader[0].setMat4("view", view);
 			shader[0].setMat4("projection", projection);
@@ -268,6 +269,7 @@ public:
 			glm::mat4 model = glm::mat4(1.0f);
 			shader[0].setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
+			glEnable(GL_CULL_FACE);
 		}
 
 		{ // cubes
@@ -289,6 +291,7 @@ public:
 		}
 
 		if (true) { // grass
+			glDisable(GL_CULL_FACE);
 			std::vector<glm::vec3> vegetation;
 			vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
 			vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
@@ -309,6 +312,7 @@ public:
 				shader[1].setMat4("model", model);
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 			}
+			glEnable(GL_CULL_FACE);
 		}
 
 		if (false) { // window
