@@ -185,12 +185,57 @@ public:
 			-1.0f, -1.0f,  1.0f,
 			 1.0f, -1.0f,  1.0f
 		};
+		float vertices[] = {
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+		};
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.frag"); // 木箱
 		shader[1] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test.frag"); // 草丛
 		shader[2] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test_1.frag"); // 玻璃窗
 		shader[3] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒
+		shader[4] = Shader("../res/Shaders/lesson_10_cubemaps_1.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒 // 优化
+		shader[5] = Shader("../res/Shaders/lesson_10_cubemaps_2.vs", "../res/Shaders/lesson_10_cubemaps_2.frag"); // 木箱 反射
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -250,6 +295,19 @@ public:
 			glBindVertexArray(0);
 		}
 
+		{ // 设置顶点属性 // 箱子 // 反射
+			// Vertex Array Object
+			glBindVertexArray(VAO[4]);
+			// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[4]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+			glBindVertexArray(0);
+		}
+
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
 		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
@@ -297,7 +355,7 @@ public:
 		glm::mat4 view = camera->GetViewMatrix();
 		glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
 
-		{ // skybox
+		if (true) { // skybox // 最先绘制 // 需关闭深度写入
 			glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
 			glDisable(GL_CULL_FACE);
 			glDepthMask(GL_FALSE);
@@ -311,7 +369,7 @@ public:
 			glEnable(GL_CULL_FACE);
 		}
 
-		{ // floor
+		if (false) { // floor
 			glDisable(GL_CULL_FACE);
 			shader[0].use();
 			shader[0].setMat4("view", view);
@@ -325,7 +383,7 @@ public:
 			glEnable(GL_CULL_FACE);
 		}
 
-		{ // cubes
+		if (false) { // cubes // 普通的箱子
 			shader[0].use();
 			shader[0].setMat4("view", view);
 			shader[0].setMat4("projection", projection);
@@ -343,7 +401,28 @@ public:
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		if (true) { // grass
+		if (true) { // cubes // 反射的箱子
+			glDisable(GL_CULL_FACE);
+			shader[5].use();
+			shader[5].setVec3("cameraPos", camera->Position);
+			shader[5].setMat4("view", view);
+			shader[5].setMat4("projection", projection);
+			glm::mat4 model = glm::mat4(1.0f);
+			glBindVertexArray(VAO[4]);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTexture);
+			shader[5].setInt("skybox", 0);
+			model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
+			shader[5].setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(2.0f, 0.001f, 0.0f));
+			shader[5].setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glEnable(GL_CULL_FACE);
+		}
+
+		if (false) { // grass
 			glDisable(GL_CULL_FACE);
 			std::vector<glm::vec3> vegetation;
 			vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
@@ -400,6 +479,21 @@ public:
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 			}
 			glEnable(GL_CULL_FACE);
+		}
+
+		if (false) { // skybox 优化 // 最后绘制 // 不用关闭深度写入 // 但是这样的绘制在绘制透明物体时显示有问题
+			glDepthFunc(GL_LEQUAL);
+			glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
+			glDisable(GL_CULL_FACE);
+			shader[4].use();
+			shader[4].setMat4("view", skyboxView);
+			shader[4].setMat4("projection", projection);
+			glBindVertexArray(VAO[3]);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTexture);
+			shader[5].setInt("skybox", 0);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glEnable(GL_CULL_FACE);
+			glDepthFunc(GL_LESS);
 		}
 	}
 
