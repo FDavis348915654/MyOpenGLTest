@@ -236,6 +236,7 @@ public:
 		shader[3] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒
 		shader[4] = Shader("../res/Shaders/lesson_10_cubemaps_1.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒 // 优化
 		shader[5] = Shader("../res/Shaders/lesson_10_cubemaps_2.vs", "../res/Shaders/lesson_10_cubemaps_2.frag"); // 木箱 反射
+		shader[6] = Shader("../res/Shaders/lesson_10_cubemaps_2.vs", "../res/Shaders/lesson_10_cubemaps_3.frag"); // 木箱 折射
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -401,8 +402,9 @@ public:
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		if (true) { // cubes // 反射的箱子
+		if (true) { // cubes // 反射/折射的箱子
 			glDisable(GL_CULL_FACE);
+			// 反射
 			shader[5].use();
 			shader[5].setVec3("cameraPos", camera->Position);
 			shader[5].setMat4("view", view);
@@ -415,9 +417,19 @@ public:
 			model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
 			shader[5].setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
+
+			// 折射
+			shader[6].use();
+			shader[6].setVec3("cameraPos", camera->Position);
+			shader[6].setMat4("view", view);
+			shader[6].setMat4("projection", projection);
 			model = glm::mat4(1.0f);
+			glBindVertexArray(VAO[4]);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTexture);
+			shader[6].setInt("skybox", 0);
 			model = glm::translate(model, glm::vec3(2.0f, 0.001f, 0.0f));
-			shader[5].setMat4("model", model);
+			shader[6].setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 			glEnable(GL_CULL_FACE);
 		}
