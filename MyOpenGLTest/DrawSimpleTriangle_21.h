@@ -51,6 +51,8 @@ public:
 	// 立方体贴图
 	unsigned int cubeTexture;
 
+	Model ourModel;
+
 	GLuint screenWidth;
 	GLuint screenHeight;
 
@@ -237,6 +239,7 @@ public:
 		shader[4] = Shader("../res/Shaders/lesson_10_cubemaps_1.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒 // 优化
 		shader[5] = Shader("../res/Shaders/lesson_10_cubemaps_2.vs", "../res/Shaders/lesson_10_cubemaps_2.frag"); // 木箱 反射
 		shader[6] = Shader("../res/Shaders/lesson_10_cubemaps_2.vs", "../res/Shaders/lesson_10_cubemaps_3.frag"); // 木箱 折射
+		shader[7] = Shader("../res/Shaders/lesson_10_cubemaps_4.vs", "../res/Shaders/lesson_10_cubemaps_4.frag"); // 模型 反射
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -328,6 +331,9 @@ public:
 			"../res/Texture/skybox/back.jpg"
 		};
 		cubeTexture = loadCubemap(faces);
+		stbi_set_flip_vertically_on_load(true);
+
+		ourModel = Model("../res/nanosuit_reflection/nanosuit.obj");
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
@@ -402,7 +408,7 @@ public:
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		if (true) { // cubes // 反射/折射的箱子
+		if (false) { // cubes // 反射/折射的箱子
 			glDisable(GL_CULL_FACE);
 			// 反射
 			shader[5].use();
@@ -491,6 +497,50 @@ public:
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 			}
 			glEnable(GL_CULL_FACE);
+		}
+
+		// 绘制纳米生化装, 反射
+		if (false) {
+			shader[5].use();
+			shader[5].setVec3("cameraPos", camera->Position);
+			shader[5].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[5].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(1.0f, -1.5f, -1.0f));
+			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			shader[5].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+			ourModel.Draw(shader[5]);
+		}
+
+		// 绘制纳米生化装, 折射
+		if (true) {
+			shader[6].use();
+			shader[6].setVec3("cameraPos", camera->Position);
+			shader[6].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[6].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(1.0f, -1.5f, -1.0f));
+			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			shader[6].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+			ourModel.Draw(shader[6]);
+		}
+
+		// 绘制纳米生化装, 部分反射
+		if (false) {
+			shader[7].use();
+			shader[7].setVec3("cameraPos", camera->Position);
+			shader[7].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[7].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(1.0f, -1.5f, -1.0f));
+			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			shader[7].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+
+			glActiveTexture(GL_TEXTURE4);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTexture);
+			shader[7].setInt("skybox", 4);
+
+			ourModel.Draw(shader[7]);
 		}
 
 		if (false) { // skybox 优化 // 最后绘制 // 不用关闭深度写入 // 但是这样的绘制在绘制透明物体时显示有问题
