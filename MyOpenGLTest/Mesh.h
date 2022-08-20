@@ -65,6 +65,7 @@ public:
 		// bind appropriate textures
 		unsigned int diffuseNr = 1;
 		unsigned int specularNr = 1;
+		unsigned int ambientNr = 1;
 		unsigned int normalNr = 1;
 		unsigned int heightNr = 1;
 		for (unsigned int i = 0; i < textures.size(); i++)
@@ -78,6 +79,8 @@ public:
 				number = std::to_string(diffuseNr++);
 			else if (name == "texture_specular")
 				number = std::to_string(specularNr++); // transfer unsigned int to string
+			else if (name == "texture_ambient")
+				number = std::to_string(ambientNr++); // transfer unsigned int to string
 			else if (name == "texture_normal")
 				number = std::to_string(normalNr++); // transfer unsigned int to string
 			else if (name == "texture_height")

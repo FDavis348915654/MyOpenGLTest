@@ -1,5 +1,5 @@
 #version 330 core
-// 立方体贴图 模型
+// 立方体贴图 模型 反射贴图
 
 layout (location = 0) in vec3 aPos; // aPos 变量的属性位置值为 0
 layout (location = 1) in vec3 aNormal;

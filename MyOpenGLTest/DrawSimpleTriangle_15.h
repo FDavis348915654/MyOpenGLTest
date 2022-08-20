@@ -135,7 +135,9 @@ public:
 			glBindVertexArray(0);
 		}
 
+		stbi_set_flip_vertically_on_load(false);
 		ourModel = Model("../res/nanosuit/nanosuit.obj");
+		stbi_set_flip_vertically_on_load(true);
 
 		// ¿ªÆôÉî¶È²âÊÔ
 		glEnable(GL_DEPTH_TEST);
