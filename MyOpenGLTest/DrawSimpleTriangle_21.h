@@ -133,6 +133,7 @@ public:
 			-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
 			 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
 		};
+		//std::cout << "sizeof planeVertices " << sizeof(planeVertices) << std::endl; // 120
 		float transparentVertices[] = {
 			// positions         // texture Coords
 			0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
