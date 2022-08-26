@@ -50,6 +50,8 @@ public:
 	unsigned int texColorBuffer;
 	// 立方体贴图
 	unsigned int cubeTexture;
+	// uniform buffer object
+	unsigned int uboMatrices;
 
 	Model ourModel;
 
@@ -233,15 +235,11 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_11_advanced_GLSL.vs", "../res/Shaders/lesson_11_advanced_GLSL.frag"); // 木箱
-		shader[1] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test.frag"); // 草丛
-		shader[2] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test_1.frag"); // 玻璃窗
-		shader[3] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒
-		shader[4] = Shader("../res/Shaders/lesson_10_cubemaps_1.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒 // 优化
-		shader[5] = Shader("../res/Shaders/lesson_10_cubemaps_2.vs", "../res/Shaders/lesson_10_cubemaps_2.frag"); // 木箱 反射
-		shader[6] = Shader("../res/Shaders/lesson_10_cubemaps_2.vs", "../res/Shaders/lesson_10_cubemaps_3.frag"); // 木箱 折射
-		shader[7] = Shader("../res/Shaders/lesson_10_cubemaps_4.vs", "../res/Shaders/lesson_10_cubemaps_4.frag"); // 模型 反射贴图
-		shader[8] = Shader("../res/Shaders/lesson_10_cubemaps_4.vs", "../res/Shaders/lesson_10_cubemaps_4_test.frag"); // 模型 反射贴图测试
+		shader[0] = Shader("../res/Shaders/lesson_11_advanced_GLSL.vs", "../res/Shaders/lesson_11_advanced_GLSL.frag"); // 用来画点并设置点的大小
+		shader[1] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_red.frag"); // Uniform缓冲对象
+		shader[2] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_green.frag"); // Uniform缓冲对象
+		shader[3] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_blue.frag"); // Uniform缓冲对象
+		shader[4] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_yellow.frag"); // Uniform缓冲对象
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -339,6 +337,29 @@ public:
 		cubeTexture = loadCubemap(faces);
 		stbi_set_flip_vertically_on_load(true);
 
+		// 获取各个着色器的 Uniform块
+		unsigned int uniformBlockIndexRed = glGetUniformBlockIndex(shader[1].ID, "Matrices");
+		unsigned int uniformBlockIndexGreen = glGetUniformBlockIndex(shader[2].ID, "Matrices");
+		unsigned int uniformBlockIndexBlue = glGetUniformBlockIndex(shader[3].ID, "Matrices");
+		unsigned int uniformBlockIndexYellow = glGetUniformBlockIndex(shader[4].ID, "Matrices");
+		// 将各个着色器上的 Uniform块 链接至 绑定点0
+		glUniformBlockBinding(shader[1].ID, uniformBlockIndexRed, 0);
+		glUniformBlockBinding(shader[2].ID, uniformBlockIndexGreen, 0);
+		glUniformBlockBinding(shader[3].ID, uniformBlockIndexBlue, 0);
+		glUniformBlockBinding(shader[4].ID, uniformBlockIndexYellow, 0);
+		// gen ubo
+		glGenBuffers(1, &uboMatrices);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
+
+		glm::mat4 projection = glm::perspective(45.0f, (float)screenWidth/(float)screenHeight, 0.1f, 100.0f);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
@@ -365,23 +386,14 @@ public:
 	virtual void OnRender() {
 		char str[256];
 		//std::cout << "call OnRender()" << std::endl;
-
 		glm::mat4 view = camera->GetViewMatrix();
 		glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
 
-		if (false) { // skybox // 最先绘制 // 需关闭深度写入
-			glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
-			glDepthMask(GL_FALSE);
-			shader[3].use();
-			shader[3].setMat4("view", skyboxView);
-			shader[3].setMat4("projection", projection);
-			glBindVertexArray(VAO[3]);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTexture);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-			glDepthMask(GL_TRUE);
-		}
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-		if (true) { // cubes // 普通的箱子
+		if (false) { // cubes // 普通的箱子
 			shader[0].use();
 			shader[0].setMat4("view", view);
 			shader[0].setMat4("projection", projection);
@@ -398,6 +410,33 @@ public:
 			shader[0].setMat4("model", model);
 			//glDrawArrays(GL_TRIANGLES, 0, 36);
 			glDrawArrays(GL_POINTS, 0, 36);
+		}
+
+		if (true) { // uniform 缓冲对象
+			glBindVertexArray(VAO[0]);
+			shader[1].use();
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(-0.75f, 0.75f, 0.0f));
+			shader[1].setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+
+			shader[2].use();
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(0.75f, 0.75f, 0.0f));
+			shader[2].setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+
+			shader[3].use();
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(0.75f, -0.75f, 0.0f));
+			shader[3].setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+
+			shader[4].use();
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(-0.75f, -0.75f, 0.0f));
+			shader[4].setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 	}
 
