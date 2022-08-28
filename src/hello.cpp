@@ -24,14 +24,15 @@
 //#include "../MyOpenGLTest/DrawSimpleTriangle_12.h"
 //#include "../MyOpenGLTest/DrawSimpleTriangle_13.h"
 //#include "../MyOpenGLTest/DrawSimpleTriangle_14.h"
-#include "../MyOpenGLTest/DrawSimpleTriangle_15.h"
+#include "../MyOpenGLTest/DrawSimpleTriangle_15.h" // 模型显示
 //#include "../MyOpenGLTest/DrawSimpleTriangle_16.h"
 //#include "../MyOpenGLTest/DrawSimpleTriangle_17.h"
 //#include "../MyOpenGLTest/DrawSimpleTriangle_18.h"
 //#include "../MyOpenGLTest/DrawSimpleTriangle_19.h"
 //#include "../MyOpenGLTest/DrawSimpleTriangle_20.h"
 #include "../MyOpenGLTest/DrawSimpleTriangle_21.h"
-#include "../MyOpenGLTest/DrawSimpleTriangle_22.h"
+#include "../MyOpenGLTest/DrawSimpleTriangle_22.h" // 高级 GLSL
+#include "../MyOpenGLTest/DrawSimpleTriangle_23.h"
 
 // Function prototypes
 // 按键回调
@@ -69,14 +70,15 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_12 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_13 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_14 obj(WIDTH, HEIGHT);
-//DrawSimpleTriangle_15 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_15 obj(WIDTH, HEIGHT); // 模型显示
 //DrawSimpleTriangle_16 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_17 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_18 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_19 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_20 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_21 obj(WIDTH, HEIGHT);
-DrawSimpleTriangle_22 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_22 obj(WIDTH, HEIGHT); // 高级 GLSL
+DrawSimpleTriangle_23 obj(WIDTH, HEIGHT);
 
 // The MAIN function, from here we start the application and run the game loop
 int main()

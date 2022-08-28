@@ -7,6 +7,12 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+// 接口块
+out VS_OUT
+{
+	vec2 TexCoords;
+} vs_out;
+
 void main()
 {
 	// 注意乘法要从右向左读
