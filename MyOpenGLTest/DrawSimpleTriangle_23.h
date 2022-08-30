@@ -80,17 +80,24 @@ public:
 	virtual void OnInitRender(GLFWwindow* window) {
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_23");
 		camera = new Camera((glm::vec3(0.0f, 0.0f, 3.0f)));
+		//float points[] = {
+		//	-0.5f,  0.5f, // 左上
+		//	 0.5f,  0.5f, // 右上
+		//	 0.5f, -0.5f, // 右下
+		//	-0.5f, -0.5f  // 左下
+		//};
 		float points[] = {
-			-0.5f,  0.5f, // 左上
-			 0.5f,  0.5f, // 右上
-			 0.5f, -0.5f, // 右下
-			-0.5f, -0.5f  // 左下
+			-0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // 左上
+			 0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // 右上
+			 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // 右下
+			-0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // 左下
 		};
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry.gs", "../res/Shaders/lesson_12_geometry.frag"); // 基础
 		//shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_test.gs", "../res/Shaders/lesson_12_geometry.frag"); // 把点拉长
-		shader[1] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_build_house.gs", "../res/Shaders/lesson_12_geometry.frag"); // 基础
+		shader[1] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_build_house.gs", "../res/Shaders/lesson_12_geometry.frag"); // 基础房子
+		shader[2] = Shader("../res/Shaders/lesson_12_geometry_build_house_color.vs", "../res/Shaders/lesson_12_geometry_build_house_color.gs", "../res/Shaders/lesson_12_geometry_build_house_color.frag"); // 带颜色房子
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -102,14 +109,27 @@ public:
 		// 加载的图像默认上下翻转
 		stbi_set_flip_vertically_on_load(true);
 
-		{ // 设置顶点属性 // 平面
+		//{ // 设置顶点属性 // 四个点
+		//	// Vertex Array Object
+		//	glBindVertexArray(VAO[0]);
+		//	// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
+		//	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+		//	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+		//	glEnableVertexAttribArray(0);
+		//	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+		//	glBindVertexArray(0);
+		//}
+
+		{ // 设置顶点属性 // 四个点(带颜色)
 			// Vertex Array Object
 			glBindVertexArray(VAO[0]);
 			// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
-			glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
 			glBindVertexArray(0);
 		}
 
@@ -159,29 +179,17 @@ public:
 		}
 
 		// 4 个房子
-		if (true) {
+		if (false) {
 			shader[1].use();
 			glBindVertexArray(VAO[0]);
 			glDrawArrays(GL_POINTS, 0, 4);
 		}
 
-		if (false) { // cubes // 普通的箱子
-			shader[0].use();
-			shader[0].setMat4("view", view);
-			shader[0].setMat4("projection", projection);
+		// 4 个房子(带颜色)
+		if (true) {
+			shader[2].use();
 			glBindVertexArray(VAO[0]);
-
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
-			shader[0].setMat4("model", model);
-			//glDrawArrays(GL_TRIANGLES, 0, 36);
-			glDrawArrays(GL_POINTS, 0, 36);
-
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(2.0f, 0.001f, 0.0f));
-			shader[0].setMat4("model", model);
-			//glDrawArrays(GL_TRIANGLES, 0, 36);
-			glDrawArrays(GL_POINTS, 0, 36);
+			glDrawArrays(GL_POINTS, 0, 4);
 		}
 	}
 
