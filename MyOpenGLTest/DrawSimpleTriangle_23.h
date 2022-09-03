@@ -92,12 +92,58 @@ public:
 			 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // 右下
 			-0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // 左下
 		};
+		float skyboxVertices[] = {
+			// positions          
+			-1.0f,  1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			-1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f
+		};
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry.gs", "../res/Shaders/lesson_12_geometry.frag"); // 基础
 		//shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_test.gs", "../res/Shaders/lesson_12_geometry.frag"); // 把点拉长
 		shader[1] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_build_house.gs", "../res/Shaders/lesson_12_geometry.frag"); // 基础房子
 		shader[2] = Shader("../res/Shaders/lesson_12_geometry_build_house_color.vs", "../res/Shaders/lesson_12_geometry_build_house_color.gs", "../res/Shaders/lesson_12_geometry_build_house_color.frag"); // 带颜色房子
+		shader[3] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒
+		shader[4] = Shader("../res/Shaders/lesson_12_geometry_explode.vs", "../res/Shaders/lesson_12_geometry_explode.gs", "../res/Shaders/lesson_12_geometry_explode.frag"); // 爆炸效果
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -133,6 +179,15 @@ public:
 			glBindVertexArray(0);
 		}
 
+		{ // 天空盒
+			glBindVertexArray(VAO[3]);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[3]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glBindVertexArray(0);
+		}
+
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
 		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
@@ -141,6 +196,22 @@ public:
 		loadTexture(texture[2], "../res/Texture/grass.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 玻璃窗
 		loadTexture(texture[3], "../res/Texture/blending_transparent_window.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+
+		stbi_set_flip_vertically_on_load(false);
+		ourModel = Model("../res/nanosuit_reflection/nanosuit.obj");
+		stbi_set_flip_vertically_on_load(true);
+
+		stbi_set_flip_vertically_on_load(false);
+		std::vector<std::string> faces = {
+			"../res/Texture/skybox/right.jpg",
+			"../res/Texture/skybox/left.jpg",
+			"../res/Texture/skybox/top.jpg",
+			"../res/Texture/skybox/bottom.jpg",
+			"../res/Texture/skybox/front.jpg",
+			"../res/Texture/skybox/back.jpg"
+		};
+		cubeTexture = loadCubemap(faces);
+		stbi_set_flip_vertically_on_load(true);
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
@@ -171,6 +242,20 @@ public:
 		glm::mat4 view = camera->GetViewMatrix();
 		glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
 
+		if (true) { // skybox // 最先绘制 // 需关闭深度写入
+			glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
+			//glDisable(GL_CULL_FACE);
+			glDepthMask(GL_FALSE);
+			shader[3].use();
+			shader[3].setMat4("view", skyboxView);
+			shader[3].setMat4("projection", projection);
+			glBindVertexArray(VAO[3]);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTexture);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glDepthMask(GL_TRUE);
+			//glEnable(GL_CULL_FACE);
+		}
+
 		// 4 个点
 		if (false) {
 			shader[0].use();
@@ -186,10 +271,24 @@ public:
 		}
 
 		// 4 个房子(带颜色)
-		if (true) {
+		if (false) {
 			shader[2].use();
 			glBindVertexArray(VAO[0]);
 			glDrawArrays(GL_POINTS, 0, 4);
+		}
+
+		// 绘制纳米生化装, 反射
+		if (true) {
+			shader[4].use();
+			shader[4].setVec3("cameraPos", camera->Position);
+			shader[4].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[4].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(-1.0f, -1.5f, -2.5f));
+			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			shader[4].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+			shader[4].setFloat("time", glfwGetTime());
+			ourModel.Draw(shader[4]);
 		}
 	}
 

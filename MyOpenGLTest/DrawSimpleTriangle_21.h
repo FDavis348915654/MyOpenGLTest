@@ -241,7 +241,7 @@ public:
 		shader[5] = Shader("../res/Shaders/lesson_10_cubemaps_2.vs", "../res/Shaders/lesson_10_cubemaps_2.frag"); // 木箱 反射
 		shader[6] = Shader("../res/Shaders/lesson_10_cubemaps_2.vs", "../res/Shaders/lesson_10_cubemaps_3.frag"); // 木箱 折射
 		shader[7] = Shader("../res/Shaders/lesson_10_cubemaps_4.vs", "../res/Shaders/lesson_10_cubemaps_4.frag"); // 模型 反射贴图
-		shader[8] = Shader("../res/Shaders/lesson_10_cubemaps_4.vs", "../res/Shaders/lesson_10_cubemaps_4_test.frag"); // 模型 反射贴图测试
+		shader[8] = Shader("../res/Shaders/lesson_10_cubemaps_4.vs", "../res/Shaders/lesson_10_cubemaps_4_test.frag"); // 模型 反射贴图测试(只绘制了漫反射纹理)
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -553,7 +553,7 @@ public:
 			//glEnable(GL_CULL_FACE);
 		}
 
-		// 绘制纳米生化装, 反射贴图测试
+		// 绘制纳米生化装, 反射贴图测试(只绘制了漫反射纹理)
 		if (true) {
 			//glDisable(GL_CULL_FACE);
 			shader[8].use();

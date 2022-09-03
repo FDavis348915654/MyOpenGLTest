@@ -10,7 +10,10 @@ uniform vec3 cameraPos;
 
 void main()
 {
-	float ratio = 1.0 / 1.52;
+	//float ratio = 1.0 / 2.417; // 钻石
+	//float ratio = 1.0 / 1.333; // 水
+	float ratio = 1.0 / 1.5; // 玻璃
+	//float ratio = 1.0; // 几乎完全透明
 	//float ratio = 0.98;
 	//float ratio = 1.4;
 	vec3 I = normalize(Position - cameraPos);

@@ -76,9 +76,9 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_18 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_19 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_20 obj(WIDTH, HEIGHT);
-DrawSimpleTriangle_21 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_21 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_22 obj(WIDTH, HEIGHT); // ¸ß¼¶ GLSL
-//DrawSimpleTriangle_23 obj(WIDTH, HEIGHT);
+DrawSimpleTriangle_23 obj(WIDTH, HEIGHT);
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
