@@ -503,6 +503,8 @@ public:
 			glEnable(GL_CULL_FACE);
 		}
 
+		float modelScale = 1.0f;
+
 		// 绘制纳米生化装, 反射
 		if (true) {
 			//glDisable(GL_CULL_FACE);
@@ -511,8 +513,8 @@ public:
 			shader[5].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader[5].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(-1.0f, -1.5f, -2.5f));
-			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			model = glm::translate(model, glm::vec3(-10.0f * modelScale, -15.0f * modelScale, -25.0f * modelScale));
+			model = glm::scale(model, glm::vec3(modelScale, modelScale, modelScale));
 			shader[5].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
 			ourModel.Draw(shader[5]);
 			//glEnable(GL_CULL_FACE);
@@ -526,8 +528,8 @@ public:
 			shader[6].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader[6].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(1.0f, -1.5f, -2.5f));
-			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			model = glm::translate(model, glm::vec3(10.0f * modelScale, -15.0f * modelScale, -25.0f * modelScale));
+			model = glm::scale(model, glm::vec3(modelScale, modelScale, modelScale));
 			shader[6].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
 			ourModel.Draw(shader[6]);
 			//glEnable(GL_CULL_FACE);
@@ -541,8 +543,8 @@ public:
 			shader[7].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader[7].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(1.0f, -1.5f, -0.5f));
-			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			model = glm::translate(model, glm::vec3(10.0f * modelScale, -15.0f * modelScale, -5.0f * modelScale));
+			model = glm::scale(model, glm::vec3(modelScale, modelScale, modelScale));
 			shader[7].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
 
 			glActiveTexture(GL_TEXTURE3);
@@ -561,8 +563,8 @@ public:
 			shader[8].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader[8].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(-1.0f, -1.5f, -0.5f));
-			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			model = glm::translate(model, glm::vec3(-10.0f * modelScale, -15.0f * modelScale, -5.0f * modelScale));
+			model = glm::scale(model, glm::vec3(modelScale, modelScale, modelScale));
 			shader[8].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
 
 			glActiveTexture(GL_TEXTURE3);

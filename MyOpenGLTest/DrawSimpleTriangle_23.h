@@ -143,7 +143,9 @@ public:
 		shader[1] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_build_house.gs", "../res/Shaders/lesson_12_geometry.frag"); // 基础房子
 		shader[2] = Shader("../res/Shaders/lesson_12_geometry_build_house_color.vs", "../res/Shaders/lesson_12_geometry_build_house_color.gs", "../res/Shaders/lesson_12_geometry_build_house_color.frag"); // 带颜色房子
 		shader[3] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒
-		shader[4] = Shader("../res/Shaders/lesson_12_geometry_explode.vs", "../res/Shaders/lesson_12_geometry_explode.gs", "../res/Shaders/lesson_12_geometry_explode.frag"); // 爆炸效果
+		shader[4] = Shader("../res/Shaders/lesson_12_geometry_explode.vs", "../res/Shaders/lesson_12_geometry_explode.gs", "../res/Shaders/lesson_12_geometry_explode.frag"); // 模型 爆炸效果
+		shader[5] = Shader("../res/Shaders/lesson_10_cubemaps_4.vs", "../res/Shaders/lesson_10_cubemaps_4_test.frag"); // 模型 只绘制了漫反射纹理
+		shader[6] = Shader("../res/Shaders/lesson_12_geometry_fur.vs", "../res/Shaders/lesson_12_geometry_fur.gs", "../res/Shaders/lesson_12_geometry_fur.frag"); // 模型 只绘制法线
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -277,18 +279,44 @@ public:
 			glDrawArrays(GL_POINTS, 0, 4);
 		}
 
-		// 绘制纳米生化装, 反射
-		if (true) {
+		float modelScale = 1.0f;
+
+		// 绘制纳米生化装, 爆炸
+		if (false) {
 			shader[4].use();
 			shader[4].setVec3("cameraPos", camera->Position);
 			shader[4].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader[4].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(-1.0f, -1.5f, -2.5f));
-			model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+			model = glm::translate(model, glm::vec3(0.0f * modelScale, -10.0f * modelScale, -8.0f * modelScale));
+			model = glm::scale(model, glm::vec3(modelScale, modelScale, modelScale));
 			shader[4].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
 			shader[4].setFloat("time", glfwGetTime());
 			ourModel.Draw(shader[4]);
+		}
+
+		// 绘制纳米生化装, 长毛
+		if (true) {
+			shader[5].use();
+			shader[5].setVec3("cameraPos", camera->Position);
+			shader[5].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[5].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(0.0f * modelScale, -10.0f * modelScale, -8.0f * modelScale));
+			model = glm::scale(model, glm::vec3(modelScale, modelScale, modelScale));
+			shader[5].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+			shader[5].setFloat("time", glfwGetTime());
+			ourModel.Draw(shader[5]);
+
+			shader[6].use();
+			shader[6].setVec3("cameraPos", camera->Position);
+			shader[6].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[6].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(0.0f * modelScale, -10.0f * modelScale, -8.0f * modelScale));
+			model = glm::scale(model, glm::vec3(modelScale, modelScale, modelScale));
+			shader[6].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+			ourModel.Draw(shader[6]);
 		}
 	}
 

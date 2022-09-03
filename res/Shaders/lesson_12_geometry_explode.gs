@@ -41,9 +41,11 @@ vec3 GetNormal() {
 }
 
 vec4 explode(vec4 position, vec3 normal) {
-	//float magnitude = 2.0; // 大爆炸
-	float magnitude = 0.1; // 小爆炸
-	vec3 direction = normal * ((sin(time * 0.3) + 1.0) / 2.0) * magnitude;
+	float magnitude = 10.0; // 大爆炸
+	//float magnitude = 2.0; // 小爆炸
+	float slow = 1.0;
+	//float slow = 0.3; // 缓慢缩放
+	vec3 direction = normal * ((sin(time * slow) + 1.0) / 2.0) * magnitude;
 	return position + vec4(direction, 0.0);
 }
 
