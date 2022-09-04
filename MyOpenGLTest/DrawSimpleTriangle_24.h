@@ -32,15 +32,15 @@ class DrawSimpleTriangle_24 : public SimpleDrawTestBase
 {
 public:
 	// Vertex Array Object, VAO
-	GLuint VAO[10];
+	GLuint VAO[20];
 	// Element Buffer Object, EBO
-	GLuint EBO[10];
+	GLuint EBO[20];
 	// Vertex Buffer Object, VBO
-	GLuint VBO[10];
+	GLuint VBO[20];
 	// 纹理对象
-	GLuint texture[10];
+	GLuint texture[20];
 	// Shader 程序类
-	Shader shader[10];
+	Shader shader[20];
 	// camera
 	Camera* camera;
 	// Framebuffer Object // 帧缓冲对象
@@ -55,6 +55,12 @@ public:
 	unsigned int uboMatrices;
 
 	Model ourModel;
+	Model planetModel;
+	Model rockModel;
+
+	//static const int RockAmount = 5000; // 普通渲染
+	static const int RockAmount = 100000; // 调用 glDrawElementsInstanced 渲染
+	glm::mat4 modelMatrices[RockAmount];
 
 	GLuint screenWidth;
 	GLuint screenHeight;
@@ -144,28 +150,20 @@ public:
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_13_instancing.vs", "../res/Shaders/lesson_13_instancing.frag"); // 使用 glDrawArraysInstanced + uniform 渲染
+		shader[1] = Shader("../res/Shaders/lesson_13_instancing_vertex.vs", "../res/Shaders/lesson_13_instancing.frag"); // 使用 glDrawArraysInstanced + 实例化数组
+		shader[2] = Shader("../res/Shaders/lesson_13_instancing_model.vs", "../res/Shaders/lesson_13_instancing_model.frag"); // 模型 只绘制了漫反射纹理
 		shader[3] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒
+		shader[4] = Shader("../res/Shaders/lesson_13_instancing_model_optimize.vs", "../res/Shaders/lesson_13_instancing_model.frag"); // 模型 使用 instanceMatrix
 		// 生成 VBO
-		glGenBuffers(10, VBO);
+		glGenBuffers(20, VBO);
 		// 创建 EBO
-		glGenBuffers(10, EBO);
+		glGenBuffers(20, EBO);
 		// 创建 VAO
-		glGenVertexArrays(10, VAO);
+		glGenVertexArrays(20, VAO);
 		// 生成纹理对象
-		glGenTextures(10, texture);
+		glGenTextures(20, texture);
 		// 加载的图像默认上下翻转
 		stbi_set_flip_vertically_on_load(true);
-
-		//{ // 设置顶点属性 // 四个点
-		//	// Vertex Array Object
-		//	glBindVertexArray(VAO[0]);
-		//	// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
-		//	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-		//	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-		//	glEnableVertexAttribArray(0);
-		//	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-		//	glBindVertexArray(0);
-		//}
 
 		{ // 设置顶点属性 // 四个点(带颜色)
 			// Vertex Array Object
@@ -177,6 +175,39 @@ public:
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(1);
 			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+			glBindVertexArray(0);
+		}
+
+		{ // 设置顶点属性 // 四个点(带颜色)
+			const int QuadVerticesCount = 100;
+			glm::vec2 translations[QuadVerticesCount];
+			int index = 0;
+			float offset = 0.1f;
+			for (int y = -10; y < 10; y += 2) {
+				for (int x = -10; x < 10; x += 2) {
+					glm::vec2 translation;
+					translation.x = (float)x / 10.0f + offset;
+					translation.y = (float)y / 10.0f + offset;
+					translations[index++] = translation;
+				}
+			}
+			// Vertex Array Object
+			glBindVertexArray(VAO[1]);
+			// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+			
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100, &translations[0], GL_STATIC_DRAW);
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glVertexAttribDivisor(2, 1);
+
 			glBindVertexArray(0);
 		}
 
@@ -198,9 +229,11 @@ public:
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 玻璃窗
 		loadTexture(texture[3], "../res/Texture/blending_transparent_window.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
-		//stbi_set_flip_vertically_on_load(false);
+		stbi_set_flip_vertically_on_load(false);
 		//ourModel = Model("../res/nanosuit_reflection/nanosuit.obj");
-		//stbi_set_flip_vertically_on_load(true);
+		planetModel = Model("../res/planet/planet.obj");
+		rockModel = Model("../res/rock/rock.obj");
+		stbi_set_flip_vertically_on_load(true);
 
 		stbi_set_flip_vertically_on_load(false);
 		std::vector<std::string> faces = {
@@ -213,6 +246,61 @@ public:
 		};
 		cubeTexture = loadCubemap(faces);
 		stbi_set_flip_vertically_on_load(true);
+
+		{ // 初始化小行星带数据
+			srand(glfwGetTime()); // 初始化随机种子
+			float radius = 150.0; // 50.0f
+			float offset = 25.0f; // 2.5f
+			for (unsigned int i = 0; i < RockAmount; i++)
+			{
+				glm::mat4 model;
+				// 1. 位移：分布在半径为 'radius' 的圆形上，偏移的范围是 [-offset, offset]
+				float angle = (float)i / (float)RockAmount * 360.0f;
+				float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+				float x = sin(angle) * radius + displacement;
+				displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+				float y = displacement * 0.4f; // 让行星带的高度比x和z的宽度要小
+				displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+				float z = cos(angle) * radius + displacement;
+				model = glm::translate(model, glm::vec3(x, y, z));
+
+				// 2. 缩放：在 0.05 和 0.25f 之间缩放
+				float scale = (rand() % 20) / 100.0f + 0.05;
+				model = glm::scale(model, glm::vec3(scale));
+
+				// 3. 旋转：绕着一个（半）随机选择的旋转轴向量进行随机的旋转
+				float rotAngle = (rand() % 360);
+				model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+
+				// 4. 添加到矩阵的数组中
+				modelMatrices[i] = model;
+			}
+		}
+
+		{ // 设置小行星带的顶点缓冲 VBO
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[4]);
+			glBufferData(GL_ARRAY_BUFFER, RockAmount * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
+			for (int i = 0; i < rockModel.meshes.size(); i++) {
+				unsigned int VAO = rockModel.meshes[i].VAO;
+				glBindVertexArray(VAO);
+				// 顶点属性
+				GLsizei vec4Size = sizeof(glm::vec4);
+				glEnableVertexAttribArray(3);
+				glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)0);
+				glEnableVertexAttribArray(4);
+				glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(vec4Size));
+				glEnableVertexAttribArray(5);
+				glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(2 * vec4Size));
+				glEnableVertexAttribArray(6);
+				glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(3 * vec4Size));
+
+				glVertexAttribDivisor(3, 1);
+				glVertexAttribDivisor(4, 1);
+				glVertexAttribDivisor(5, 1);
+				glVertexAttribDivisor(6, 1);
+				glBindVertexArray(0);
+			}
+		}
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
@@ -241,7 +329,8 @@ public:
 		char str[256];
 		//std::cout << "call OnRender()" << std::endl;
 		glm::mat4 view = camera->GetViewMatrix();
-		glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
+		//glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 800.0f); // 为了看小行星带, 远平面设得远一点
 
 		if (false) { // skybox // 最先绘制 // 需关闭深度写入
 			glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
@@ -258,7 +347,7 @@ public:
 		}
 
 		// 使用 glDrawArraysInstanced + uniform 渲染
-		if (true) {
+		if (false) {
 			const int QuadVerticesCount = 100;
 			glm::vec2 translations[QuadVerticesCount];
 			int index = 0;
@@ -273,7 +362,7 @@ public:
 			}
 
 			shader[0].use();
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < QuadVerticesCount; i++) {
 				std::stringstream ss;
 				std::string index;
 				ss << i;
@@ -282,6 +371,54 @@ public:
 			}
 			glBindVertexArray(VAO[0]);
 			glDrawArraysInstanced(GL_TRIANGLES, 0, 6, QuadVerticesCount);
+		}
+
+		// 使用 glDrawArraysInstanced + 实例化数组
+		if (false) {
+			const int QuadVerticesCount = 100;
+			shader[1].use();
+			glBindVertexArray(VAO[1]);
+			glDrawArraysInstanced(GL_TRIANGLES, 0, 6, QuadVerticesCount);
+		}
+
+		// 小行星带
+		if (false) {
+			glEnable(GL_CULL_FACE);
+			// 绘制行星
+			shader[2].use();
+			shader[2].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[2].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+			shader[2].setMat4("model", model);
+			planetModel.Draw(shader[2]);
+			// 绘制小行星
+			for (int i = 0; i < RockAmount; i++) {
+				shader[2].setMat4("model", modelMatrices[i]);
+				rockModel.Draw(shader[2]);
+			}
+			glDisable(GL_CULL_FACE);
+		}
+
+		// 小行星带(使用 instanceMatrix)
+		if (true) {
+			glEnable(GL_CULL_FACE);
+			// 绘制行星
+			shader[2].use();
+			shader[2].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[2].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+			shader[2].setMat4("model", model);
+			planetModel.Draw(shader[2]);
+			// 绘制小行星
+			shader[4].use();
+			shader[4].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[4].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			rockModel.Draw(shader[4], true, RockAmount);
+			glDisable(GL_CULL_FACE);
 		}
 	}
 

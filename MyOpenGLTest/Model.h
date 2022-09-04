@@ -31,14 +31,14 @@ public:
 	Model(std::string const &path) {
 		loadModel(path);
 	}
-	void Draw(Shader shader) {
+	void Draw(Shader shader, bool useInstanced = false, unsigned int count = 0) {
 		for (unsigned int i = 0; i < meshes.size(); i++) {
-			meshes[i].Draw(shader);
+			meshes[i].Draw(shader, useInstanced, count);
 		}
 	}
+	std::vector<Mesh> meshes;
 private:
 	std::vector<Texture> textures_loaded; // Œ∆¿Ìª∫¥Ê
-	std::vector<Mesh> meshes;
 	std::string directory;
 	void loadModel(std::string path) {
 		Assimp::Importer import;

@@ -78,7 +78,7 @@ public:
     {
         float velocity = MovementSpeed * deltaTime;
 		if (speedUp) {
-			velocity *= 3.0f;
+			velocity *= 80.0f; // 3.0f
 		}
         if (direction == FORWARD)
             Position += Front * velocity;
