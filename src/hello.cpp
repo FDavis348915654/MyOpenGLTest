@@ -33,6 +33,7 @@
 #include "../MyOpenGLTest/DrawSimpleTriangle_21.h"
 #include "../MyOpenGLTest/DrawSimpleTriangle_22.h" // 高级 GLSL
 #include "../MyOpenGLTest/DrawSimpleTriangle_23.h"
+#include "../MyOpenGLTest/DrawSimpleTriangle_24.h"
 
 // Function prototypes
 // 按键回调
@@ -78,7 +79,8 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_20 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_21 obj(WIDTH, HEIGHT);
 //DrawSimpleTriangle_22 obj(WIDTH, HEIGHT); // 高级 GLSL
-DrawSimpleTriangle_23 obj(WIDTH, HEIGHT);
+//DrawSimpleTriangle_23 obj(WIDTH, HEIGHT);
+DrawSimpleTriangle_24 obj(WIDTH, HEIGHT);
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
