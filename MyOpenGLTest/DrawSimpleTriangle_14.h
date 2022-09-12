@@ -61,7 +61,7 @@ public:
 
 	virtual void OnInitRender(GLFWwindow* window) {
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_14");
-		camera = new Camera((glm::vec3(0.0f, 0.0f, 3.0f)));
+		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		//std::cout << "call PreRender()" << std::endl;
 		float vertices[] = {
 			// positions          // normals           // texture coords

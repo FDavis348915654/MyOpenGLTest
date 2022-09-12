@@ -1,5 +1,5 @@
 /*
-	几何着色器
+	实例化
 */
 #pragma once
 #include <string>
@@ -86,7 +86,7 @@ public:
 
 	virtual void OnInitRender(GLFWwindow* window) {
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_24");
-		camera = new Camera((glm::vec3(0.0f, 0.0f, 3.0f)));
+		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), YAW, PITCH, 80.0f);
 		//float points[] = {
 		//	-0.5f,  0.5f, // 左上
 		//	 0.5f,  0.5f, // 右上
@@ -309,6 +309,9 @@ public:
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		// MSAA
+		glEnable(GL_MULTISAMPLE);
+
 		//glEnable(GL_CULL_FACE);
 
 		//glEnable(GL_PROGRAM_POINT_SIZE);
@@ -422,6 +425,15 @@ public:
 		}
 	}
 
+	void OpenMSAA(bool open) {
+		if (open) {
+			glEnable(GL_MULTISAMPLE);
+		}
+		else {
+			glDisable(GL_MULTISAMPLE);
+		}
+	}
+
 	virtual void OnOverRender() {
 		/*	glDeleteVertexArrays(3, VAO);
 			glDeleteBuffers(3, VBO);*/
@@ -433,6 +445,7 @@ public:
 		{
 			if (key == GLFW_KEY_F) {
 				useSpotLight = !useSpotLight;
+				OpenMSAA(useSpotLight);
 			}
 			if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
 				effectType = key - GLFW_KEY_0;

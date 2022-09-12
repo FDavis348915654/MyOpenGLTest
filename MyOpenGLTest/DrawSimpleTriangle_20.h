@@ -71,7 +71,7 @@ public:
 
 	virtual void OnInitRender(GLFWwindow* window) {
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_20");
-		camera = new Camera((glm::vec3(0.0f, 0.0f, 3.0f)));
+		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		//std::cout << "call PreRender()" << std::endl;
 		float cubeVertices[] = {
 			// Back face
@@ -152,7 +152,7 @@ public:
 		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.frag");
 		shader[1] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test.frag"); // ²Ý´Ô
 		shader[2] = Shader("../res/Shaders/lesson_08_blend_test.vs", "../res/Shaders/lesson_08_blend_test_1.frag"); // ²£Á§´°
-		shader[3] = Shader("../res/Shaders/lesson_09_framebuffers.vs", "../res/Shaders/lesson_09_framebuffers.frag"); // ÆÁÄ»
+		shader[3] = Shader("../res/Shaders/lesson_09_framebuffers.vs", "../res/Shaders/lesson_09_framebuffers.frag"); // ÆÁÄ»£¨Ö¡»º³å£©
 		// Éú³É VBO
 		glGenBuffers(10, VBO);
 		// ´´½¨ EBO

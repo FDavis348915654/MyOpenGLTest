@@ -47,14 +47,16 @@ public:
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;
+	float SpeedUpRatio;
 
     // constructor with vectors
-    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH, float speedUpRatio = 3.0f) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
     {
         Position = position;
         WorldUp = up;
         Yaw = yaw;
         Pitch = pitch;
+		SpeedUpRatio = speedUpRatio;
         updateCameraVectors();
     }
     // constructor with scalar values
@@ -78,7 +80,7 @@ public:
     {
         float velocity = MovementSpeed * deltaTime;
 		if (speedUp) {
-			velocity *= 80.0f; // 3.0f
+			velocity *= SpeedUpRatio; // 3.0f // 80.0f
 		}
         if (direction == FORWARD)
             Position += Front * velocity;

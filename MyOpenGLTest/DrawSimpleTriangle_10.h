@@ -55,7 +55,7 @@ public:
 	}
 
 	virtual void OnInitRender(GLFWwindow* window) {
-		camera = new Camera((glm::vec3(0.0f, 0.0f, 3.0f)));
+		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		//std::cout << "call PreRender()" << std::endl;
 		float vertices[] = {
 			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,

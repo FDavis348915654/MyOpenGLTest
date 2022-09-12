@@ -79,7 +79,7 @@ public:
 
 	virtual void OnInitRender(GLFWwindow* window) {
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_23");
-		camera = new Camera((glm::vec3(0.0f, 0.0f, 3.0f)));
+		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		//float points[] = {
 		//	-0.5f,  0.5f, // вСио
 		//	 0.5f,  0.5f, // срио
