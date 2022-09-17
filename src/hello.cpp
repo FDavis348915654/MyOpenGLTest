@@ -10,31 +10,32 @@
 #include "Shader.h"
 
 // test
-//#include "../MyOpenGLTest/DrawSimpleTriangle.h" // 你好，三角形。VBO
-//#include "../MyOpenGLTest/DrawSimpleTriangle_2.h" // 你好，三角形。EBO
-//#include "../MyOpenGLTest/DrawSimpleTriangle_3.h" // 你好，三角形
-//#include "../MyOpenGLTest/DrawSimpleTriangle_4.h" // 着色器
-//#include "../MyOpenGLTest/DrawSimpleTriangle_5.h" // 纹理
-//#include "../MyOpenGLTest/DrawSimpleTriangle_6.h" // 变换
-//#include "../MyOpenGLTest/DrawSimpleTriangle_7.h" // 坐标系统
-//#include "../MyOpenGLTest/DrawSimpleTriangle_8.h" // 摄像机
-//#include "../MyOpenGLTest/DrawSimpleTriangle_9.h" // 颜色
-//#include "../MyOpenGLTest/DrawSimpleTriangle_10.h" // 基础光照
-//#include "../MyOpenGLTest/DrawSimpleTriangle_11.h" // 材质
-//#include "../MyOpenGLTest/DrawSimpleTriangle_12.h" // 光照贴图
-//#include "../MyOpenGLTest/DrawSimpleTriangle_13.h" // 投光物
-//#include "../MyOpenGLTest/DrawSimpleTriangle_14.h" // 多光源
-//#include "../MyOpenGLTest/DrawSimpleTriangle_15.h" // 模型显示
-//#include "../MyOpenGLTest/DrawSimpleTriangle_16.h" // 深度测试
-//#include "../MyOpenGLTest/DrawSimpleTriangle_17.h" // 模板测试
-//#include "../MyOpenGLTest/DrawSimpleTriangle_18.h" // 混合
-//#include "../MyOpenGLTest/DrawSimpleTriangle_19.h" // 面剔除
-//#include "../MyOpenGLTest/DrawSimpleTriangle_20.h" // 帧缓冲
-//#include "../MyOpenGLTest/DrawSimpleTriangle_21.h" // 立方体贴图
-//#include "../MyOpenGLTest/DrawSimpleTriangle_22.h" // 高级 GLSL
-//#include "../MyOpenGLTest/DrawSimpleTriangle_23.h" // 几何着色器
-//#include "../MyOpenGLTest/DrawSimpleTriangle_24.h" // 实例化
+#include "../MyOpenGLTest/DrawSimpleTriangle.h" // 你好，三角形。VBO
+#include "../MyOpenGLTest/DrawSimpleTriangle_2.h" // 你好，三角形。EBO
+#include "../MyOpenGLTest/DrawSimpleTriangle_3.h" // 你好，三角形
+#include "../MyOpenGLTest/DrawSimpleTriangle_4.h" // 着色器
+#include "../MyOpenGLTest/DrawSimpleTriangle_5.h" // 纹理
+#include "../MyOpenGLTest/DrawSimpleTriangle_6.h" // 变换
+#include "../MyOpenGLTest/DrawSimpleTriangle_7.h" // 坐标系统
+#include "../MyOpenGLTest/DrawSimpleTriangle_8.h" // 摄像机
+#include "../MyOpenGLTest/DrawSimpleTriangle_9.h" // 颜色
+#include "../MyOpenGLTest/DrawSimpleTriangle_10.h" // 基础光照
+#include "../MyOpenGLTest/DrawSimpleTriangle_11.h" // 材质
+#include "../MyOpenGLTest/DrawSimpleTriangle_12.h" // 光照贴图
+#include "../MyOpenGLTest/DrawSimpleTriangle_13.h" // 投光物
+#include "../MyOpenGLTest/DrawSimpleTriangle_14.h" // 多光源
+#include "../MyOpenGLTest/DrawSimpleTriangle_15.h" // 模型显示
+#include "../MyOpenGLTest/DrawSimpleTriangle_16.h" // 深度测试
+#include "../MyOpenGLTest/DrawSimpleTriangle_17.h" // 模板测试
+#include "../MyOpenGLTest/DrawSimpleTriangle_18.h" // 混合
+#include "../MyOpenGLTest/DrawSimpleTriangle_19.h" // 面剔除
+#include "../MyOpenGLTest/DrawSimpleTriangle_20.h" // 帧缓冲
+#include "../MyOpenGLTest/DrawSimpleTriangle_21.h" // 立方体贴图
+#include "../MyOpenGLTest/DrawSimpleTriangle_22.h" // 高级 GLSL
+#include "../MyOpenGLTest/DrawSimpleTriangle_23.h" // 几何着色器
+#include "../MyOpenGLTest/DrawSimpleTriangle_24.h" // 实例化
 #include "../MyOpenGLTest/DrawSimpleTriangle_25.h" // 抗锯齿
+#include "../MyOpenGLTest/DrawSimpleTriangle_26.h" // 高级光照
 
 // Function prototypes
 // 按键回调
@@ -82,7 +83,8 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_22 obj(WIDTH, HEIGHT); // 高级 GLSL
 //DrawSimpleTriangle_23 obj(WIDTH, HEIGHT); // 几何着色器
 //DrawSimpleTriangle_24 obj(WIDTH, HEIGHT); // 实例化
-DrawSimpleTriangle_25 obj(WIDTH, HEIGHT); // 抗锯齿
+//DrawSimpleTriangle_25 obj(WIDTH, HEIGHT); // 抗锯齿
+DrawSimpleTriangle_26 obj(WIDTH, HEIGHT); // 高级光照
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
@@ -98,7 +100,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	// MSAA
-	glfwWindowHint(GLFW_SAMPLES, 4);
+	//glfwWindowHint(GLFW_SAMPLES, 4);
 
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
