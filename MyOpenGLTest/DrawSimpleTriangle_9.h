@@ -114,8 +114,8 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/test_1_color_light.vs", "../res/Shaders/test_1_color_light.frag");
-		shader[1] = Shader("../res/Shaders/test_1_color.vs", "../res/Shaders/test_1_color.frag");
+		shader[0] = Shader("../res/Shaders/test_1_color_light.vs", "../res/Shaders/test_1_color_light.fs");
+		shader[1] = Shader("../res/Shaders/test_1_color.vs", "../res/Shaders/test_1_color.fs");
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO

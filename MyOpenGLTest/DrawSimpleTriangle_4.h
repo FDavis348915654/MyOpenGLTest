@@ -46,11 +46,11 @@ public:
 		};
 
 		// ±àÒë×ÅÉ«Æ÷
-		Shader myShader("../res/Shaders/linkTest.vs", "../res/Shaders/linkTest.frag");
-		Shader myShader_2("../res/Shaders/default.vs", "../res/Shaders/uniformTest.frag");
-		Shader myShader_3("../res/Shaders/someColor.vs", "../res/Shaders/someColor.frag");
-		Shader myShader_4("../res/Shaders/someColor_1.vs", "../res/Shaders/someColor.frag");
-		Shader myShader_5("../res/Shaders/someColor_2.vs", "../res/Shaders/someColor_2.frag");
+		Shader myShader("../res/Shaders/linkTest.vs", "../res/Shaders/linkTest.fs");
+		Shader myShader_2("../res/Shaders/default.vs", "../res/Shaders/uniformTest.fs");
+		Shader myShader_3("../res/Shaders/someColor.vs", "../res/Shaders/someColor.fs");
+		Shader myShader_4("../res/Shaders/someColor_1.vs", "../res/Shaders/someColor.fs");
+		Shader myShader_5("../res/Shaders/someColor_2.vs", "../res/Shaders/someColor_2.fs");
 		program[0] = myShader.ID;
 		program[1] = myShader_2.ID;
 		program[2] = myShader_3.ID;

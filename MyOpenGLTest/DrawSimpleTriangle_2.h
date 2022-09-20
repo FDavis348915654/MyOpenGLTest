@@ -34,7 +34,7 @@ public:
 			1, 2, 3  // 第二个三角形
 		};
 		// 编译着色器
-		Shader myShader("../res/Shaders/default.vs", "../res/Shaders/default.frag");
+		Shader myShader("../res/Shaders/default.vs", "../res/Shaders/default.fs");
 		program = myShader.ID;
 		// 生成 VBO
 		GLuint VBO;

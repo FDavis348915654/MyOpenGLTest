@@ -23,7 +23,7 @@
 #include "Camera.h"
 
 // 加载图片
-unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT);
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT, bool isSRGB);
 // 加载天空盒
 unsigned int loadCubemap(std::vector<std::string> faces);
 
@@ -138,14 +138,14 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry.gs", "../res/Shaders/lesson_12_geometry.frag"); // 基础
-		//shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_test.gs", "../res/Shaders/lesson_12_geometry.frag"); // 把点拉长
-		shader[1] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_build_house.gs", "../res/Shaders/lesson_12_geometry.frag"); // 基础房子
-		shader[2] = Shader("../res/Shaders/lesson_12_geometry_build_house_color.vs", "../res/Shaders/lesson_12_geometry_build_house_color.gs", "../res/Shaders/lesson_12_geometry_build_house_color.frag"); // 带颜色房子
-		shader[3] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒
-		shader[4] = Shader("../res/Shaders/lesson_12_geometry_explode.vs", "../res/Shaders/lesson_12_geometry_explode.gs", "../res/Shaders/lesson_12_geometry_explode.frag"); // 模型 爆炸效果
-		shader[5] = Shader("../res/Shaders/lesson_10_cubemaps_4.vs", "../res/Shaders/lesson_10_cubemaps_4_test.frag"); // 模型 只绘制了漫反射纹理
-		shader[6] = Shader("../res/Shaders/lesson_12_geometry_fur.vs", "../res/Shaders/lesson_12_geometry_fur.gs", "../res/Shaders/lesson_12_geometry_fur.frag"); // 模型 只绘制法线
+		shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry.gs", "../res/Shaders/lesson_12_geometry.fs"); // 基础
+		//shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_test.gs", "../res/Shaders/lesson_12_geometry.fs"); // 把点拉长
+		shader[1] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_build_house.gs", "../res/Shaders/lesson_12_geometry.fs"); // 基础房子
+		shader[2] = Shader("../res/Shaders/lesson_12_geometry_build_house_color.vs", "../res/Shaders/lesson_12_geometry_build_house_color.gs", "../res/Shaders/lesson_12_geometry_build_house_color.fs"); // 带颜色房子
+		shader[3] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
+		shader[4] = Shader("../res/Shaders/lesson_12_geometry_explode.vs", "../res/Shaders/lesson_12_geometry_explode.gs", "../res/Shaders/lesson_12_geometry_explode.fs"); // 模型 爆炸效果
+		shader[5] = Shader("../res/Shaders/lesson_10_cubemaps_4.vs", "../res/Shaders/lesson_10_cubemaps_4_test.fs"); // 模型 只绘制了漫反射纹理
+		shader[6] = Shader("../res/Shaders/lesson_12_geometry_fur.vs", "../res/Shaders/lesson_12_geometry_fur.gs", "../res/Shaders/lesson_12_geometry_fur.fs"); // 模型 只绘制法线
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -191,13 +191,13 @@ public:
 		}
 
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
-		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT, false);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
-		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT, false);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 草丛
-		loadTexture(texture[2], "../res/Texture/grass.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		loadTexture(texture[2], "../res/Texture/grass.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, false);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 玻璃窗
-		loadTexture(texture[3], "../res/Texture/blending_transparent_window.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		loadTexture(texture[3], "../res/Texture/blending_transparent_window.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, false);
 
 		stbi_set_flip_vertically_on_load(false);
 		ourModel = Model("../res/nanosuit_reflection/nanosuit.obj");

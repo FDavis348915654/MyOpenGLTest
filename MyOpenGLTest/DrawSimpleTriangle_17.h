@@ -22,7 +22,7 @@
 #include "Camera.h"
 
 // 加载图片
-unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT);
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT, bool isSRGB);
 
 class DrawSimpleTriangle_17 : public SimpleDrawTestBase
 {
@@ -120,8 +120,8 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.frag");
-		shader[1] = Shader("../res/Shaders/lesson_07_stencil_test_color.vs", "../res/Shaders/lesson_07_stencil_test_color.frag"); // 描边
+		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.fs");
+		shader[1] = Shader("../res/Shaders/lesson_07_stencil_test_color.vs", "../res/Shaders/lesson_07_stencil_test_color.fs"); // 描边
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -160,10 +160,10 @@ public:
 		}
 
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
-		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT, false);
 
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
-		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT, false);
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);

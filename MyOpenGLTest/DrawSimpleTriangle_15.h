@@ -109,9 +109,9 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.frag"); // 用于显示光源的小白块
-		shader[1] = Shader("../res/Shaders/lesson_05_model.vs", "../res/Shaders/lesson_05_model.frag");
-		shader[2] = Shader("../res/Shaders/lesson_05_model.vs", "../res/Shaders/lesson_05_model_light.frag");
+		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
+		shader[1] = Shader("../res/Shaders/lesson_05_model.vs", "../res/Shaders/lesson_05_model.fs");
+		shader[2] = Shader("../res/Shaders/lesson_05_model.vs", "../res/Shaders/lesson_05_model_light.fs");
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO

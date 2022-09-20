@@ -22,7 +22,7 @@
 #include "Camera.h"
 
 // 加载图片
-unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT);
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT, bool isSRGB);
 
 class DrawSimpleTriangle_16 : public SimpleDrawTestBase
 {
@@ -120,9 +120,9 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.frag");
-		//shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test_show_depth.frag"); // 显示深度值
-		//shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test_show_linear_depth.frag"); // 显示线性深度值
+		shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test.fs");
+		//shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test_show_depth.fs"); // 显示深度值
+		//shader[0] = Shader("../res/Shaders/lesson_06_depth_test.vs", "../res/Shaders/lesson_06_depth_test_show_linear_depth.fs"); // 显示线性深度值
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -161,10 +161,10 @@ public:
 		}
 
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
-		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT, false);
 
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
-		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT, false);
 
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);

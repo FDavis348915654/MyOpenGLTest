@@ -36,8 +36,8 @@ public:
 			0.25f, 0.5f, 0.0f
 		};
 		// 编译着色器
-		Shader myShader("../res/Shaders/default.vs", "../res/Shaders/default.frag");
-		Shader myShader2("../res/Shaders/default.vs", "../res/Shaders/default_2.frag");
+		Shader myShader("../res/Shaders/default.vs", "../res/Shaders/default.fs");
+		Shader myShader2("../res/Shaders/default.vs", "../res/Shaders/default_2.fs");
 		program[0] = myShader.ID;
 		program[1] = myShader2.ID;
 		// 生成 VBO

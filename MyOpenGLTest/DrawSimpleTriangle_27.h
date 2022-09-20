@@ -1,5 +1,5 @@
 /*
-	抗锯齿
+	Gamma校正
 */
 #pragma once
 #include <string>
@@ -28,19 +28,21 @@ unsigned int loadTexture(unsigned int textureID, char const * path, GLint textur
 // 加载天空盒
 unsigned int loadCubemap(std::vector<std::string> faces);
 
-class DrawSimpleTriangle_25 : public SimpleDrawTestBase
+class DrawSimpleTriangle_27 : public SimpleDrawTestBase
 {
 public:
+	static const int RenderNum = 20;
+	static const int SkyboxIndex = RenderNum - 1;
 	// Vertex Array Object, VAO
-	GLuint VAO[20];
+	GLuint VAO[RenderNum];
 	// Element Buffer Object, EBO
-	GLuint EBO[20];
+	GLuint EBO[RenderNum];
 	// Vertex Buffer Object, VBO
-	GLuint VBO[20];
+	GLuint VBO[RenderNum];
 	// 纹理对象
-	GLuint texture[20];
+	GLuint texture[RenderNum];
 	// Shader 程序类
-	Shader shader[20];
+	Shader shader[RenderNum];
 	// camera
 	Camera* camera;
 	// Framebuffer Object // 帧缓冲对象
@@ -82,70 +84,25 @@ public:
 
 	int effectType = 0;
 
-	DrawSimpleTriangle_25(GLuint screenWidth, GLuint screenHeight) {
+	DrawSimpleTriangle_27(GLuint screenWidth, GLuint screenHeight) {
 		this->screenWidth = screenWidth;
 		this->screenHeight = screenHeight;
 		aspect = (GLfloat)screenWidth / (GLfloat)screenHeight;
 	}
 
 	virtual void OnInitRender(GLFWwindow* window) {
-		glfwSetWindowTitle(window, "DrawSimpleTriangle_25");
+		glfwSetWindowTitle(window, "DrawSimpleTriangle_27");
 		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
-		GLfloat cubeVertices[] = {
-			// Positions       
-			-0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f,  0.5f, -0.5f,
-			 0.5f,  0.5f, -0.5f,
-			-0.5f,  0.5f, -0.5f,
-			-0.5f, -0.5f, -0.5f,
+		float planeVertices[] = {
+			// positions            // normals         // texcoords
+			 10.0f, -0.5f,  10.0f,  0.0f, 1.0f, 0.0f,  10.0f,  0.0f,
+			-10.0f, -0.5f,  10.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+			-10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,   0.0f, 10.0f,
 
-			-0.5f, -0.5f,  0.5f,
-			 0.5f, -0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f,  0.5f,
-			-0.5f, -0.5f,  0.5f,
-
-			-0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f, -0.5f,
-			-0.5f, -0.5f, -0.5f,
-			-0.5f, -0.5f, -0.5f,
-			-0.5f, -0.5f,  0.5f,
-			-0.5f,  0.5f,  0.5f,
-
-			 0.5f,  0.5f,  0.5f,
-			 0.5f,  0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-
-			-0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f,  0.5f,
-			 0.5f, -0.5f,  0.5f,
-			-0.5f, -0.5f,  0.5f,
-			-0.5f, -0.5f, -0.5f,
-
-			-0.5f,  0.5f, -0.5f,
-			 0.5f,  0.5f, -0.5f,
-			 0.5f,  0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f, -0.5f
-		};
-
-		float quadVertices[] = {   // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-			// positions   // texCoords
-			-1.0f,  1.0f,  0.0f, 1.0f,
-			-1.0f, -1.0f,  0.0f, 0.0f,
-			 1.0f, -1.0f,  1.0f, 0.0f,
-
-			-1.0f,  1.0f,  0.0f, 1.0f,
-			 1.0f, -1.0f,  1.0f, 0.0f,
-			 1.0f,  1.0f,  1.0f, 1.0f
+			 10.0f, -0.5f,  10.0f,  0.0f, 1.0f, 0.0f,  10.0f,  0.0f,
+			-10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,   0.0f, 10.0f,
+			 10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,  10.0f, 10.0f
 		};
 
 #pragma region "skybox"
@@ -196,52 +153,43 @@ public:
 #pragma endregion
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_14_antiAliasing.vs", "../res/Shaders/lesson_14_antiAliasing.fs");
-		shader[1] = Shader("../res/Shaders/lesson_14_antiAliasing_framebuffers.vs", "../res/Shaders/lesson_14_antiAliasing_framebuffers.fs"); // 屏幕（帧缓冲）
+		shader[0] = Shader("../res/Shaders/lesson_16_gamma_correction.vs", "../res/Shaders/lesson_16_gamma_correction.fs");
 
 #pragma region "skybox"
-		shader[3] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
+		shader[SkyboxIndex] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
 #pragma endregion
 
 		// 生成 VBO
-		glGenBuffers(20, VBO);
+		glGenBuffers(RenderNum, VBO);
 		// 创建 EBO
-		glGenBuffers(20, EBO);
+		glGenBuffers(RenderNum, EBO);
 		// 创建 VAO
-		glGenVertexArrays(20, VAO);
+		glGenVertexArrays(RenderNum, VAO);
 		// 生成纹理对象
-		glGenTextures(20, texture);
+		glGenTextures(RenderNum, texture);
 		// 加载的图像默认上下翻转
 		stbi_set_flip_vertically_on_load(true);
 
-		{ // 设置顶点属性 // 立方体
-			// Vertex Array Object
+		{ // 平面
 			glBindVertexArray(VAO[0]);
-			// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
 			glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 			glBindVertexArray(0);
 		}
 
-		{ // 屏幕
-			// Vertex Array Object
-			glBindVertexArray(VAO[1]);
-			// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
-			glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-			glBindVertexArray(0);
-		}
+		loadTexture(texture[0], "../res/Texture/wood.png", GL_REPEAT, GL_REPEAT, false);
+		loadTexture(texture[1], "../res/Texture/wood.png", GL_REPEAT, GL_REPEAT, true);
 
 #pragma region "skybox"
 		{ // 天空盒
-			glBindVertexArray(VAO[3]);
-			glBindBuffer(GL_ARRAY_BUFFER, VBO[3]);
+			glBindVertexArray(VAO[SkyboxIndex]);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[SkyboxIndex]);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -264,47 +212,6 @@ public:
 		stbi_set_flip_vertically_on_load(true);
 #pragma endregion
 
-		{ // configure MSAA framebuffer
-			glGenFramebuffers(1, &framebuffer);
-			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-			glGenTextures(1, &texColorBuffer);
-			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texColorBuffer);
-			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, screenWidth, screenHeight, GL_TRUE);
-			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texColorBuffer, 0);
-
-			glGenRenderbuffers(1, &rbo);
-			glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-			glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
-			glBindRenderbuffer(GL_RENDERBUFFER, 0);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-				std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-			}
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
-
-		{ // configure second post-processing framebuffer
-			glGenFramebuffers(1, &intermediateFBO);
-			glBindFramebuffer(GL_FRAMEBUFFER, intermediateFBO);
-
-			glGenTextures(1, &screenTexture);
-			glBindTexture(GL_TEXTURE_2D, screenTexture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screenWidth, screenHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTexture, 0);	// we only need a color buffer
-
-			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-				std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-			}
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
-
 		// 开启深度测试
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
@@ -313,7 +220,8 @@ public:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// MSAA
-		glEnable(GL_MULTISAMPLE);
+		//glEnable(GL_MULTISAMPLE);
+		//glDisable(GL_MULTISAMPLE);
 
 		//glEnable(GL_CULL_FACE);
 
@@ -339,14 +247,14 @@ public:
 		//glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 800.0f); // 为了看小行星带, 远平面设得远一点
 
 #pragma region "skybox"
-		if (true) { // skybox // 最先绘制 // 需关闭深度写入
+		if (false) { // skybox // 最先绘制 // 需关闭深度写入
 			glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
 			//glDisable(GL_CULL_FACE);
 			glDepthMask(GL_FALSE);
-			shader[3].use();
-			shader[3].setMat4("view", skyboxView);
-			shader[3].setMat4("projection", projection);
-			glBindVertexArray(VAO[3]);
+			shader[SkyboxIndex].use();
+			shader[SkyboxIndex].setMat4("view", skyboxView);
+			shader[SkyboxIndex].setMat4("projection", projection);
+			glBindVertexArray(VAO[SkyboxIndex]);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTexture);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 			glDepthMask(GL_TRUE);
@@ -354,55 +262,33 @@ public:
 		}
 #pragma endregion
 
-		// 绘制立方体
-		if (false) {
-			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(0.0f, -1.0f, -2.0f));
-			shader[0].use();
-			shader[0].setMat4("projection", projection);
-			shader[0].setMat4("view", view);
-			shader[0].setMat4("model", model);
-			glBindVertexArray(VAO[0]);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-			glBindVertexArray(0);
-		}
-
-		// 用帧缓冲绘制立方体
 		if (true) {
-			// 1. draw scene as normal in multisampled buffers
-			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glEnable(GL_DEPTH_TEST);
+			// lighting info
+			glm::vec3 lightPositions[] = {
+				glm::vec3(-3.0f, 0.0f, 0.0f),
+				glm::vec3(-1.0f, 0.0f, 0.0f),
+				glm::vec3(1.0f, 0.0f, 0.0f),
+				glm::vec3(3.0f, 0.0f, 0.0f)
+			};
+			glm::vec3 lightColors[] = {
+				glm::vec3(0.25),
+				glm::vec3(0.50),
+				glm::vec3(0.75),
+				glm::vec3(1.00)
+			};
 
-			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(0.0f, -1.0f, -2.0f));
-			// set transformation matrices		
 			shader[0].use();
 			shader[0].setMat4("projection", projection);
 			shader[0].setMat4("view", view);
-			shader[0].setMat4("model", model);
-
+			shader[0].setVec3("viewPos", camera->Position);
+			glUniform3fv(glGetUniformLocation(shader[0].ID, "lightPositions"), 4, &lightPositions[0][0]);
+			glUniform3fv(glGetUniformLocation(shader[0].ID, "lightColors"), 4, &lightColors[0][0]);
+			bool gamma = effectType;
+			shader[0].setInt("gamma", gamma);
 			glBindVertexArray(VAO[0]);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-
-			// 2. now blit multisampled buffer(s) to normal colorbuffer of intermediate FBO. Image is stored in screenTexture
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFBO);
-			glBlitFramebuffer(0, 0, screenWidth, screenHeight, 0, 0, screenWidth, screenHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-			// 3. now render quad with scene's visuals as its texture image
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			glDisable(GL_DEPTH_TEST);
-
-			// draw Screen quad
-			shader[1].use();
-			shader[1].setInt("effectType", effectType);
-			glBindVertexArray(VAO[1]);
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, screenTexture); // use the now resolved color attachment as the quad's texture
+			glBindTexture(GL_TEXTURE_2D, gamma ? texture[1] : texture[0]);
+			shader[0].setInt("floorTexture", 0);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 		}
 	}
@@ -413,21 +299,11 @@ public:
 		delete camera;
 	}
 
-	void OpenMSAA(bool open) {
-		if (open) {
-			glEnable(GL_MULTISAMPLE);
-		}
-		else {
-			glDisable(GL_MULTISAMPLE);
-		}
-	}
-
 	virtual void OnKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 		if (action == GLFW_PRESS)
 		{
 			if (key == GLFW_KEY_F) {
 				useSpotLight = !useSpotLight;
-				OpenMSAA(useSpotLight);
 			}
 			if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
 				effectType = key - GLFW_KEY_0;

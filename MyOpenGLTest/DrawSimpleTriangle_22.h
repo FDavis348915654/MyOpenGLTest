@@ -23,7 +23,7 @@
 #include "Camera.h"
 
 // 加载图片
-unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT);
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT, bool isSRGB);
 // 加载天空盒
 unsigned int loadCubemap(std::vector<std::string> faces);
 
@@ -235,11 +235,11 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_11_advanced_GLSL.vs", "../res/Shaders/lesson_11_advanced_GLSL.frag"); // 用来画点并设置点的大小
-		shader[1] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_red.frag"); // Uniform缓冲对象
-		shader[2] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_green.frag"); // Uniform缓冲对象
-		shader[3] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_blue.frag"); // Uniform缓冲对象
-		shader[4] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_yellow.frag"); // Uniform缓冲对象
+		shader[0] = Shader("../res/Shaders/lesson_11_advanced_GLSL.vs", "../res/Shaders/lesson_11_advanced_GLSL.fs"); // 用来画点并设置点的大小
+		shader[1] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_red.fs"); // Uniform缓冲对象
+		shader[2] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_green.fs"); // Uniform缓冲对象
+		shader[3] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_blue.fs"); // Uniform缓冲对象
+		shader[4] = Shader("../res/Shaders/lesson_11_advanced_GLSL_uniform.vs", "../res/Shaders/lesson_11_advanced_GLSL_uniform_yellow.fs"); // Uniform缓冲对象
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -313,13 +313,13 @@ public:
 		}
 
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
-		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT, false);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
-		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT, false);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 草丛
-		loadTexture(texture[2], "../res/Texture/grass.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		loadTexture(texture[2], "../res/Texture/grass.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, false);
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 玻璃窗
-		loadTexture(texture[3], "../res/Texture/blending_transparent_window.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		loadTexture(texture[3], "../res/Texture/blending_transparent_window.png", GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, false);
 
 		stbi_set_flip_vertically_on_load(false);
 		//ourModel = Model("../res/nanosuit_reflection/nanosuit.obj");

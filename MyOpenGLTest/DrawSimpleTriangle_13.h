@@ -21,7 +21,7 @@
 #include "Camera.h"
 
 // 加载图片
-unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT);
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT, bool isSRGB);
 
 class DrawSimpleTriangle_13 : public SimpleDrawTestBase
 {
@@ -107,12 +107,12 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.frag"); // 用于显示光源的小白块
-		shader[1] = Shader("../res/Shaders/lesson_04_light_casters.vs", "../res/Shaders/lesson_04_light_casters.frag");
-		shader[2] = Shader("../res/Shaders/lesson_04_light_casters.vs", "../res/Shaders/lesson_04_light_casters_direction.frag"); // 平行光
-		shader[3] = Shader("../res/Shaders/lesson_04_light_casters.vs", "../res/Shaders/lesson_04_light_casters_point.frag"); // 点光源
-		shader[4] = Shader("../res/Shaders/lesson_04_light_casters.vs", "../res/Shaders/lesson_04_light_casters_spotlight.frag"); // 聚光
-		shader[5] = Shader("../res/Shaders/lesson_04_light_casters.vs", "../res/Shaders/lesson_04_light_casters_spotlight_soft.frag"); // 聚光软化
+		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
+		shader[1] = Shader("../res/Shaders/lesson_04_light_casters.vs", "../res/Shaders/lesson_04_light_casters.fs");
+		shader[2] = Shader("../res/Shaders/lesson_04_light_casters.vs", "../res/Shaders/lesson_04_light_casters_direction.fs"); // 平行光
+		shader[3] = Shader("../res/Shaders/lesson_04_light_casters.vs", "../res/Shaders/lesson_04_light_casters_point.fs"); // 点光源
+		shader[4] = Shader("../res/Shaders/lesson_04_light_casters.vs", "../res/Shaders/lesson_04_light_casters_spotlight.fs"); // 聚光
+		shader[5] = Shader("../res/Shaders/lesson_04_light_casters.vs", "../res/Shaders/lesson_04_light_casters_spotlight_soft.fs"); // 聚光软化
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO
@@ -125,10 +125,10 @@ public:
 		stbi_set_flip_vertically_on_load(true);
 
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 木箱
-		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[0], "../res/Texture/container2.png", GL_REPEAT, GL_REPEAT, false);
 
 		// 绑定一个纹理对象, 为当前绑定的纹理对象设置环绕、过滤方式 // 高光
-		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[1], "../res/Texture/container2_specular.png", GL_REPEAT, GL_REPEAT, false);
 
 		{ // 设置顶点属性 // 灯
 			// Vertex Array Object

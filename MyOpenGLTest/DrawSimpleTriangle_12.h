@@ -103,10 +103,10 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.frag"); // 用于显示光源的小白块
-		shader[1] = Shader("../res/Shaders/lesson_03_lighting_maps.vs", "../res/Shaders/lesson_03_lighting_maps.frag");
+		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
+		shader[1] = Shader("../res/Shaders/lesson_03_lighting_maps.vs", "../res/Shaders/lesson_03_lighting_maps.fs");
 		// 练习题四, 添加一个叫做放射光贴图(Emission Map)的东西，它是一个储存了每个片段的发光值(Emission Value)的贴图。发光值是一个包含（假设）光源的物体发光(Emit)时可能显现的颜色，这样的话物体就能够忽略光照条件进行发光(Glow)。游戏中某个物体在发光的时候，你通常看到的就是放射光贴图（比如 机器人的眼，或是箱子上的灯带）。将这个纹理（作者为 creativesam）作为放射光贴图添加到箱子上，产生这些字母都在发光的效果：参考解答，最终效果
-		//shader[1] = Shader("../res/Shaders/lesson_03_lighting_maps.vs", "../res/Shaders/lesson_03_lighting_maps_test_4.frag");
+		//shader[1] = Shader("../res/Shaders/lesson_03_lighting_maps.vs", "../res/Shaders/lesson_03_lighting_maps_test_4.fs");
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO

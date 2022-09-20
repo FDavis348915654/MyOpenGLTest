@@ -29,7 +29,7 @@ public:
 			0.0f,  0.5f, 0.0f
 		};
 		// 编译着色器
-		Shader myShader("../res/Shaders/default.vs", "../res/Shaders/default.frag");
+		Shader myShader("../res/Shaders/default.vs", "../res/Shaders/default.fs");
 		program = myShader.ID;
 
 		// 生成 VBO

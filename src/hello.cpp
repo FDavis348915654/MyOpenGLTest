@@ -36,6 +36,7 @@
 #include "../MyOpenGLTest/DrawSimpleTriangle_24.h" // 实例化
 #include "../MyOpenGLTest/DrawSimpleTriangle_25.h" // 抗锯齿
 #include "../MyOpenGLTest/DrawSimpleTriangle_26.h" // 高级光照
+#include "../MyOpenGLTest/DrawSimpleTriangle_27.h" // Gamma校正
 
 // Function prototypes
 // 按键回调
@@ -49,7 +50,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 // 打印顶点属性上限
 void ShowMaxVertex();
 // 加载图片
-unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT);
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT, bool isSRGB);
 // 加载天空盒
 unsigned int loadCubemap(std::vector<std::string> faces);
 
@@ -84,7 +85,8 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_23 obj(WIDTH, HEIGHT); // 几何着色器
 //DrawSimpleTriangle_24 obj(WIDTH, HEIGHT); // 实例化
 //DrawSimpleTriangle_25 obj(WIDTH, HEIGHT); // 抗锯齿
-DrawSimpleTriangle_26 obj(WIDTH, HEIGHT); // 高级光照
+//DrawSimpleTriangle_26 obj(WIDTH, HEIGHT); // 高级光照
+DrawSimpleTriangle_27 obj(WIDTH, HEIGHT); // Gamma校正
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
@@ -199,22 +201,29 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 // utility function for loading a 2D texture from file
 // ---------------------------------------------------
-unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT)
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT, bool isSRGB)
 {
 	int width, height, nrComponents;
 	unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
 	if (data)
 	{
-		GLenum format;
-		if (nrComponents == 1)
-			format = GL_RED;
-		else if (nrComponents == 3)
-			format = GL_RGB;
-		else if (nrComponents == 4)
-			format = GL_RGBA;
+		GLenum internalFormat;
+		GLenum dataFormat;
+		if (nrComponents == 1) {
+			internalFormat = GL_RED;
+			dataFormat = GL_RED;
+		}
+		else if (nrComponents == 3) {
+			internalFormat = isSRGB ? GL_SRGB : GL_RGB;
+			dataFormat = GL_RGB;
+		}
+		else if (nrComponents == 4) {
+			internalFormat = isSRGB ? GL_SRGB_ALPHA : GL_RGBA;
+			dataFormat = GL_RGBA;
+		}
 
 		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapS);

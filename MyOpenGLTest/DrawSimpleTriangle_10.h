@@ -102,10 +102,10 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.frag"); // 用于显示光源的小白块
-		shader[1] = Shader("../res/Shaders/lesson_01_color.vs", "../res/Shaders/lesson_01_color.frag");
-		shader[2] = Shader("../res/Shaders/lesson_01_color_1.vs", "../res/Shaders/lesson_01_color_1.frag"); // 练习题三, 在观察空间（而不是世界空间）中计算冯氏光照
-		shader[3] = Shader("../res/Shaders/lesson_01_color_2.vs", "../res/Shaders/lesson_01_color_2.frag"); // 练习题四, 尝试实现一个Gouraud着色（而不是冯氏着色）。如果你做对了话，立方体的光照应该会看起来有些奇怪，尝试推理为什么它会看起来这么奇怪
+		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
+		shader[1] = Shader("../res/Shaders/lesson_01_color.vs", "../res/Shaders/lesson_01_color.fs");
+		shader[2] = Shader("../res/Shaders/lesson_01_color_1.vs", "../res/Shaders/lesson_01_color_1.fs"); // 练习题三, 在观察空间（而不是世界空间）中计算冯氏光照
+		shader[3] = Shader("../res/Shaders/lesson_01_color_2.vs", "../res/Shaders/lesson_01_color_2.fs"); // 练习题四, 尝试实现一个Gouraud着色（而不是冯氏着色）。如果你做对了话，立方体的光照应该会看起来有些奇怪，尝试推理为什么它会看起来这么奇怪
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO

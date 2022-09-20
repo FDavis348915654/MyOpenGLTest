@@ -24,7 +24,7 @@
 #include "Camera.h"
 
 // 加载图片
-unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT);
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT, bool isSRGB);
 // 加载天空盒
 unsigned int loadCubemap(std::vector<std::string> faces);
 
@@ -153,10 +153,10 @@ public:
 #pragma endregion
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_15_advanced_lighting.vs", "../res/Shaders/lesson_15_advanced_lighting.frag");
+		shader[0] = Shader("../res/Shaders/lesson_15_advanced_lighting.vs", "../res/Shaders/lesson_15_advanced_lighting.fs");
 
 #pragma region "skybox"
-		shader[SkyboxIndex] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.frag"); // 天空盒
+		shader[SkyboxIndex] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
 #pragma endregion
 
 		// 生成 VBO
@@ -183,7 +183,7 @@ public:
 			glBindVertexArray(0);
 		}
 
-		loadTexture(texture[0], "../res/Texture/wood.png", GL_REPEAT, GL_REPEAT);
+		loadTexture(texture[0], "../res/Texture/wood.png", GL_REPEAT, GL_REPEAT, false);
 
 #pragma region "skybox"
 		{ // 天空盒

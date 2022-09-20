@@ -55,7 +55,7 @@ public:
 		};
 
 		// 编译着色器
-		Shader myShader("../res/Shaders/test_1_trans.vs", "../res/Shaders/test_1_trans.frag");
+		Shader myShader("../res/Shaders/test_1_trans.vs", "../res/Shaders/test_1_trans.fs");
 		program[0] = myShader.ID;
 		// 生成 VBO
 		glGenBuffers(10, VBO);
