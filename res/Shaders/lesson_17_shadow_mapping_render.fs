@@ -33,6 +33,29 @@ float ShadowCalculation(vec4 fragPosLightSpace, float bias) {
 	return shadow;
 }
 
+float ShadowCalculationWithPCF(vec4 fragPosLightSpace, float bias) {
+	// 执行透视除法
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	// 变换到[0,1]的范围
+	projCoords = projCoords * 0.5 + 0.5;
+	// 取得当前片段在光源视角下的深度
+	float currentDepth = projCoords.z;
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	for (int x = -1; x <= 1; x++) {
+		for (int y = -1; y <= 1; y++) {
+			// 取得最近点的深度(使用[0,1]范围下的fragPosLight当坐标)
+			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += (currentDepth - bias > pcfDepth ? 1.0 : 0.0);
+		}
+	}
+	shadow /= 9.0;
+	if (currentDepth > 1.0) {
+		shadow = 0.0;
+	}
+	return shadow;
+}
+
 void main()
 {
 	vec3 color = texture(diffuseTexture, fs_in.TexCoords).rgb;
@@ -53,7 +76,8 @@ void main()
 	// 计算阴影
 	float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); // 适当的阴影偏移
 	//float bias = 0.0;
-	float shadow = ShadowCalculation(fs_in.FragPosLightSpace, bias);
+	// float shadow = ShadowCalculation(fs_in.FragPosLightSpace, bias);
+	float shadow = ShadowCalculationWithPCF(fs_in.FragPosLightSpace, bias);
 	vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
 	FragColor = vec4(lighting, 1.0);
 }

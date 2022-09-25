@@ -31,7 +31,7 @@ unsigned int loadCubemap(std::vector<std::string> faces);
 class DrawSimpleTriangle_28 : public SimpleDrawTestBase
 {
 public:
-	static const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+	static const unsigned int SHADOW_WIDTH = 1024 * 1, SHADOW_HEIGHT = 1024 * 1;
 	static const int RenderNum = 20;
 	static const int SkyboxIndex = RenderNum - 1;
 	// Vertex Array Object, VAO
