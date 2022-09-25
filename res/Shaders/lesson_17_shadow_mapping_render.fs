@@ -16,7 +16,7 @@ uniform sampler2D shadowMap;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 
-float ShadowCalculation(vec4 fragPosLightSpace) {
+float ShadowCalculation(vec4 fragPosLightSpace, float bias) {
 	// 执行透视除法
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 	// 变换到[0,1]的范围
@@ -26,7 +26,10 @@ float ShadowCalculation(vec4 fragPosLightSpace) {
 	// 取得当前片段在光源视角下的深度
 	float currentDepth = projCoords.z;
 	// 检查当前片段是否在阴影中
-	float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+	if (currentDepth > 1.0) {
+		shadow = 0.0;
+	}
 	return shadow;
 }
 
@@ -48,7 +51,9 @@ void main()
 	spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
 	vec3 specular = spec * lightColor;
 	// 计算阴影
-	float shadow = ShadowCalculation(fs_in.FragPosLightSpace);
+	float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); // 适当的阴影偏移
+	//float bias = 0.0;
+	float shadow = ShadowCalculation(fs_in.FragPosLightSpace, bias);
 	vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
 	FragColor = vec4(lighting, 1.0);
 }
