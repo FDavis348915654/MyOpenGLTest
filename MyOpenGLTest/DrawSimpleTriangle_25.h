@@ -488,4 +488,6 @@ public:
 		this->screenHeight = height;
 		aspect = (GLfloat)width / (GLfloat)height;
 	};
+
+	virtual bool IsUseMSAA() { return true; };
 };

@@ -37,6 +37,7 @@
 #include "../MyOpenGLTest/DrawSimpleTriangle_25.h" // 抗锯齿
 #include "../MyOpenGLTest/DrawSimpleTriangle_26.h" // 高级光照
 #include "../MyOpenGLTest/DrawSimpleTriangle_27.h" // Gamma校正
+#include "../MyOpenGLTest/DrawSimpleTriangle_28.h" // 阴影映射
 
 // Function prototypes
 // 按键回调
@@ -86,7 +87,8 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_24 obj(WIDTH, HEIGHT); // 实例化
 //DrawSimpleTriangle_25 obj(WIDTH, HEIGHT); // 抗锯齿
 //DrawSimpleTriangle_26 obj(WIDTH, HEIGHT); // 高级光照
-DrawSimpleTriangle_27 obj(WIDTH, HEIGHT); // Gamma校正
+//DrawSimpleTriangle_27 obj(WIDTH, HEIGHT); // Gamma校正
+DrawSimpleTriangle_28 obj(WIDTH, HEIGHT); // 阴影映射
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
@@ -102,7 +104,9 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	// MSAA
-	//glfwWindowHint(GLFW_SAMPLES, 4);
+	if (obj.IsUseMSAA()) {
+		glfwWindowHint(GLFW_SAMPLES, 4);
+	}
 
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);

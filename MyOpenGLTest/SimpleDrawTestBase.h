@@ -21,5 +21,7 @@ public:
 	virtual void OnScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {};
 
 	virtual void OnFrameBufferSizeChanged(GLFWwindow* window, int width, int height) {};
+
+	virtual bool IsUseMSAA() { return false; };
 };
 

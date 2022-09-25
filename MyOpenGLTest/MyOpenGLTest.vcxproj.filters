@@ -111,6 +111,9 @@
     <ClCompile Include="DrawSimpleTriangle_27.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DrawSimpleTriangle_28.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdPartyLibs\Libs\glew32.dll">
@@ -218,6 +221,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DrawSimpleTriangle_27.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawSimpleTriangle_28.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
