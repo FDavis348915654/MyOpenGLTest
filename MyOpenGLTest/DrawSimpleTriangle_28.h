@@ -386,11 +386,11 @@ public:
 			// 1. render depth of scene to texture (from light's perspective)
 			glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
 
-			//float radius = 0.5f;
-			//float lightPosX = -2.0f + (float)sin(glfwGetTime()) * radius;
-			//float lightPosY = 4.0f + (float)cos(glfwGetTime()) * radius;
-			//lightPos.x = lightPosX;
-			//lightPos.y = lightPosY;
+			float radius = 0.3f;
+			float lightPosX = -2.0f + (float)sin(glfwGetTime()) * radius;
+			float lightPosY = 4.0f + (float)cos(glfwGetTime()) * radius;
+			lightPos.x = lightPosX;
+			lightPos.y = lightPosY;
 
 			glm::mat4 lightProjection, lightView;
 			glm::mat4 lightSpaceMatrix;
