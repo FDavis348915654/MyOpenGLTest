@@ -218,8 +218,11 @@ public:
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_17_shadow_mapping.vs", "../res/Shaders/lesson_17_shadow_mapping.fs");
-		shader[1] = Shader("../res/Shaders/lesson_17_shadow_mapping_render.vs", "../res/Shaders/lesson_17_shadow_mapping_render.fs");
+		shader[1] = Shader("../res/Shaders/lesson_17_shadow_mapping_render.vs", "../res/Shaders/lesson_17_shadow_mapping_render.fs"); // 正交阴影
 		shader[2] = Shader("../res/Shaders/lesson_17_shadow_mapping_show.vs", "../res/Shaders/lesson_17_shadow_mapping_show.fs");
+		shader[3] = Shader("../res/Shaders/lesson_17_shadow_mapping_show.vs", "../res/Shaders/lesson_17_shadow_mapping_show02.fs");
+		shader[4] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
+		shader[5] = Shader("../res/Shaders/lesson_17_shadow_mapping_render.vs", "../res/Shaders/lesson_17_shadow_mapping_render02.fs"); // 透视阴影
 
 #pragma region "skybox"
 		shader[SkyboxIndex] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
@@ -382,10 +385,21 @@ public:
 		if (true) {
 			// 1. render depth of scene to texture (from light's perspective)
 			glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
+
+			//float radius = 0.5f;
+			//float lightPosX = -2.0f + (float)sin(glfwGetTime()) * radius;
+			//float lightPosY = 4.0f + (float)cos(glfwGetTime()) * radius;
+			//lightPos.x = lightPosX;
+			//lightPos.y = lightPosY;
+
 			glm::mat4 lightProjection, lightView;
 			glm::mat4 lightSpaceMatrix;
-			float near_plane = 1.0f, far_plane = 7.5f;
-			lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+			// 正交
+			//float near_plane = 1.0f, far_plane = 7.5f;
+			//lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+			// 透视
+			float near_plane = 0.1f, far_plane = 100.0f;
+			lightProjection = glm::perspective(120.0f, (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, near_plane, far_plane);
 			lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 			lightSpaceMatrix = lightProjection * lightView;
 			// render scene from light's point of view
@@ -406,32 +420,55 @@ public:
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			// render Depth map to quad for visual debugging
-			if (false) {
+			if (false) { // orthographic 正交
 				shader[2].use();
-				shader[2].setFloat("near_plane", near_plane);
-				shader[2].setFloat("far_plane", far_plane);
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, depthMap);
 				shader[2].setInt("depthMap", 0);
 				RenderQuad();
 			}
+			if (false) { // perspectiv 透视
+				shader[3].use();
+				shader[3].setFloat("near_plane", near_plane);
+				shader[3].setFloat("far_plane", far_plane);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, depthMap);
+				shader[3].setInt("depthMap", 0);
+				RenderQuad();
+			}
 
 			// render scene
 			if (true) {
-				shader[1].use();
-				shader[1].setInt("diffuseTexture", 0);
-				shader[1].setInt("shadowMap", 1);
+				//Shader renderShader = shader[1]; // 正交
+				Shader renderShader = shader[5]; // 透视
+				renderShader.use();
+				renderShader.setFloat("near_plane", near_plane);
+				renderShader.setFloat("far_plane", far_plane);
+				renderShader.setInt("diffuseTexture", 0);
+				renderShader.setInt("shadowMap", 1);
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, texture[0]);
 				glActiveTexture(GL_TEXTURE1);
 				glBindTexture(GL_TEXTURE_2D, depthMap);
-				shader[1].setMat4("projection", projection);
-				shader[1].setMat4("view", view);
+				renderShader.setMat4("projection", projection);
+				renderShader.setMat4("view", view);
 				// set light uniforms
-				shader[1].setVec3("viewPos", camera->Position);
-				shader[1].setVec3("lightPos", lightPos);
-				shader[1].setMat4("lightSpaceMatrix", lightSpaceMatrix);
-				RenderScene(shader[1]);
+				renderShader.setVec3("viewPos", camera->Position);
+				renderShader.setVec3("lightPos", lightPos);
+				renderShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+				RenderScene(renderShader);
+
+				// lightPos
+				glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // 光源颜色
+				shader[4].use();
+				glm::mat4 model;
+				model = glm::translate(model, lightPos);
+				model = glm::scale(model, glm::vec3(0.05));
+				shader[4].setMat4("projection", projection);
+				shader[4].setMat4("view", view);
+				shader[4].setMat4("model", model);
+				shader[4].setVec3("lightColor", lightColor);
+				RenderCube();
 			}
 		}
 	}

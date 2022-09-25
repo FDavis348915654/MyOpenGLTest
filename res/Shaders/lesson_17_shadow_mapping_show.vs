@@ -1,5 +1,5 @@
 #version 330 core
-// 阴影映射
+// 阴影映射(显示调试阴影)
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 texCoords;
