@@ -1,5 +1,5 @@
 /*
-	阴影映射
+	点阴影
 */
 #pragma once
 #include <string>
@@ -28,7 +28,7 @@ unsigned int loadTexture(unsigned int textureID, char const * path, GLint textur
 // 加载天空盒
 unsigned int loadCubemap(std::vector<std::string> faces);
 
-class DrawSimpleTriangle_28 : public SimpleDrawTestBase
+class DrawSimpleTriangle_29 : public SimpleDrawTestBase
 {
 public:
 	static const unsigned int SHADOW_WIDTH = 1024 * 1, SHADOW_HEIGHT = 1024 * 1;
@@ -61,7 +61,8 @@ public:
 	// 阴影帧缓冲
 	unsigned int depthMapFBO;
 	// 阴影纹理附件
-	unsigned int depthMap;
+	//unsigned int depthMap;
+	unsigned int depthCubemap;
 
 	// 立方体贴图
 	unsigned int cubeTexture;
@@ -92,14 +93,14 @@ public:
 
 	int effectType = 0;
 
-	DrawSimpleTriangle_28(GLuint screenWidth, GLuint screenHeight) {
+	DrawSimpleTriangle_29(GLuint screenWidth, GLuint screenHeight) {
 		this->screenWidth = screenWidth;
 		this->screenHeight = screenHeight;
 		aspect = (GLfloat)screenWidth / (GLfloat)screenHeight;
 	}
 
 	virtual void OnInitRender(GLFWwindow* window) {
-		glfwSetWindowTitle(window, "DrawSimpleTriangle_28");
+		glfwSetWindowTitle(window, "DrawSimpleTriangle_29");
 		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 		// 平面 // VAO[0]
@@ -217,12 +218,10 @@ public:
 #pragma endregion
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_17_shadow_mapping.vs", "../res/Shaders/lesson_17_shadow_mapping.fs");
-		shader[1] = Shader("../res/Shaders/lesson_17_shadow_mapping_render.vs", "../res/Shaders/lesson_17_shadow_mapping_render.fs"); // 正交阴影
-		shader[2] = Shader("../res/Shaders/lesson_17_shadow_mapping_show.vs", "../res/Shaders/lesson_17_shadow_mapping_show.fs");
-		shader[3] = Shader("../res/Shaders/lesson_17_shadow_mapping_show.vs", "../res/Shaders/lesson_17_shadow_mapping_show02.fs");
-		shader[4] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
-		shader[5] = Shader("../res/Shaders/lesson_17_shadow_mapping_render.vs", "../res/Shaders/lesson_17_shadow_mapping_render02.fs"); // 透视阴影
+		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
+		shader[1] = Shader("../res/Shaders/lesson_18_point_shadows_depth.vs", "../res/Shaders/lesson_18_point_shadows_depth.gs", "../res/Shaders/lesson_18_point_shadows_depth.fs"); // 写入深度
+		shader[2] = Shader("../res/Shaders/lesson_18_point_shadows_render.vs", "../res/Shaders/lesson_18_point_shadows_render.fs"); // 绘制阴影
+		shader[3] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
 
 #pragma region "skybox"
 		shader[SkyboxIndex] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
@@ -283,21 +282,20 @@ public:
 		// configure depth map FBO
 		glGenFramebuffers(1, &depthMapFBO);
 		// create depth texture
-		glGenTextures(1, &depthMap);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-		GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+		glGenTextures(1, &depthCubemap);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
+		for (int i = 0; i < 6; i++) {
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		}
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		// attach depth texture as FBO's depth buffer
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		// 将它附加到当前绑定的帧缓冲对象
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap, 0);
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
 		unsigned int frameRet = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -383,93 +381,68 @@ public:
 #pragma endregion
 
 		if (true) {
-			// 1. render depth of scene to texture (from light's perspective)
-			glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
+			glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
+			//lightPos.z = sin(glfwGetTime() * 0.5f) * 3.0f;
 
-			float radius = 0.3f;
-			float lightPosX = -2.0f + (float)sin(glfwGetTime()) * radius;
-			float lightPosY = 4.0f + (float)cos(glfwGetTime()) * radius;
-			lightPos.x = lightPosX;
-			lightPos.y = lightPosY;
+			// crate depth cubemap transformation matrices
+			float near_plane = 1.0f;
+			float far_plane = 25.0f;
+			glm::mat4 shadowProj = glm::perspective(90.0f, (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, near_plane, far_plane);
+			std::vector<glm::mat4> shadowTransforms;
+			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)));
+			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
 
-			glm::mat4 lightProjection, lightView;
-			glm::mat4 lightSpaceMatrix;
-			// 正交
-			//float near_plane = 1.0f, far_plane = 7.5f;
-			//lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-			// 透视
-			float near_plane = 0.1f, far_plane = 100.0f;
-			lightProjection = glm::perspective(120.0f, (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, near_plane, far_plane);
-			lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-			lightSpaceMatrix = lightProjection * lightView;
-			// render scene from light's point of view
-			shader[0].use();
-			shader[0].setMat4("lightSpaceMatrix", lightSpaceMatrix);
+			// render scene to depth cubemap
 			glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 			glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 			glClear(GL_DEPTH_BUFFER_BIT);
-			//glEnable(GL_CULL_FACE);
-			//glCullFace(GL_FRONT);
-			RenderScene(shader[0]);
-			//glCullFace(GL_BACK); // 不要忘记设回原先的culling face
-			//glDisable(GL_CULL_FACE);
+			shader[1].use();
+			for (int i = 0; i < 6; i++) {
+				shader[1].setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+			}
+			shader[1].setFloat("near_plane", near_plane);
+			shader[1].setFloat("far_plane", far_plane);
+			shader[1].setVec3("lightPos", lightPos);
+			RenderScene(shader[1]);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-			// reset viewport
+			// render scene as normal
+			bool shadows = true;
 			glViewport(0, 0, screenWidth, screenHeight);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			Shader renderShader = shader[2];
+			renderShader.use();
+			renderShader.setInt("diffuseTexture", 0);
+			renderShader.setInt("depthMap", 1);
+			renderShader.setMat4("projection", projection);
+			renderShader.setMat4("view", view);
+			// set lighting uniforms
+			renderShader.setVec3("lightPos", lightPos);
+			renderShader.setVec3("viewPos", camera->Position);
+			renderShader.setInt("shadows", shadows); // enable/disable shadows by pressing 'SPACE'
+			renderShader.setFloat("near_plane", near_plane);
+			renderShader.setFloat("far_plane", far_plane);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture[0]);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
+			RenderScene(renderShader);
 
-			// render Depth map to quad for visual debugging
-			if (false) { // orthographic 正交
-				shader[2].use();
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, depthMap);
-				shader[2].setInt("depthMap", 0);
-				RenderQuad();
-			}
-			if (false) { // perspectiv 透视
-				shader[3].use();
-				shader[3].setFloat("near_plane", near_plane);
-				shader[3].setFloat("far_plane", far_plane);
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, depthMap);
-				shader[3].setInt("depthMap", 0);
-				RenderQuad();
-			}
-
-			// render scene
-			if (true) {
-				//Shader renderShader = shader[1]; // 正交
-				Shader renderShader = shader[5]; // 透视
-				renderShader.use();
-				renderShader.setFloat("near_plane", near_plane);
-				renderShader.setFloat("far_plane", far_plane);
-				renderShader.setInt("diffuseTexture", 0);
-				renderShader.setInt("shadowMap", 1);
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, texture[0]);
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, depthMap);
-				renderShader.setMat4("projection", projection);
-				renderShader.setMat4("view", view);
-				// set light uniforms
-				renderShader.setVec3("viewPos", camera->Position);
-				renderShader.setVec3("lightPos", lightPos);
-				renderShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-				RenderScene(renderShader);
-
-				// lightPos
-				glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // 光源颜色
-				shader[4].use();
-				glm::mat4 model;
-				model = glm::translate(model, lightPos);
-				model = glm::scale(model, glm::vec3(0.05));
-				shader[4].setMat4("projection", projection);
-				shader[4].setMat4("view", view);
-				shader[4].setMat4("model", model);
-				shader[4].setVec3("lightColor", lightColor);
-				RenderCube();
-			}
+			// lightPos
+			glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // 光源颜色
+			shader[3].use();
+			glm::mat4 model;
+			model = glm::translate(model, lightPos);
+			model = glm::scale(model, glm::vec3(0.05));
+			shader[3].setMat4("projection", projection);
+			shader[3].setMat4("view", view);
+			shader[3].setMat4("model", model);
+			shader[3].setVec3("lightColor", lightColor);
+			RenderCube();
 		}
 	}
 
@@ -489,26 +462,40 @@ public:
 	}
 
 	void RenderScene(const Shader &shader) {
-		// floor
+		// room cube
 		glm::mat4 model;
+		model = glm::scale(model, glm::vec3(5.0f));
 		shader.setMat4("model", model);
-		glBindVertexArray(VAO[0]);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		//glDisable(GL_CULL_FACE); // note that we disable culling here since we render 'inside' the cube instead of the usual 'outside' which throws off the normal culling methods.
+		shader.setInt("reverse_normals", 1); // A small little hack to invert normals when drawing cube from the inside so lighting still works.
+		RenderCube();
+		shader.setInt("reverse_normals", 0); // and of course disable it
+		//glEnable(GL_CULL_FACE);
 		// cubes
 		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
+		model = glm::translate(model, glm::vec3(4.0f, -3.5f, 0.0));
 		model = glm::scale(model, glm::vec3(0.5f));
 		shader.setMat4("model", model);
 		RenderCube();
 		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
+		model = glm::translate(model, glm::vec3(2.0f, 3.0f, 1.0));
+		model = glm::scale(model, glm::vec3(0.75f));
+		shader.setMat4("model", model);
+		RenderCube();
+		model = glm::mat4();
+		model = glm::translate(model, glm::vec3(-3.0f, -1.0f, 0.0));
 		model = glm::scale(model, glm::vec3(0.5f));
 		shader.setMat4("model", model);
 		RenderCube();
 		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
+		model = glm::translate(model, glm::vec3(-1.5f, 1.0f, 1.5));
+		model = glm::scale(model, glm::vec3(0.5f));
+		shader.setMat4("model", model);
+		RenderCube();
+		model = glm::mat4();
+		model = glm::translate(model, glm::vec3(-1.5f, 2.0f, -3.0));
 		model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-		model = glm::scale(model, glm::vec3(0.25));
+		model = glm::scale(model, glm::vec3(0.75f));
 		shader.setMat4("model", model);
 		RenderCube();
 	}
