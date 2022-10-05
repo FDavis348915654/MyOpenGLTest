@@ -88,6 +88,7 @@ public:
 	GLboolean firstMouse = true;
 
 	bool useSpotLight = true;
+	bool enableShadows = true;
 
 	float deltaTime = 0.0f;
 
@@ -382,7 +383,7 @@ public:
 
 		if (true) {
 			glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
-			//lightPos.z = sin(glfwGetTime() * 0.5f) * 3.0f;
+			lightPos.z = sin(glfwGetTime() * 0.5f) * 3.0f;
 
 			// crate depth cubemap transformation matrices
 			float near_plane = 1.0f;
@@ -411,7 +412,7 @@ public:
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 			// render scene as normal
-			bool shadows = true;
+			bool shadows = enableShadows;
 			glViewport(0, 0, screenWidth, screenHeight);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			Shader renderShader = shader[2];
@@ -511,6 +512,7 @@ public:
 		{
 			if (key == GLFW_KEY_F) {
 				useSpotLight = !useSpotLight;
+				enableShadows = !enableShadows;
 			}
 			if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
 				effectType = key - GLFW_KEY_0;
