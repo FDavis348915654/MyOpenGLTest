@@ -57,8 +57,8 @@ unsigned int loadTexture(unsigned int textureID, char const * path, GLint textur
 unsigned int loadCubemap(std::vector<std::string> faces);
 
 // Window dimensions
-//const GLuint WIDTH = 800, HEIGHT = 600;
-const GLuint WIDTH = 800 * 2, HEIGHT = 600 * 2;
+const GLuint WIDTH = 800, HEIGHT = 600;
+//const GLuint WIDTH = 800 * 2, HEIGHT = 600 * 2;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;

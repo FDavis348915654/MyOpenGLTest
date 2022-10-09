@@ -57,6 +57,36 @@ float ShadowCalculationWithPCF(vec3 fragPos) {
 	return shadow;
 }
 
+vec3 sampleOffsetDirections[20] = vec3[]
+(
+	vec3(1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1), 
+	vec3(1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
+	vec3(1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
+	vec3(1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
+	vec3(0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
+);
+
+float ShadowCalculationWithPCFOptimze(vec3 fragPos) {
+	// 从光到片段的向量, 用于采样立方体贴图
+	vec3 fragToLight = fragPos - lightPos;
+	float currentDepth = length(fragToLight);
+	float shadow = 0.0;
+	float bias = 0.05; //0.15;
+	float samples = 20;
+	float viewDistance = length(viewPos - fragPos);
+	// float diskRadius = 0.05;
+	float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0; // 观察近处阴影锐利, 观察远处阴影柔和
+	for (int i = 0; i < samples; i++) {
+		float closestDepth = texture(depthMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
+		closestDepth *= far_plane;
+		if (currentDepth - bias > closestDepth) {
+			shadow += 1.0;
+		}
+	}
+	shadow /= float(samples);
+	return shadow;
+}
+
 void main()
 {
 	vec3 color = texture(diffuseTexture, fs_in.TexCoords).rgb;
@@ -75,10 +105,12 @@ void main()
 	spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
 	vec3 specular = spec * lightColor;
 	// calculate shadow
-	float shadow = shadows ? ShadowCalculationWithPCF(fs_in.FragPos) : 0.0;
+	// float shadow = shadows ? ShadowCalculation(fs_in.FragPos) : 0.0;
+	// float shadow = shadows ? ShadowCalculationWithPCF(fs_in.FragPos) : 0.0;
+	float shadow = shadows ? ShadowCalculationWithPCFOptimze(fs_in.FragPos) : 0.0;
 	vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
-	//vec3 lighting = (1.0 - shadow) * (ambient + diffuse + specular) * color;
-	//vec3 lighting = (diffuse) * color;
+	//vec3 lighting = (1.0 - shadow) * (ambient + diffuse + specular) * color; // 调试
+	//vec3 lighting = (diffuse) * color; // 调试, 不带阴影
 	FragColor = vec4(lighting, 1.0);
-	//FragColor = vec4(texture(diffuseTexture, fs_in.TexCoords).rgb, 1.0);
+	//FragColor = vec4(texture(diffuseTexture, fs_in.TexCoords).rgb, 1.0); // 调试, 不带阴影
 }
