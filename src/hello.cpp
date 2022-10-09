@@ -39,6 +39,7 @@
 #include "../MyOpenGLTest/DrawSimpleTriangle_27.h" // Gamma校正
 #include "../MyOpenGLTest/DrawSimpleTriangle_28.h" // 阴影映射
 #include "../MyOpenGLTest/DrawSimpleTriangle_29.h" // 点阴影
+#include "../MyOpenGLTest/DrawSimpleTriangle_30.h" // 法线贴图
 
 // Function prototypes
 // 按键回调
@@ -91,7 +92,8 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_26 obj(WIDTH, HEIGHT); // 高级光照
 //DrawSimpleTriangle_27 obj(WIDTH, HEIGHT); // Gamma校正
 //DrawSimpleTriangle_28 obj(WIDTH, HEIGHT); // 阴影映射
-DrawSimpleTriangle_29 obj(WIDTH, HEIGHT); // 点阴影
+//DrawSimpleTriangle_29 obj(WIDTH, HEIGHT); // 点阴影
+DrawSimpleTriangle_30 obj(WIDTH, HEIGHT); // 法线贴图
 
 // The MAIN function, from here we start the application and run the game loop
 int main()

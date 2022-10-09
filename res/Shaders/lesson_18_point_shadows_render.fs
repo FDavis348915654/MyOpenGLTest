@@ -106,8 +106,8 @@ void main()
 	vec3 specular = spec * lightColor;
 	// calculate shadow
 	// float shadow = shadows ? ShadowCalculation(fs_in.FragPos) : 0.0;
-	// float shadow = shadows ? ShadowCalculationWithPCF(fs_in.FragPos) : 0.0;
-	float shadow = shadows ? ShadowCalculationWithPCFOptimze(fs_in.FragPos) : 0.0;
+	float shadow = shadows ? ShadowCalculationWithPCF(fs_in.FragPos) : 0.0;
+	// float shadow = shadows ? ShadowCalculationWithPCFOptimze(fs_in.FragPos) : 0.0;
 	vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
 	//vec3 lighting = (1.0 - shadow) * (ambient + diffuse + specular) * color; // 调试
 	//vec3 lighting = (diffuse) * color; // 调试, 不带阴影
