@@ -69,6 +69,10 @@ public:
 	// uniform buffer object
 	unsigned int uboMatrices;
 
+	// 法线贴图相关变量
+	unsigned int quadVAO = 0;
+	unsigned int quadVBO;
+
 	Model ourModel;
 	Model planetModel;
 	Model rockModel;
@@ -103,16 +107,17 @@ public:
 	virtual void OnInitRender(GLFWwindow* window) {
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_30");
 		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+		camera->SpeedUpRatio = 50.0f;
 
 		float transparentVertices[] = {
 			// positions                    // texture Coords (swapped y coordinates because texture is flipped upside down)
-			0.0f,  0.5f,  0.0f,             0.0f,  1.0f - 0.0f,
-			0.0f, -0.5f,  0.0f,             0.0f,  1.0f - 1.0f,
-			1.0f, -0.5f,  0.0f,             1.0f,  1.0f - 1.0f,
+			-1.0f,  1.0f, 0.0f,             0.0f,  1.0f,
+			-1.0f, -1.0f, 0.0f,             0.0f,  0.0f,
+			 1.0f, -1.0f, 0.0f,             1.0f,  0.0f,
 								           
-			0.0f,  0.5f,  0.0f,             0.0f,  1.0f - 0.0f,
-			1.0f, -0.5f,  0.0f,             1.0f,  1.0f - 1.0f,
-			1.0f,  0.5f,  0.0f,             1.0f,  1.0f - 0.0f
+			-1.0f,  1.0f, 0.0f,             0.0f,  1.0f,
+			 1.0f, -1.0f, 0.0f,             1.0f,  0.0f,
+			 1.0f,  1.0f, 0.0f,             1.0f,  1.0f
 		};
 
 		// 箱子 // VAO[1] // 用来指示光源
@@ -210,8 +215,9 @@ public:
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_19_normal_mapping_base.vs", "../res/Shaders/lesson_19_normal_mapping_base.fs"); // 法线贴图测试
-		shader[3] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
-
+		shader[1] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
+		shader[2] = Shader("../res/Shaders/lesson_19_normal_mapping_manual.vs", "../res/Shaders/lesson_19_normal_mapping_manual.fs"); // 法线贴图测试, TBN 在 fs 里处理
+	
 #pragma region "skybox"
 		shader[SkyboxIndex] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
 #pragma endregion
@@ -334,13 +340,17 @@ public:
 		}
 #pragma endregion
 
-		if (true) { // wall 基础法线测试
-			glm::vec3 lightPos(0.0f, 0.5f, 2.0f);
+		// wall 基础法线测试
+		if (true) {
+			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
+			glm::vec3 posOffset(8.0f, -0.5f, -0.5f);
+			lightPos += posOffset;
 
 			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(-1.0f, -0.5f, -0.48f));
+			model = glm::translate(model, posOffset);
 			model = glm::scale(model, glm::vec3(5.0f));
 			//model = glm::rotate(model, 90.0f, glm::vec3(1.0, 0.0, 0.0)); // 加上旋转之后, 因为法线方向还是原来的方向，导致光照计算不正确
+			model = glm::rotate(model, (GLfloat)glfwGetTime() * -10, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 
 			shader[0].use();
 			shader[0].setMat4("view", view);
@@ -363,71 +373,157 @@ public:
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
 			// lightPos
-			glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // 光源颜色
-			shader[3].use();
+			glm::vec3 lightColor(1.0f, 0.5f, 0.5f); // 光源颜色
+			shader[1].use();
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, lightPos);
 			model = glm::scale(model, glm::vec3(0.05));
-			shader[3].setMat4("projection", projection);
-			shader[3].setMat4("view", view);
-			shader[3].setMat4("model", model);
-			shader[3].setVec3("lightColor", lightColor);
-			RenderCube();
+			shader[1].setMat4("projection", projection);
+			shader[1].setMat4("view", view);
+			shader[1].setMat4("model", model);
+			shader[1].setVec3("lightColor", lightColor);
+			RenderCube(VAO[1]);
+		}
+
+		// wall, TBN 在 fs 里使用
+		if (true) {
+			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
+			glm::vec3 posOffset(-8.0f, -0.5f, -0.5f);
+			lightPos += posOffset;
+
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, posOffset);
+			model = glm::scale(model, glm::vec3(5.0f));
+			//model = glm::rotate(model, 90.0f, glm::vec3(1.0, 0.0, 0.0)); // 加上旋转之后, 因为法线方向还是原来的方向，导致光照计算不正确
+			model = glm::rotate(model, (GLfloat)glfwGetTime() * -10, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+
+			shader[2].use();
+			shader[2].setMat4("view", view);
+			shader[2].setMat4("projection", projection);
+			shader[2].setMat4("model", model);
+			shader[2].setVec3("lightPos", lightPos);
+			shader[2].setVec3("viewPos", camera->Position);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture[0]);
+			shader[2].setInt("diffuseTexture", 0);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, texture[1]);
+			shader[2].setInt("normalMap", 1);
+
+			shader[2].setBool("useNormalMap", useSpotLight);
+
+			renderQuad();
+
+			// lightPos
+			glm::vec3 lightColor(0.5f, 1.0f, 0.5f); // 光源颜色
+			shader[1].use();
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, lightPos);
+			model = glm::scale(model, glm::vec3(0.05));
+			shader[1].setMat4("projection", projection);
+			shader[1].setMat4("view", view);
+			shader[1].setMat4("model", model);
+			shader[1].setVec3("lightColor", lightColor);
+			RenderCube(VAO[1]);
 		}
 	}
 
-	// 绘制屏幕
-	void RenderQuad()
+	void renderQuad()
 	{
-		glBindVertexArray(VAO[2]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		// 如果还没有定义 VAO, 那么定义 VAO
+		if (quadVAO == 0)
+		{
+			// positions
+			glm::vec3 pos1(-1.0f, 1.0f, 0.0f);
+			glm::vec3 pos2(-1.0f, -1.0f, 0.0f);
+			glm::vec3 pos3(1.0f, -1.0f, 0.0f);
+			glm::vec3 pos4(1.0f, 1.0f, 0.0f);
+			// texture coordinates
+			glm::vec2 uv1(0.0f, 1.0f);
+			glm::vec2 uv2(0.0f, 0.0f);
+			glm::vec2 uv3(1.0f, 0.0f);
+			glm::vec2 uv4(1.0f, 1.0f);
+			// normal vector
+			glm::vec3 nm(0.0f, 0.0f, 1.0f);
+
+			// calculate tangent/bitangent vectors of both triangles
+			glm::vec3 tangent1, bitangent1;
+			glm::vec3 tangent2, bitangent2;
+			// triangle 1
+			// ----------
+			glm::vec3 edge1 = pos2 - pos1;
+			glm::vec3 edge2 = pos3 - pos1;
+			glm::vec2 deltaUV1 = uv2 - uv1;
+			glm::vec2 deltaUV2 = uv3 - uv1;
+
+			float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+			tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+			tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+			tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+			bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+			bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+			bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+			// triangle 2
+			// ----------
+			edge1 = pos3 - pos1;
+			edge2 = pos4 - pos1;
+			deltaUV1 = uv3 - uv1;
+			deltaUV2 = uv4 - uv1;
+
+			f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+			tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+			tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+			tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+
+			bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+			bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+			bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+
+			float quadVertices[] = {
+				// positions            // normal         // texcoords  // tangent                          // bitangent
+				pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+				pos2.x, pos2.y, pos2.z, nm.x, nm.y, nm.z, uv2.x, uv2.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+				pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+
+				pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+				pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+				pos4.x, pos4.y, pos4.z, nm.x, nm.y, nm.z, uv4.x, uv4.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z
+			};
+			// configure plane VAO
+			glGenVertexArrays(1, &quadVAO);
+			glGenBuffers(1, &quadVBO);
+			glBindVertexArray(quadVAO);
+			glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(6 * sizeof(float)));
+			glEnableVertexAttribArray(3);
+			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(8 * sizeof(float)));
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(11 * sizeof(float)));
+		}
+		glBindVertexArray(quadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 	}
 
 	// 绘制箱子
-	void RenderCube() {
-		glBindVertexArray(VAO[1]);
+	void RenderCube(unsigned int vao) {
+		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
-	}
-
-	void RenderScene(const Shader &shader) {
-		// room cube
-		glm::mat4 model;
-		model = glm::scale(model, glm::vec3(5.0f));
-		shader.setMat4("model", model);
-		//glDisable(GL_CULL_FACE); // note that we disable culling here since we render 'inside' the cube instead of the usual 'outside' which throws off the normal culling methods.
-		shader.setInt("reverse_normals", 1); // A small little hack to invert normals when drawing cube from the inside so lighting still works.
-		RenderCube();
-		shader.setInt("reverse_normals", 0); // and of course disable it
-		//glEnable(GL_CULL_FACE);
-		// cubes
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(4.0f, -3.5f, 0.0));
-		model = glm::scale(model, glm::vec3(0.5f));
-		shader.setMat4("model", model);
-		RenderCube();
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(2.0f, 3.0f, 1.0));
-		model = glm::scale(model, glm::vec3(0.75f));
-		shader.setMat4("model", model);
-		RenderCube();
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(-3.0f, -1.0f, 0.0));
-		model = glm::scale(model, glm::vec3(0.5f));
-		shader.setMat4("model", model);
-		RenderCube();
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(-1.5f, 1.0f, 1.5));
-		model = glm::scale(model, glm::vec3(0.5f));
-		shader.setMat4("model", model);
-		RenderCube();
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(-1.5f, 2.0f, -3.0));
-		model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-		model = glm::scale(model, glm::vec3(0.75f));
-		shader.setMat4("model", model);
-		RenderCube();
 	}
 
 	virtual void OnOverRender() {
