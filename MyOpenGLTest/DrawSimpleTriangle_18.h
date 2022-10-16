@@ -258,7 +258,7 @@ public:
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		if (false) { // grass
+		if (true) { // grass
 			std::vector<glm::vec3> vegetation;
 			vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
 			vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));

@@ -104,19 +104,18 @@ public:
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_30");
 		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
-		// 平面 // VAO[0]
-		float planeVertices[] = {
-			// positions            // normals         // texcoords
-			 25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-			-25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-			-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-
-			 25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-			-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-			 25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 10.0f
+		float transparentVertices[] = {
+			// positions                    // texture Coords (swapped y coordinates because texture is flipped upside down)
+			0.0f,  0.5f,  0.0f,             0.0f,  1.0f - 0.0f,
+			0.0f, -0.5f,  0.0f,             0.0f,  1.0f - 1.0f,
+			1.0f, -0.5f,  0.0f,             1.0f,  1.0f - 1.0f,
+								           
+			0.0f,  0.5f,  0.0f,             0.0f,  1.0f - 0.0f,
+			1.0f, -0.5f,  0.0f,             1.0f,  1.0f - 1.0f,
+			1.0f,  0.5f,  0.0f,             1.0f,  1.0f - 0.0f
 		};
 
-		// 箱子 // VAO[1]
+		// 箱子 // VAO[1] // 用来指示光源
 		float vertices[] = {
 			// back face
 			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
@@ -160,15 +159,6 @@ public:
 			 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
 			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
 			-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
-		};
-
-		// 屏幕 // VAO[2]
-		float quadVertices[] = {
-			// positions        // texture Coords
-			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-			 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
 		};
 
 #pragma region "skybox"
@@ -219,9 +209,7 @@ public:
 #pragma endregion
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
-		shader[1] = Shader("../res/Shaders/lesson_18_point_shadows_depth.vs", "../res/Shaders/lesson_18_point_shadows_depth.gs", "../res/Shaders/lesson_18_point_shadows_depth.fs"); // 写入深度
-		shader[2] = Shader("../res/Shaders/lesson_18_point_shadows_render.vs", "../res/Shaders/lesson_18_point_shadows_render.fs"); // 绘制阴影
+		shader[0] = Shader("../res/Shaders/lesson_19_normal_mapping_base.vs", "../res/Shaders/lesson_19_normal_mapping_base.fs"); // 法线贴图测试
 		shader[3] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
 
 #pragma region "skybox"
@@ -239,20 +227,20 @@ public:
 		// 加载的图像默认上下翻转
 		stbi_set_flip_vertically_on_load(true);
 
-		{ // 平面
+		{ // 设置顶点属性 // 墙, 平面
+			// Vertex Array Object
 			glBindVertexArray(VAO[0]);
+			// 复制顶点数组到一个顶点缓冲中供 OpenGL 使用
 			glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 			glBindVertexArray(0);
 		}
 
-		{ // 箱子
+		{ // 箱子 // 用来指示光源
 			glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 			// link vertex attributes
@@ -267,43 +255,8 @@ public:
 			glBindVertexArray(0);
 		}
 
-		{ // 屏幕
-			glBindVertexArray(VAO[2]);
-			glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-			glBindVertexArray(0);
-		}
-
-		loadTexture(texture[0], "../res/Texture/wood.png", GL_REPEAT, GL_REPEAT, false);
-
-		// configure depth map FBO
-		glGenFramebuffers(1, &depthMapFBO);
-		// create depth texture
-		glGenTextures(1, &depthCubemap);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
-		for (int i = 0; i < 6; i++) {
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-		}
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		// attach depth texture as FBO's depth buffer
-		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-		// 将它附加到当前绑定的帧缓冲对象
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap, 0);
-		glDrawBuffer(GL_NONE);
-		glReadBuffer(GL_NONE);
-		unsigned int frameRet = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		if (frameRet != GL_FRAMEBUFFER_COMPLETE) {
-			std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete! " << std::hex << frameRet << std::endl;
-		}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		loadTexture(texture[0], "../res/Texture/brickwall.jpg", GL_REPEAT, GL_REPEAT, false);
+		loadTexture(texture[1], "../res/Texture/brickwall_normal.jpg", GL_REPEAT, GL_REPEAT, false);
 
 #pragma region "skybox"
 		{ // 天空盒
@@ -366,7 +319,7 @@ public:
 		//glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 800.0f); // 为了看小行星带, 远平面设得远一点
 
 #pragma region "skybox"
-		if (false) { // skybox // 最先绘制 // 需关闭深度写入
+		if (true) { // skybox // 最先绘制 // 需关闭深度写入
 			glm::mat4 skyboxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
 			//glDisable(GL_CULL_FACE);
 			glDepthMask(GL_FALSE);
@@ -381,62 +334,38 @@ public:
 		}
 #pragma endregion
 
-		if (true) {
-			glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
-			lightPos.z = sin(glfwGetTime() * 0.5f) * 3.0f;
+		if (true) { // wall 基础法线测试
+			glm::vec3 lightPos(0.0f, 0.5f, 2.0f);
 
-			// crate depth cubemap transformation matrices
-			float near_plane = 1.0f;
-			float far_plane = 25.0f;
-			glm::mat4 shadowProj = glm::perspective(90.0f, (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, near_plane, far_plane);
-			std::vector<glm::mat4> shadowTransforms;
-			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
-			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
-			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
-			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)));
-			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
-			shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(-1.0f, -0.5f, -0.48f));
+			model = glm::scale(model, glm::vec3(5.0f));
+			//model = glm::rotate(model, 90.0f, glm::vec3(1.0, 0.0, 0.0)); // 加上旋转之后, 因为法线方向还是原来的方向，导致光照计算不正确
 
-			// render scene to depth cubemap
-			glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-			glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-			glClear(GL_DEPTH_BUFFER_BIT);
-			shader[1].use();
-			for (int i = 0; i < 6; i++) {
-				shader[1].setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
-			}
-			shader[1].setFloat("near_plane", near_plane);
-			shader[1].setFloat("far_plane", far_plane);
-			shader[1].setVec3("lightPos", lightPos);
-			RenderScene(shader[1]);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			shader[0].use();
+			shader[0].setMat4("view", view);
+			shader[0].setMat4("projection", projection);
+			shader[0].setMat4("model", model);
+			shader[0].setVec3("lightPos", lightPos);
+			shader[0].setVec3("viewPos", camera->Position);
 
-			// render scene as normal
-			bool shadows = enableShadows;
-			glViewport(0, 0, screenWidth, screenHeight);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			Shader renderShader = shader[2];
-			renderShader.use();
-			renderShader.setInt("diffuseTexture", 0);
-			renderShader.setInt("depthMap", 1);
-			renderShader.setMat4("projection", projection);
-			renderShader.setMat4("view", view);
-			// set lighting uniforms
-			renderShader.setVec3("lightPos", lightPos);
-			renderShader.setVec3("viewPos", camera->Position);
-			renderShader.setInt("shadows", shadows); // enable/disable shadows by pressing 'SPACE'
-			renderShader.setFloat("near_plane", near_plane);
-			renderShader.setFloat("far_plane", far_plane);
+			glBindVertexArray(VAO[0]);
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture[0]);
+			shader[0].setInt("diffuseTexture", 0);
+
 			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
-			RenderScene(renderShader);
+			glBindTexture(GL_TEXTURE_2D, texture[1]);
+			shader[0].setInt("normalMap", 1);
+
+			shader[0].setBool("useNormalMap", useSpotLight);
+			
+			glDrawArrays(GL_TRIANGLES, 0, 6);
 
 			// lightPos
 			glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // 光源颜色
 			shader[3].use();
-			glm::mat4 model;
+			model = glm::mat4(1.0f);
 			model = glm::translate(model, lightPos);
 			model = glm::scale(model, glm::vec3(0.05));
 			shader[3].setMat4("projection", projection);
