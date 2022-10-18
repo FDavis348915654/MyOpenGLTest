@@ -217,7 +217,8 @@ public:
 		shader[0] = Shader("../res/Shaders/lesson_19_normal_mapping_base.vs", "../res/Shaders/lesson_19_normal_mapping_base.fs"); // 法线贴图测试
 		shader[1] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
 		shader[2] = Shader("../res/Shaders/lesson_19_normal_mapping_manual.vs", "../res/Shaders/lesson_19_normal_mapping_manual.fs"); // 法线贴图测试, TBN 在 fs 里处理
-	
+		shader[3] = Shader("../res/Shaders/lesson_19_normal_mapping_manual2.vs", "../res/Shaders/lesson_19_normal_mapping_manual2.fs"); // 法线贴图测试, TBN 在 fs 里处理
+
 #pragma region "skybox"
 		shader[SkyboxIndex] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
 #pragma endregion
@@ -397,22 +398,25 @@ public:
 			//model = glm::rotate(model, 90.0f, glm::vec3(1.0, 0.0, 0.0)); // 加上旋转之后, 因为法线方向还是原来的方向，导致光照计算不正确
 			model = glm::rotate(model, (GLfloat)glfwGetTime() * -10, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 
-			shader[2].use();
-			shader[2].setMat4("view", view);
-			shader[2].setMat4("projection", projection);
-			shader[2].setMat4("model", model);
-			shader[2].setVec3("lightPos", lightPos);
-			shader[2].setVec3("viewPos", camera->Position);
+			//Shader renderShader = shader[2];
+			Shader renderShader = shader[3];
+
+			renderShader.use();
+			renderShader.setMat4("view", view);
+			renderShader.setMat4("projection", projection);
+			renderShader.setMat4("model", model);
+			renderShader.setVec3("lightPos", lightPos);
+			renderShader.setVec3("viewPos", camera->Position);
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture[0]);
-			shader[2].setInt("diffuseTexture", 0);
+			renderShader.setInt("diffuseTexture", 0);
 
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, texture[1]);
-			shader[2].setInt("normalMap", 1);
+			renderShader.setInt("normalMap", 1);
 
-			shader[2].setBool("useNormalMap", useSpotLight);
+			renderShader.setBool("useNormalMap", useSpotLight);
 
 			renderQuad();
 
