@@ -59,7 +59,7 @@ unsigned int loadCubemap(std::vector<std::string> faces);
 
 // Window dimensions
 //const GLuint WIDTH = 800, HEIGHT = 600;
-const GLuint WIDTH = 800 * 2, HEIGHT = 600 * 2;
+const GLuint WIDTH = 800 * 1.5f, HEIGHT = 600 * 1.5f;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;

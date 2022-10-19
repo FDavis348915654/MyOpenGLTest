@@ -42,7 +42,7 @@ private:
 	std::string directory;
 	void loadModel(std::string path) {
 		Assimp::Importer import;
-		const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 			std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
@@ -77,6 +77,17 @@ private:
 			vector.y = mesh->mNormals[i].y;
 			vector.z = mesh->mNormals[i].z;
 			vertex.Normal = vector;
+			// tangent
+			vector.x = mesh->mTangents[i].x;
+			vector.y = mesh->mTangents[i].y;
+			vector.z = mesh->mTangents[i].z;
+			vertex.Tangent = vector;
+			// bitangent
+			vector.x = mesh->mBitangents[i].x;
+			vector.y = mesh->mBitangents[i].y;
+			vector.z = mesh->mBitangents[i].z;
+			vertex.Bitangent = vector;
+			// 
 			if (mesh->mTextureCoords[0]) {
 				glm::vec2 vec;
 				vec.x = mesh->mTextureCoords[0][i].x;
@@ -98,10 +109,16 @@ private:
 		// Âþ·´Éä/¾µÃæÎÆÀí
 		if (mesh->mMaterialIndex >= 0) {
 			aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+			// 1. diffuse maps
 			std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 			textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+			// 2. specular maps
 			std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+			// 3. normal maps
+			std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+			textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+			// 4. ambient maps
 			std::vector<Texture> ambientMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_ambient");
 			textures.insert(textures.end(), ambientMaps.begin(), ambientMaps.end());
 		}

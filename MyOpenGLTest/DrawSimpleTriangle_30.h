@@ -107,7 +107,7 @@ public:
 	virtual void OnInitRender(GLFWwindow* window) {
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_30");
 		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
-		camera->SpeedUpRatio = 50.0f;
+		camera->SpeedUpRatio = 10.0f;
 
 		float transparentVertices[] = {
 			// positions                    // texture Coords (swapped y coordinates because texture is flipped upside down)
@@ -218,6 +218,7 @@ public:
 		shader[1] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
 		shader[2] = Shader("../res/Shaders/lesson_19_normal_mapping_manual.vs", "../res/Shaders/lesson_19_normal_mapping_manual.fs"); // 法线贴图测试, TBN 在 fs 里处理
 		shader[3] = Shader("../res/Shaders/lesson_19_normal_mapping_manual2.vs", "../res/Shaders/lesson_19_normal_mapping_manual2.fs"); // 法线贴图测试, TBN 在 fs 里处理
+		shader[4] = Shader("../res/Shaders/lesson_13_instancing_model.vs", "../res/Shaders/lesson_13_instancing_model.fs"); // 模型 反射贴图测试(只绘制了漫反射纹理)
 
 #pragma region "skybox"
 		shader[SkyboxIndex] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
@@ -264,6 +265,10 @@ public:
 
 		loadTexture(texture[0], "../res/Texture/brickwall.jpg", GL_REPEAT, GL_REPEAT, false);
 		loadTexture(texture[1], "../res/Texture/brickwall_normal.jpg", GL_REPEAT, GL_REPEAT, false);
+
+		stbi_set_flip_vertically_on_load(false);
+		ourModel = Model("../res/cyborg/cyborg.obj");
+		stbi_set_flip_vertically_on_load(true);
 
 #pragma region "skybox"
 		{ // 天空盒
@@ -342,7 +347,7 @@ public:
 #pragma endregion
 
 		// wall 基础法线测试
-		if (true) {
+		if (false) {
 			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 posOffset(8.0f, -0.5f, -0.5f);
 			lightPos += posOffset;
@@ -387,7 +392,7 @@ public:
 		}
 
 		// wall, TBN 在 fs 里使用
-		if (true) {
+		if (false) {
 			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 posOffset(-8.0f, -0.5f, -0.5f);
 			lightPos += posOffset;
@@ -431,6 +436,20 @@ public:
 			shader[1].setMat4("model", model);
 			shader[1].setVec3("lightColor", lightColor);
 			RenderCube(VAO[1]);
+		}
+
+		// 绘制赛博模型, 反射贴图测试(只绘制了漫反射纹理)
+		if (true) {
+			//glDisable(GL_CULL_FACE);
+			shader[4].use();
+			shader[4].setVec3("cameraPos", camera->Position);
+			shader[4].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			shader[4].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			glm::mat4 model;
+			model = glm::translate(model, glm::vec3(-1.0f, -3.0f, -5.0f));
+			shader[4].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+			ourModel.Draw(shader[4]);
+			//glEnable(GL_CULL_FACE);
 		}
 	}
 
