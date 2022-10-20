@@ -73,6 +73,9 @@ public:
 	unsigned int quadVAO = 0;
 	unsigned int quadVBO;
 
+	// 自定义的光源位置
+	glm::vec3 customLightPos;
+
 	Model ourModel;
 	Model planetModel;
 	Model rockModel;
@@ -108,6 +111,8 @@ public:
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_30");
 		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		camera->SpeedUpRatio = 10.0f;
+
+		customLightPos = glm::vec3(1.0f, 1.0f, -2.0f);
 
 		float transparentVertices[] = {
 			// positions                    // texture Coords (swapped y coordinates because texture is flipped upside down)
@@ -217,8 +222,9 @@ public:
 		shader[0] = Shader("../res/Shaders/lesson_19_normal_mapping_base.vs", "../res/Shaders/lesson_19_normal_mapping_base.fs"); // 法线贴图测试
 		shader[1] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
 		shader[2] = Shader("../res/Shaders/lesson_19_normal_mapping_manual.vs", "../res/Shaders/lesson_19_normal_mapping_manual.fs"); // 法线贴图测试, TBN 在 fs 里处理
-		shader[3] = Shader("../res/Shaders/lesson_19_normal_mapping_manual2.vs", "../res/Shaders/lesson_19_normal_mapping_manual2.fs"); // 法线贴图测试, TBN 在 fs 里处理
-		shader[4] = Shader("../res/Shaders/lesson_13_instancing_model.vs", "../res/Shaders/lesson_13_instancing_model.fs"); // 模型 反射贴图测试(只绘制了漫反射纹理)
+		shader[3] = Shader("../res/Shaders/lesson_19_normal_mapping_manual2.vs", "../res/Shaders/lesson_19_normal_mapping_manual2.fs"); // 法线贴图测试, TBN 在 vs 里处理
+		shader[4] = Shader("../res/Shaders/lesson_13_instancing_model.vs", "../res/Shaders/lesson_13_instancing_model.fs"); // 模型(只绘制了漫反射纹理)
+		shader[5] = Shader("../res/Shaders/lesson_19_normal_mapping_model.vs", "../res/Shaders/lesson_19_normal_mapping_model.fs"); // 模型
 
 #pragma region "skybox"
 		shader[SkyboxIndex] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
@@ -347,7 +353,7 @@ public:
 #pragma endregion
 
 		// wall 基础法线测试
-		if (false) {
+		if (true) {
 			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 posOffset(8.0f, -0.5f, -0.5f);
 			lightPos += posOffset;
@@ -392,7 +398,7 @@ public:
 		}
 
 		// wall, TBN 在 fs 里使用
-		if (false) {
+		if (true) {
 			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 posOffset(-8.0f, -0.5f, -0.5f);
 			lightPos += posOffset;
@@ -400,11 +406,10 @@ public:
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, posOffset);
 			model = glm::scale(model, glm::vec3(5.0f));
-			//model = glm::rotate(model, 90.0f, glm::vec3(1.0, 0.0, 0.0)); // 加上旋转之后, 因为法线方向还是原来的方向，导致光照计算不正确
 			model = glm::rotate(model, (GLfloat)glfwGetTime() * -10, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 
-			//Shader renderShader = shader[2];
-			Shader renderShader = shader[3];
+			//Shader renderShader = shader[2]; // 法线贴图测试, TBN 在 fs 里处理
+			Shader renderShader = shader[3]; // 法线贴图测试, TBN 在 vs 里处理
 
 			renderShader.use();
 			renderShader.setMat4("view", view);
@@ -438,18 +443,58 @@ public:
 			RenderCube(VAO[1]);
 		}
 
-		// 绘制赛博模型, 反射贴图测试(只绘制了漫反射纹理)
-		if (true) {
+		// 绘制赛博模型, 只绘制了漫反射纹理
+		if (false) {
 			//glDisable(GL_CULL_FACE);
-			shader[4].use();
-			shader[4].setVec3("cameraPos", camera->Position);
-			shader[4].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
-			shader[4].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			Shader modelShader = shader[4];
+
+			modelShader.use();
+			modelShader.setVec3("cameraPos", camera->Position);
+			modelShader.setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			modelShader.setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(-1.0f, -3.0f, -5.0f));
-			shader[4].setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
-			ourModel.Draw(shader[4]);
+			model = glm::translate(model, glm::vec3(-5.0f, -3.0f, -5.0f));
+			modelShader.setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+
+			ourModel.Draw(modelShader);
 			//glEnable(GL_CULL_FACE);
+		}
+
+		// 绘制赛博模型, 法线贴图
+		if (false) {
+			glm::mat4 model;
+			//glDisable(GL_CULL_FACE);
+			glm::vec3 lightPos = customLightPos;
+
+			Shader modelShader = shader[5];
+
+			modelShader.use();
+			modelShader.setVec3("cameraPos", camera->Position);
+			modelShader.setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
+			modelShader.setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(2.0f, -3.0f, -5.0f));
+			modelShader.setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+
+			modelShader.setVec3("lightPos", lightPos);
+			modelShader.setVec3("viewPos", camera->Position);
+
+			modelShader.setBool("useNormalMap", useSpotLight);
+
+			ourModel.Draw(modelShader);
+			//glEnable(GL_CULL_FACE);
+
+			// lightPos
+			glm::vec3 lightColor(0.5f, 1.0f, 0.5f); // 光源颜色
+			shader[1].use();
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, lightPos);
+			model = glm::scale(model, glm::vec3(0.05));
+			shader[1].setMat4("projection", projection);
+			shader[1].setMat4("view", view);
+			shader[1].setMat4("model", model);
+			shader[1].setVec3("lightColor", lightColor);
+			RenderCube(VAO[1]);
 		}
 	}
 
@@ -561,6 +606,9 @@ public:
 			if (key == GLFW_KEY_F) {
 				useSpotLight = !useSpotLight;
 				enableShadows = !enableShadows;
+			}
+			if (key == GLFW_KEY_C) {
+				customLightPos = camera->Position;
 			}
 			if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
 				effectType = key - GLFW_KEY_0;

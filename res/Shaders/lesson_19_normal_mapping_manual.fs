@@ -47,7 +47,8 @@ void main()
 	spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
 	vec3 specular = spec * lightColor;
 
-	vec3 lighting = (ambient + diffuse + specular) * color;
+	// vec3 lighting = (ambient + diffuse + specular) * color;
+	vec3 lighting = (ambient + diffuse + specular);
 	// vec3 lighting = (diffuse) * color; // 调试, 不带阴影
 	FragColor = vec4(lighting, 1.0);
 	// FragColor = vec4(texture(diffuseTexture, fs_in.TexCoords).rgb, 1.0); // 调试, 不带阴影

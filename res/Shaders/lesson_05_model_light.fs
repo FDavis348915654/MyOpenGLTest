@@ -77,6 +77,7 @@ void main()
 	FragColor = vec4(result, 1.0);
 }
 
+// 定向光照
 // 注意, 这里的 viewDir 仅仅是片段看向 viewPos 的方向
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
 	vec3 lightDir = normalize(-light.direction);
@@ -92,6 +93,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
 	return (ambient + diffuse + specular);
 }
 
+// 点光源
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
 	vec3 lightDir = normalize(light.position - fragPos);
 	// 漫反射着色
@@ -112,6 +114,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
 	return (ambient + diffuse + specular);
 }
 
+// 聚光
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
 	vec3 lightDir = normalize(light.position - fragPos);
 	// 漫反射着色
