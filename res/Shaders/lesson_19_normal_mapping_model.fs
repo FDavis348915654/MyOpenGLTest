@@ -30,7 +30,7 @@ void main()
 		normal = normalize(normal * 2.0 - 1.0);
 	}
 	else {
-		normal = normalize(vec3(0.0, 0.0, 1.0));
+		normal = normalize(vec3(0.0, 0.0, 1.0)); // 因为是在切线空间计算法线，所以默认的法线就是这个方向
 	}
 
 	vec3 color = texture(texture_diffuse1, fs_in.TexCoords).rgb;

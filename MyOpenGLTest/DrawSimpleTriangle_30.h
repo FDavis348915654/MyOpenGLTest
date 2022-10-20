@@ -353,7 +353,7 @@ public:
 #pragma endregion
 
 		// wall 基础法线测试
-		if (true) {
+		if (false) {
 			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 posOffset(8.0f, -0.5f, -0.5f);
 			lightPos += posOffset;
@@ -398,7 +398,7 @@ public:
 		}
 
 		// wall, TBN 在 fs 里使用
-		if (true) {
+		if (false) {
 			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 posOffset(-8.0f, -0.5f, -0.5f);
 			lightPos += posOffset;
@@ -444,7 +444,7 @@ public:
 		}
 
 		// 绘制赛博模型, 只绘制了漫反射纹理
-		if (false) {
+		if (true) {
 			//glDisable(GL_CULL_FACE);
 			Shader modelShader = shader[4];
 
@@ -461,7 +461,7 @@ public:
 		}
 
 		// 绘制赛博模型, 法线贴图
-		if (false) {
+		if (true) {
 			glm::mat4 model;
 			//glDisable(GL_CULL_FACE);
 			glm::vec3 lightPos = customLightPos;

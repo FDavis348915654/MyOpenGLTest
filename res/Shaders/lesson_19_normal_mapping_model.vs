@@ -28,16 +28,16 @@ void main()
 	vs_out.TexCoords = aTexCoords;
 
 	// 修正前
-	vec3 T = normalize(vec3(model * vec4(aTangent, 0.0)));
-	vec3 B = normalize(vec3(model * vec4(aBitangent, 0.0)));
-	vec3 N = normalize(vec3(model * vec4(aNormal, 0.0)));
+	// vec3 T = normalize(vec3(model * vec4(aTangent, 0.0)));
+	// vec3 B = normalize(vec3(model * vec4(aBitangent, 0.0)));
+	// vec3 N = normalize(vec3(model * vec4(aNormal, 0.0)));
 
 	// 修正后
-	// mat3 normalMatrix = transpose(inverse(mat3(model)));
-	// vec3 T = normalize(normalMatrix * aTangent);
-	// vec3 N = normalize(normalMatrix * aNormal);
-	// T = normalize(T - dot(T, N) * N);
-	// vec3 B = cross(N, T);
+	mat3 normalMatrix = transpose(inverse(mat3(model)));
+	vec3 T = normalize(normalMatrix * aTangent);
+	vec3 N = normalize(normalMatrix * aNormal);
+	T = normalize(T - dot(T, N) * N);
+	vec3 B = cross(N, T);
 
 	mat3 TBN = transpose(mat3(T, B, N));
 	vs_out.TangentLightPos = TBN * lightPos;
