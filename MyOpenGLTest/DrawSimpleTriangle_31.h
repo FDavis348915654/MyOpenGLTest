@@ -358,8 +358,18 @@ public:
 		}
 #pragma endregion
 
+		if (true) {
+			glm::vec3 lightPos(0.5f, 1.0f, 6.0f);
+			// lightPos
+			glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // 光源颜色
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, lightPos);
+			model = glm::scale(model, glm::vec3(0.05));
+			RenderLightBox(projection, view, model, lightColor);
+		}
+
 		// wall 基础法线测试
-		if (false) {
+		if (true) {
 			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 posOffset(8.0f, -0.5f, -0.5f);
 			lightPos += posOffset;
@@ -395,11 +405,11 @@ public:
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, lightPos);
 			model = glm::scale(model, glm::vec3(0.05));
-			RenderCube(VAO[1]);
+			RenderLightBox(projection, view, model, lightColor);
 		}
 
 		// wall, TBN 在 fs 里使用
-		if (false) {
+		if (true) {
 			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 posOffset(-8.0f, -0.5f, -0.5f);
 			lightPos += posOffset;
