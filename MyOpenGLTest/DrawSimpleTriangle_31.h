@@ -33,7 +33,10 @@ class DrawSimpleTriangle_31 : public SimpleDrawTestBase
 public:
 	static const unsigned int SHADOW_WIDTH = 1024 * 1, SHADOW_HEIGHT = 1024 * 1;
 	static const int RenderNum = 20;
+	// 天空盒的索引
 	static const int SkyboxIndex = RenderNum - 1;
+	// 测试光源的索引
+	static const int LightBoxIndex = RenderNum - 2;
 	// Vertex Array Object, VAO
 	GLuint VAO[RenderNum];
 	// Element Buffer Object, EBO
@@ -125,51 +128,53 @@ public:
 			 1.0f,  1.0f, 0.0f,             1.0f,  1.0f
 		};
 
-		// 箱子 // VAO[1] // 用来指示光源
-		float vertices[] = {
+#pragma region "光源"
+		// 箱子 // VAO[LightBoxIndex] // 用来指示光源
+		float lightBoxVertices[] = {
 			// back face
-			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-			 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-			 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
-			 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-			-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
+			-1.0f, -1.0f, -1.0f, // bottom-left
+			 1.0f,  1.0f, -1.0f, // top-right
+			 1.0f, -1.0f, -1.0f, // bottom-right
+			 1.0f,  1.0f, -1.0f, // top-right
+			-1.0f, -1.0f, -1.0f, // bottom-left
+			-1.0f,  1.0f, -1.0f, // top-left
 			// front face
-			-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-			 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
-			 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-			 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-			-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
-			-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+			-1.0f, -1.0f,  1.0f, // bottom-left
+			 1.0f, -1.0f,  1.0f, // bottom-right
+			 1.0f,  1.0f,  1.0f, // top-right
+			 1.0f,  1.0f,  1.0f, // top-right
+			-1.0f,  1.0f,  1.0f, // top-left
+			-1.0f, -1.0f,  1.0f, // bottom-left
 			// left face
-			-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-			-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
-			-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-			-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-			-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-			-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+			-1.0f,  1.0f,  1.0f, // top-right
+			-1.0f,  1.0f, -1.0f, // top-left
+			-1.0f, -1.0f, -1.0f, // bottom-left
+			-1.0f, -1.0f, -1.0f, // bottom-left
+			-1.0f, -1.0f,  1.0f, // bottom-right
+			-1.0f,  1.0f,  1.0f, // top-right
 			// right face
-			 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-			 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-			 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
-			 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-			 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-			 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+			 1.0f,  1.0f,  1.0f, // top-left
+			 1.0f, -1.0f, -1.0f, // bottom-right
+			 1.0f,  1.0f, -1.0f, // top-right
+			 1.0f, -1.0f, -1.0f, // bottom-right
+			 1.0f,  1.0f,  1.0f, // top-left
+			 1.0f, -1.0f,  1.0f, // bottom-left
 			// bottom face
-			-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-			 1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
-			 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-			 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-			-1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-			-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+			-1.0f, -1.0f, -1.0f, // top-right
+			 1.0f, -1.0f, -1.0f, // top-left
+			 1.0f, -1.0f,  1.0f, // bottom-left
+			 1.0f, -1.0f,  1.0f, // bottom-left
+			-1.0f, -1.0f,  1.0f, // bottom-right
+			-1.0f, -1.0f, -1.0f, // top-right
 			// top face
-			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-			 1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-			 1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
-			 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-			-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
+			-1.0f,  1.0f, -1.0f, // top-left
+			 1.0f,  1.0f , 1.0f, // bottom-right
+			 1.0f,  1.0f, -1.0f, // top-right
+			 1.0f,  1.0f,  1.0f, // bottom-right
+			-1.0f,  1.0f, -1.0f, // top-left
+			-1.0f,  1.0f,  1.0f, // bottom-left
 		};
+#pragma endregion
 
 #pragma region "skybox"
 		float skyboxVertices[] = {
@@ -220,11 +225,14 @@ public:
 
 		// 编译着色器
 		shader[0] = Shader("../res/Shaders/lesson_19_normal_mapping_base.vs", "../res/Shaders/lesson_19_normal_mapping_base.fs"); // 法线贴图测试
-		shader[1] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
 		shader[2] = Shader("../res/Shaders/lesson_19_normal_mapping_manual.vs", "../res/Shaders/lesson_19_normal_mapping_manual.fs"); // 法线贴图测试, TBN 在 fs 里处理
 		shader[3] = Shader("../res/Shaders/lesson_19_normal_mapping_manual2.vs", "../res/Shaders/lesson_19_normal_mapping_manual2.fs"); // 法线贴图测试, TBN 在 vs 里处理
 		shader[4] = Shader("../res/Shaders/lesson_13_instancing_model.vs", "../res/Shaders/lesson_13_instancing_model.fs"); // 模型(只绘制了漫反射纹理)
 		shader[5] = Shader("../res/Shaders/lesson_19_normal_mapping_model.vs", "../res/Shaders/lesson_19_normal_mapping_model.fs"); // 模型
+
+#pragma region "光源"
+		shader[LightBoxIndex] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
+#pragma endregion
 
 #pragma region "skybox"
 		shader[SkyboxIndex] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
@@ -254,20 +262,18 @@ public:
 			glBindVertexArray(0);
 		}
 
+#pragma region "光源"
 		{ // 箱子 // 用来指示光源
-			glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO[LightBoxIndex]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(lightBoxVertices), lightBoxVertices, GL_STATIC_DRAW);
 			// link vertex attributes
-			glBindVertexArray(VAO[1]);
+			glBindVertexArray(VAO[LightBoxIndex]);
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glBindVertexArray(0);
 		}
+#pragma endregion
 
 		loadTexture(texture[0], "../res/Texture/brickwall.jpg", GL_REPEAT, GL_REPEAT, false);
 		loadTexture(texture[1], "../res/Texture/brickwall_normal.jpg", GL_REPEAT, GL_REPEAT, false);
@@ -386,14 +392,9 @@ public:
 
 			// lightPos
 			glm::vec3 lightColor(1.0f, 0.5f, 0.5f); // 光源颜色
-			shader[1].use();
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, lightPos);
 			model = glm::scale(model, glm::vec3(0.05));
-			shader[1].setMat4("projection", projection);
-			shader[1].setMat4("view", view);
-			shader[1].setMat4("model", model);
-			shader[1].setVec3("lightColor", lightColor);
 			RenderCube(VAO[1]);
 		}
 
@@ -432,15 +433,10 @@ public:
 
 			// lightPos
 			glm::vec3 lightColor(0.5f, 1.0f, 0.5f); // 光源颜色
-			shader[1].use();
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, lightPos);
 			model = glm::scale(model, glm::vec3(0.05));
-			shader[1].setMat4("projection", projection);
-			shader[1].setMat4("view", view);
-			shader[1].setMat4("model", model);
-			shader[1].setVec3("lightColor", lightColor);
-			RenderCube(VAO[1]);
+			RenderLightBox(projection, view, model, lightColor);
 		}
 
 		// 绘制赛博模型, 只绘制了漫反射纹理
@@ -486,17 +482,23 @@ public:
 
 			// lightPos
 			glm::vec3 lightColor(0.5f, 1.0f, 0.5f); // 光源颜色
-			shader[1].use();
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, lightPos);
 			model = glm::scale(model, glm::vec3(0.05));
-			shader[1].setMat4("projection", projection);
-			shader[1].setMat4("view", view);
-			shader[1].setMat4("model", model);
-			shader[1].setVec3("lightColor", lightColor);
-			RenderCube(VAO[1]);
+			RenderLightBox(projection, view, model, lightColor);
 		}
 	}
+
+#pragma region "光源"
+	void RenderLightBox(glm::mat4 projection, glm::mat4 view, glm::mat4 model, glm::vec3 lightColor) {
+		shader[LightBoxIndex].use();
+		shader[LightBoxIndex].setMat4("projection", projection);
+		shader[LightBoxIndex].setMat4("view", view);
+		shader[LightBoxIndex].setMat4("model", model);
+		shader[LightBoxIndex].setVec3("lightColor", lightColor);
+		RenderCube(VAO[LightBoxIndex]);
+	}
+#pragma endregion
 
 	void renderQuad()
 	{
