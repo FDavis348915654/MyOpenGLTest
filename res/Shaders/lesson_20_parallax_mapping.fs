@@ -26,7 +26,7 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir) {
 		return texCoords - viewDir.xy * (height * heightScale);
 	}
 	else {
-		return texCoords
+		return texCoords;
 	}
 }
 
@@ -53,7 +53,7 @@ void main()
 		normal = normalize(vec3(0.0, 0.0, 1.0));
 	}
 
-	vec3 color = texture(diffuseTexture, fs_in.TexCoords).rgb;
+	vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
 	vec3 lightColor = vec3(0.2);
 
 	// 平常的光照处理
@@ -64,7 +64,6 @@ void main()
 	float diff = max(dot(lightDir, normal), 0.0);
 	vec3 diffuse = diff * color;
 	// specular
-	vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangetFragPos);
 	float spec = 0.0;
 	vec3 halfwayDir = normalize(lightDir + viewDir);
 	spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
@@ -74,5 +73,5 @@ void main()
 	vec3 lighting = (ambient + diffuse + specular);
 	// vec3 lighting = (diffuse) * color; // 调试, 不带阴影
 	FragColor = vec4(lighting, 1.0);
-	// FragColor = vec4(texture(diffuseTexture, fs_in.TexCoords).rgb, 1.0); // 调试, 不带阴影
+	// FragColor = vec4(texture(diffuseMap, fs_in.TexCoords).rgb, 1.0); // 调试, 不带阴影
 }

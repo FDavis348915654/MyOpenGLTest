@@ -224,11 +224,7 @@ public:
 #pragma endregion
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_19_normal_mapping_base.vs", "../res/Shaders/lesson_19_normal_mapping_base.fs"); // 法线贴图测试
-		shader[2] = Shader("../res/Shaders/lesson_19_normal_mapping_manual.vs", "../res/Shaders/lesson_19_normal_mapping_manual.fs"); // 法线贴图测试, TBN 在 fs 里处理
-		shader[3] = Shader("../res/Shaders/lesson_19_normal_mapping_manual2.vs", "../res/Shaders/lesson_19_normal_mapping_manual2.fs"); // 法线贴图测试, TBN 在 vs 里处理
-		shader[4] = Shader("../res/Shaders/lesson_13_instancing_model.vs", "../res/Shaders/lesson_13_instancing_model.fs"); // 模型(只绘制了漫反射纹理)
-		shader[5] = Shader("../res/Shaders/lesson_19_normal_mapping_model.vs", "../res/Shaders/lesson_19_normal_mapping_model.fs"); // 模型
+		shader[0] = Shader("../res/Shaders/lesson_20_parallax_mapping.vs", "../res/Shaders/lesson_20_parallax_mapping.fs"); // 视差贴图
 
 #pragma region "光源"
 		shader[LightBoxIndex] = Shader("../res/Shaders/lesson_01_color_light.vs", "../res/Shaders/lesson_01_color_light.fs"); // 用于显示光源的小白块
@@ -275,12 +271,11 @@ public:
 		}
 #pragma endregion
 
-		loadTexture(texture[0], "../res/Texture/brickwall.jpg", GL_REPEAT, GL_REPEAT, false);
-		loadTexture(texture[1], "../res/Texture/brickwall_normal.jpg", GL_REPEAT, GL_REPEAT, false);
-
-		stbi_set_flip_vertically_on_load(false);
-		ourModel = Model("../res/cyborg/cyborg.obj");
-		stbi_set_flip_vertically_on_load(true);
+		loadTexture(texture[0], "../res/Texture/bricks2.jpg", GL_REPEAT, GL_REPEAT, false);
+		loadTexture(texture[1], "../res/Texture/bricks2_normal.jpg", GL_REPEAT, GL_REPEAT, false);
+		//loadTexture(texture[2], "../res/Texture/parallax_mapping_height_map.png", GL_REPEAT, GL_REPEAT, false);
+		loadTexture(texture[2], "../res/Texture/bricks2_disp.jpg", GL_REPEAT, GL_REPEAT, false);
+		
 
 #pragma region "skybox"
 		{ // 天空盒
@@ -368,59 +363,19 @@ public:
 			RenderLightBox(projection, view, model, lightColor);
 		}
 
-		// wall 基础法线测试
+		// wall, TBN 在 vs 里使用
 		if (true) {
+			float heightScale = 0.2f;
 			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
-			glm::vec3 posOffset(8.0f, -0.5f, -0.5f);
+			glm::vec3 posOffset(0.0f, -0.5f, -0.5f);
 			lightPos += posOffset;
 
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, posOffset);
-			model = glm::scale(model, glm::vec3(5.0f));
-			//model = glm::rotate(model, 90.0f, glm::vec3(1.0, 0.0, 0.0)); // 加上旋转之后, 因为法线方向还是原来的方向，导致光照计算不正确
-			model = glm::rotate(model, (GLfloat)glfwGetTime() * -10, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+			model = glm::scale(model, glm::vec3(2.0f));
+			//model = glm::rotate(model, (GLfloat)glfwGetTime() * -10, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 
-			shader[0].use();
-			shader[0].setMat4("view", view);
-			shader[0].setMat4("projection", projection);
-			shader[0].setMat4("model", model);
-			shader[0].setVec3("lightPos", lightPos);
-			shader[0].setVec3("viewPos", camera->Position);
-
-			glBindVertexArray(VAO[0]);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture[0]);
-			shader[0].setInt("diffuseTexture", 0);
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, texture[1]);
-			shader[0].setInt("normalMap", 1);
-
-			shader[0].setBool("useNormalMap", useSpotLight);
-
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-
-			// lightPos
-			glm::vec3 lightColor(1.0f, 0.5f, 0.5f); // 光源颜色
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, lightPos);
-			model = glm::scale(model, glm::vec3(0.05));
-			RenderLightBox(projection, view, model, lightColor);
-		}
-
-		// wall, TBN 在 fs 里使用
-		if (true) {
-			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
-			glm::vec3 posOffset(-8.0f, -0.5f, -0.5f);
-			lightPos += posOffset;
-
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, posOffset);
-			model = glm::scale(model, glm::vec3(5.0f));
-			model = glm::rotate(model, (GLfloat)glfwGetTime() * -10, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-
-			//Shader renderShader = shader[2]; // 法线贴图测试, TBN 在 fs 里处理
-			Shader renderShader = shader[3]; // 法线贴图测试, TBN 在 vs 里处理
+			Shader renderShader = shader[0]; // 法线贴图测试, TBN 在 vs 里处理
 
 			renderShader.use();
 			renderShader.setMat4("view", view);
@@ -431,64 +386,22 @@ public:
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture[0]);
-			renderShader.setInt("diffuseTexture", 0);
+			renderShader.setInt("diffuseMap", 0);
 
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, texture[1]);
 			renderShader.setInt("normalMap", 1);
 
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, texture[2]);
+			renderShader.setInt("depthMap", 2);
+
+			renderShader.setBool("useDepthMap", useSpotLight);
 			renderShader.setBool("useNormalMap", useSpotLight);
 
+			renderShader.setFloat("heightScale", heightScale);
+
 			renderQuad();
-
-			// lightPos
-			glm::vec3 lightColor(0.5f, 1.0f, 0.5f); // 光源颜色
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, lightPos);
-			model = glm::scale(model, glm::vec3(0.05));
-			RenderLightBox(projection, view, model, lightColor);
-		}
-
-		// 绘制赛博模型, 只绘制了漫反射纹理
-		if (true) {
-			//glDisable(GL_CULL_FACE);
-			Shader modelShader = shader[4];
-
-			modelShader.use();
-			modelShader.setVec3("cameraPos", camera->Position);
-			modelShader.setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
-			modelShader.setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
-			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(-5.0f, -3.0f, -5.0f));
-			modelShader.setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
-
-			ourModel.Draw(modelShader);
-			//glEnable(GL_CULL_FACE);
-		}
-
-		// 绘制赛博模型, 法线贴图
-		if (true) {
-			glm::mat4 model;
-			//glDisable(GL_CULL_FACE);
-			glm::vec3 lightPos = customLightPos;
-
-			Shader modelShader = shader[5];
-
-			modelShader.use();
-			modelShader.setVec3("cameraPos", camera->Position);
-			modelShader.setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
-			modelShader.setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(2.0f, -3.0f, -5.0f));
-			modelShader.setMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
-
-			modelShader.setVec3("lightPos", lightPos);
-			modelShader.setVec3("viewPos", camera->Position);
-
-			modelShader.setBool("useNormalMap", useSpotLight);
-
-			ourModel.Draw(modelShader);
-			//glEnable(GL_CULL_FACE);
 
 			// lightPos
 			glm::vec3 lightColor(0.5f, 1.0f, 0.5f); // 光源颜色
