@@ -1,5 +1,5 @@
 #version 330 core
-// 法线贴图, 手工计算法线
+// 法线贴图, 手工计算法线(在 fs 里使用 TBN)
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
@@ -29,6 +29,7 @@ void main()
 	vec3 B = normalize(vec3(model * vec4(aBitangent, 0.0)));
 	vec3 N = normalize(vec3(model * vec4(aNormal, 0.0)));
 	mat3 TBN = mat3(T, B, N);
+
 	vs_out.TBN = TBN;
 
 	gl_Position = projection * view * model * vec4(aPos, 1.0f);

@@ -1,5 +1,5 @@
 #version 330 core
-// 法线贴图, 手工计算法线
+// 法线贴图, 手工计算法线(在 fs 里使用 TBN)
 
 out vec4 FragColor; // 片段着色器输出的变量名可以任意命名，类型必须是 vec4
 

@@ -23,7 +23,9 @@ uniform float heightScale;
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir) {
 	if (useDepthMap) {
 		float height = texture(depthMap, texCoords).r;
-		return texCoords - viewDir.xy * (height * heightScale);
+		// vec2 p = viewDir.xy * (height * heightScale); // 普通视差贴图
+		vec2 p = viewDir.xy / viewDir.z * (height * heightScale); // 有偏移量限制的视差贴图
+		return texCoords - p;
 	}
 	else {
 		return texCoords;
@@ -44,7 +46,7 @@ void main()
 	}
 
 	// 从法线贴图范围[0,1]获取法线
-	vec3 normal = texture(normalMap, fs_in.TexCoords).rgb;
+	vec3 normal = texture(normalMap, texCoords).rgb;
 	// 将法线向量转换为范围[-1,1]
 	if (useNormalMap) {
 		normal = normalize(normal * 2.0 - 1.0);
@@ -53,7 +55,7 @@ void main()
 		normal = normalize(vec3(0.0, 0.0, 1.0));
 	}
 
-	vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
+	vec3 color = texture(diffuseMap, texCoords).rgb;
 	vec3 lightColor = vec3(0.2);
 
 	// 平常的光照处理

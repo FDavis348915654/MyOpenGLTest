@@ -115,7 +115,7 @@ public:
 		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		camera->SpeedUpRatio = 10.0f;
 
-		customLightPos = glm::vec3(1.0f, 1.0f, -2.0f);
+		customLightPos = glm::vec3(0.5f, 1.0f, 6.0f);
 
 		float transparentVertices[] = {
 			// positions                    // texture Coords (swapped y coordinates because texture is flipped upside down)
@@ -354,7 +354,7 @@ public:
 #pragma endregion
 
 		if (true) {
-			glm::vec3 lightPos(0.5f, 1.0f, 6.0f);
+			glm::vec3 lightPos(5.5f, 1.0f, 6.0f);
 			// lightPos
 			glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // 光源颜色
 			glm::mat4 model = glm::mat4(1.0f);
@@ -365,10 +365,11 @@ public:
 
 		// wall, TBN 在 vs 里使用
 		if (true) {
-			float heightScale = 0.2f;
-			glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
+			float heightScale = 0.1f;
+			//glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
+			glm::vec3 lightPos = customLightPos;
 			glm::vec3 posOffset(0.0f, -0.5f, -0.5f);
-			lightPos += posOffset;
+			//lightPos += posOffset;
 
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, posOffset);
@@ -400,7 +401,7 @@ public:
 			renderShader.setBool("useNormalMap", useSpotLight);
 
 			renderShader.setFloat("heightScale", heightScale);
-
+			// 手工计算切线空间
 			renderQuad();
 
 			// lightPos
@@ -423,6 +424,7 @@ public:
 	}
 #pragma endregion
 
+	// 手工计算切线空间
 	void renderQuad()
 	{
 		// 如果还没有定义 VAO, 那么定义 VAO

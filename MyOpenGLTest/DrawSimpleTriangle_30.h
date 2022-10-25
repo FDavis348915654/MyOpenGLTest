@@ -427,7 +427,7 @@ public:
 			renderShader.setInt("normalMap", 1);
 
 			renderShader.setBool("useNormalMap", useSpotLight);
-
+			// 手工计算切线空间
 			renderQuad();
 
 			// lightPos
@@ -498,6 +498,7 @@ public:
 		}
 	}
 
+	// 手工计算切线空间
 	void renderQuad()
 	{
 		// 如果还没有定义 VAO, 那么定义 VAO
