@@ -39,13 +39,13 @@ vec2 ParallaxMappingMulti(vec2 texCoords, vec3 viewDir) {
 		// const float numLayers = 20;
 
 		// 根据观察角度动态修改样本数量
-		const float minLayers = 8;
-		const float maxLayers = 32;
+		const float minLayers = 50; //8;
+		const float maxLayers = 100; //32;
 		float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
 
 		float layerDepth = 1.0 / numLayers;
 		float currentLayerDepth = 0.0;
-		vec2 P = viewDir.xy * heightScale;
+		vec2 P = viewDir.xy / viewDir.z * heightScale;
 		vec2 deltaTexCoords = P / numLayers;
 
 		// get initial values
@@ -62,8 +62,7 @@ vec2 ParallaxMappingMulti(vec2 texCoords, vec3 viewDir) {
 			currentLayerDepth += layerDepth;
 		}
 
-		vec2 p = currentTexCoords * (currentDepthMapValue * heightScale);
-		return texCoords - p;
+		return currentTexCoords;
 	}
 	else {
 		return texCoords;
@@ -77,8 +76,8 @@ void main()
 	vec2 texCoords = fs_in.TexCoords;
 
 	if (useDepthMap) {
-		texCoords = ParallaxMapping(texCoords, viewDir); // 视差贴图
-		// texCoords = ParallaxMappingMulti(texCoords, viewDir); // 陡峭视差映射(Steep Parallax Mapping)
+		// texCoords = ParallaxMapping(texCoords, viewDir); // 视差贴图
+		texCoords = ParallaxMappingMulti(texCoords, viewDir); // 陡峭视差映射(Steep Parallax Mapping)
 		if (texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0) {
 			discard;
 		}

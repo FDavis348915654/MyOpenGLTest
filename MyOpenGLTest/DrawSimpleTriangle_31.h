@@ -358,6 +358,7 @@ public:
 		}
 #pragma endregion
 
+		// 用于定位的光源
 		if (true) {
 			glm::vec3 lightPos(5.5f, 1.0f, 6.0f);
 			// lightPos
@@ -369,8 +370,8 @@ public:
 		}
 
 		// wall, TBN 在 vs 里使用
-		if (true) {
-			float heightScale = 0.05f;
+		if (false) {
+			float heightScale = 0.1f;
 			//glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 lightPos = customLightPos;
 			glm::vec3 posOffset(0.0f, -0.5f, -0.5f);
@@ -418,7 +419,7 @@ public:
 		}
 
 		// 木雕, TBN 在 vs 里使用
-		if (false) {
+		if (true) {
 			float heightScale = 0.1f;
 			//glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 lightPos = customLightPos;
