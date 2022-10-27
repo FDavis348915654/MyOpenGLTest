@@ -271,10 +271,15 @@ public:
 		}
 #pragma endregion
 
+		stbi_set_flip_vertically_on_load(false);
 		loadTexture(texture[0], "../res/Texture/bricks2.jpg", GL_REPEAT, GL_REPEAT, false);
 		loadTexture(texture[1], "../res/Texture/bricks2_normal.jpg", GL_REPEAT, GL_REPEAT, false);
-		//loadTexture(texture[2], "../res/Texture/parallax_mapping_height_map.png", GL_REPEAT, GL_REPEAT, false);
 		loadTexture(texture[2], "../res/Texture/bricks2_disp.jpg", GL_REPEAT, GL_REPEAT, false);
+
+		loadTexture(texture[3], "../res/Texture/wood.png", GL_REPEAT, GL_REPEAT, false);
+		loadTexture(texture[4], "../res/Texture/toy_box_normal.png", GL_REPEAT, GL_REPEAT, false);
+		loadTexture(texture[5], "../res/Texture/toy_box_disp.png", GL_REPEAT, GL_REPEAT, false);
+		stbi_set_flip_vertically_on_load(true);
 		
 
 #pragma region "skybox"
@@ -365,7 +370,7 @@ public:
 
 		// wall, TBN 在 vs 里使用
 		if (true) {
-			float heightScale = 0.1f;
+			float heightScale = 0.05f;
 			//glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 lightPos = customLightPos;
 			glm::vec3 posOffset(0.0f, -0.5f, -0.5f);
@@ -373,7 +378,7 @@ public:
 
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, posOffset);
-			model = glm::scale(model, glm::vec3(2.0f));
+			model = glm::scale(model, glm::vec3(1.0f));
 			//model = glm::rotate(model, (GLfloat)glfwGetTime() * -10, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 
 			Shader renderShader = shader[0]; // 法线贴图测试, TBN 在 vs 里处理
@@ -395,6 +400,55 @@ public:
 
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, texture[2]);
+			renderShader.setInt("depthMap", 2);
+
+			renderShader.setBool("useDepthMap", useSpotLight);
+			renderShader.setBool("useNormalMap", useSpotLight);
+
+			renderShader.setFloat("heightScale", heightScale);
+			// 手工计算切线空间
+			renderQuad();
+
+			// lightPos
+			glm::vec3 lightColor(0.5f, 1.0f, 0.5f); // 光源颜色
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, lightPos);
+			model = glm::scale(model, glm::vec3(0.05));
+			RenderLightBox(projection, view, model, lightColor);
+		}
+
+		// 木雕, TBN 在 vs 里使用
+		if (false) {
+			float heightScale = 0.1f;
+			//glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
+			glm::vec3 lightPos = customLightPos;
+			glm::vec3 posOffset(0.0f, -0.5f, -0.5f);
+			//lightPos += posOffset;
+
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, posOffset);
+			model = glm::scale(model, glm::vec3(1.0f));
+			//model = glm::rotate(model, (GLfloat)glfwGetTime() * -10, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+
+			Shader renderShader = shader[0]; // 法线贴图测试, TBN 在 vs 里处理
+
+			renderShader.use();
+			renderShader.setMat4("view", view);
+			renderShader.setMat4("projection", projection);
+			renderShader.setMat4("model", model);
+			renderShader.setVec3("lightPos", lightPos);
+			renderShader.setVec3("viewPos", camera->Position);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture[3]);
+			renderShader.setInt("diffuseMap", 0);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, texture[4]);
+			renderShader.setInt("normalMap", 1);
+
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, texture[5]);
 			renderShader.setInt("depthMap", 2);
 
 			renderShader.setBool("useDepthMap", useSpotLight);
