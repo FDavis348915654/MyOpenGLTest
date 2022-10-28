@@ -115,7 +115,7 @@ public:
 		camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 		camera->SpeedUpRatio = 10.0f;
 
-		customLightPos = glm::vec3(0.5f, 1.0f, 6.0f);
+		customLightPos = glm::vec3(0.5f, 10.0f, 15.0f);
 
 		float transparentVertices[] = {
 			// positions                    // texture Coords (swapped y coordinates because texture is flipped upside down)
@@ -370,17 +370,18 @@ public:
 		}
 
 		// wall, TBN 在 vs 里使用
-		if (false) {
-			float heightScale = 0.1f;
+		if (true) {
+			float heightScale = 0.03f; // 0.1f;
 			//glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 lightPos = customLightPos;
-			glm::vec3 posOffset(0.0f, -0.5f, -0.5f);
+			glm::vec3 posOffset(0.0f, -2.0f, 0.0f);
 			//lightPos += posOffset;
 
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, posOffset);
-			model = glm::scale(model, glm::vec3(1.0f));
 			//model = glm::rotate(model, (GLfloat)glfwGetTime() * -10, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+			model = glm::scale(model, glm::vec3(20.0f));
+			model = glm::rotate(model, -90.0f, glm::normalize(glm::vec3(1.0, 0.0, 0.0)));
 
 			Shader renderShader = shader[0]; // 法线贴图测试, TBN 在 vs 里处理
 
@@ -423,7 +424,7 @@ public:
 			float heightScale = 0.1f;
 			//glm::vec3 lightPos(0.5f, 1.0f, 6.3f);
 			glm::vec3 lightPos = customLightPos;
-			glm::vec3 posOffset(0.0f, -0.5f, -0.5f);
+			glm::vec3 posOffset(0.0f, 1.0f, 0.0f);
 			//lightPos += posOffset;
 
 			glm::mat4 model = glm::mat4(1.0f);
