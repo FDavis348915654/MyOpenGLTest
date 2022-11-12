@@ -31,12 +31,19 @@ unsigned int loadCubemap(std::vector<std::string> faces);
 class DrawSimpleTriangle_33 : public SimpleDrawTestBase
 {
 public:
-	static const unsigned int SHADOW_WIDTH = 1024 * 1, SHADOW_HEIGHT = 1024 * 1;
+	// 渲染对象的数量
 	static const int RenderNum = 20;
+
+#pragma region "skybox"
 	// 天空盒的索引
 	static const int SkyboxIndex = RenderNum - 1;
+#pragma endregion
+
+#pragma region "光源"
 	// 测试光源的索引
 	static const int LightBoxIndex = RenderNum - 2;
+#pragma endregion
+
 	// Vertex Array Object, VAO
 	GLuint VAO[RenderNum];
 	// Element Buffer Object, EBO
@@ -49,53 +56,11 @@ public:
 	Shader shader[RenderNum];
 	// camera
 	Camera* camera;
-	// Framebuffer Object // 帧缓冲对象
-	unsigned int framebuffer;
-	// Renderbuffer Object // 渲染缓冲对象/渲染附件
-	unsigned int rbo;
-	// 纹理附件
-	unsigned int texColorBuffer;
 
-	// MSAA 中间帧缓冲
-	unsigned int intermediateFBO;
-	// MSAA 显示在屏幕上的帧缓冲
-	unsigned int screenTexture;
-
-	// 阴影帧缓冲
-	unsigned int depthMapFBO;
-	// 阴影纹理附件
-	//unsigned int depthMap;
-	unsigned int depthCubemap;
-
-	// hdr 帧缓冲
-	unsigned int hdrFBO;
-	std::vector<glm::vec3> lightPositions;
-	std::vector<glm::vec3> lightColors;
-	unsigned int cubeVAO = 0;
-	unsigned int cubeVBO = 0;
-	unsigned int quadVAO = 0;
-	unsigned int quadVBO;
-	unsigned int colorBuffer; // texture
-
+#pragma region "skybox"
 	// 立方体贴图 // 天空盒
 	unsigned int cubeTexture;
-	// uniform buffer object
-	unsigned int uboMatrices;
-
-	// 法线贴图相关变量
-	//unsigned int quadVAO = 0;
-	//unsigned int quadVBO;
-
-	// 自定义的光源位置
-	glm::vec3 customLightPos;
-
-	Model ourModel;
-	Model planetModel;
-	Model rockModel;
-
-	//static const int RockAmount = 5000; // 普通渲染
-	static const int RockAmount = 100000; // 调用 glDrawElementsInstanced 渲染
-	glm::mat4 modelMatrices[RockAmount];
+#pragma endregion
 
 	GLuint screenWidth;
 	GLuint screenHeight;
@@ -108,7 +73,6 @@ public:
 	GLboolean firstMouse = true;
 
 	bool useSpotLight = true;
-	bool enableShadows = true;
 
 	float deltaTime = 0.0f;
 
@@ -124,19 +88,6 @@ public:
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_33");
 		camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
 		camera->SpeedUpRatio = 10.0f;
-
-		customLightPos = glm::vec3(0.5f, 10.0f, 15.0f);
-
-		// positions
-		lightPositions.push_back(glm::vec3(0.0f, 0.0f, 49.5f)); // back light
-		lightPositions.push_back(glm::vec3(-1.4f, -1.9f, 9.0f));
-		lightPositions.push_back(glm::vec3(0.0f, -1.8f, 4.0f));
-		lightPositions.push_back(glm::vec3(0.8f, -1.7f, 6.0f));
-		// colors
-		lightColors.push_back(glm::vec3(200.0f, 200.0f, 200.0f));
-		lightColors.push_back(glm::vec3(0.1f, 0.0f, 0.0f));
-		lightColors.push_back(glm::vec3(0.0f, 0.0f, 0.2f));
-		lightColors.push_back(glm::vec3(0.0f, 0.1f, 0.0f));
 
 #pragma region "光源"
 		// 箱子 // VAO[LightBoxIndex] // 用来指示光源
@@ -261,30 +212,6 @@ public:
 		// 加载的图像默认上下翻转
 		stbi_set_flip_vertically_on_load(true);
 
-		{ // HDR FBO
-			glGenFramebuffers(1, &hdrFBO);
-			// create floating point color buffer
-			glGenTextures(1, &colorBuffer);
-			glBindTexture(GL_TEXTURE_2D, colorBuffer);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenWidth, screenHeight, 0, GL_RGBA, GL_FLOAT, NULL);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			// create depth buffer (renderbuffer)
-			unsigned int rboDepth;
-			glGenRenderbuffers(1, &rboDepth);
-			glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, screenWidth, screenHeight);
-			// attach buffers
-			glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-			unsigned int frameRet = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-			if (frameRet != GL_FRAMEBUFFER_COMPLETE) {
-				std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete! " << std::hex << frameRet << std::endl;
-			}
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
-
 #pragma region "光源"
 		{ // 箱子 // 用来指示光源
 			glBindBuffer(GL_ARRAY_BUFFER, VBO[LightBoxIndex]);
@@ -361,7 +288,6 @@ public:
 		//std::cout << "call OnRender()" << std::endl;
 		glm::mat4 view = camera->GetViewMatrix();
 		glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
-		//glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 800.0f); // 为了看小行星带, 远平面设得远一点
 
 #pragma region "skybox"
 		if (true) { // skybox // 最先绘制 // 需关闭深度写入
@@ -379,6 +305,7 @@ public:
 		}
 #pragma endregion
 
+#pragma region "光源"
 		// 用于定位的光源
 		if (false) {
 			glm::vec3 lightPos(5.5f, 1.0f, 6.0f);
@@ -389,44 +316,8 @@ public:
 			model = glm::scale(model, glm::vec3(0.05));
 			RenderLightBox(projection, view, model, lightColor);
 		}
+#pragma endregion
 
-		bool hdr = useSpotLight; //true;
-		float exposure = 1.0f;
-
-		// 1. render scene into floating point framebuffer
-		// -----------------------------------------------
-		glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		shader[0].use();
-		shader[0].setMat4("projection", projection);
-		shader[0].setMat4("view", view);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture[0]);
-		// set lighting uniforms
-		for (unsigned int i = 0; i < lightPositions.size(); i++)
-		{
-			shader[0].setVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
-			shader[0].setVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
-		}
-		shader[0].setVec3("viewPos", camera->Position);
-		// render tunnel
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 25.0));
-		model = glm::scale(model, glm::vec3(2.5f, 2.5f, 27.5f));
-		shader[0].setMat4("model", model);
-		shader[0].setInt("inverse_normals", true);
-		renderCube();
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		// 2. now render floating point color buffer to 2D quad and tonemap HDR colors to default framebuffer's (clamped) color range
-		// --------------------------------------------------------------------------------------------------------------------------
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		shader[1].use();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, colorBuffer);
-		shader[1].setInt("hdr", hdr);
-		shader[1].setFloat("exposure", exposure);
-		renderQuad();
 	}
 
 #pragma region "光源"
@@ -447,112 +338,11 @@ public:
 		glBindVertexArray(0);
 	}
 
-	// renderCube() renders a 1x1 3D cube in NDC.
-	// -------------------------------------------------
-	void renderCube()
-	{
-		// initialize (if necessary)
-		if (cubeVAO == 0)
-		{
-			float vertices[] = {
-				// back face
-				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-				 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
-				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-				-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
-				// front face
-				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-				 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
-				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-				-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
-				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-				// left face
-				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-				-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
-				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-				-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-				// right face
-				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-				 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
-				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-				 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
-				// bottom face
-				-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-				 1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
-				 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-				 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-				-1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-				-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-				// top face
-				-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-				 1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-				 1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
-				 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-				-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-				-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
-			};
-			glGenVertexArrays(1, &cubeVAO);
-			glGenBuffers(1, &cubeVBO);
-			// fill buffer
-			glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-			// link vertex attributes
-			glBindVertexArray(cubeVAO);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindVertexArray(0);
-		}
-		// render Cube
-		glBindVertexArray(cubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-	}
-
-	// renderQuad() renders a 1x1 XY quad in NDC
-	// -----------------------------------------
-	void renderQuad()
-	{
-		if (quadVAO == 0)
-		{
-			float quadVertices[] = {
-				// positions        // texture Coords
-				-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-				-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-				 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-				 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-			};
-			// setup plane VAO
-			glGenVertexArrays(1, &quadVAO);
-			glGenBuffers(1, &quadVBO);
-			glBindVertexArray(quadVAO);
-			glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-		}
-		glBindVertexArray(quadVAO);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-	}
-
 	virtual void OnOverRender() {
-		/*	glDeleteVertexArrays(3, VAO);
-			glDeleteBuffers(3, VBO);*/
+		//glDeleteVertexArrays(3, VAO);
+		//glDeleteBuffers(3, VBO);
 		delete camera;
+		camera = NULL;
 	}
 
 	virtual void OnKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode) {
@@ -560,10 +350,6 @@ public:
 		{
 			if (key == GLFW_KEY_F) {
 				useSpotLight = !useSpotLight;
-				enableShadows = !enableShadows;
-			}
-			if (key == GLFW_KEY_C) {
-				customLightPos = camera->Position;
 			}
 			if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
 				effectType = key - GLFW_KEY_0;
