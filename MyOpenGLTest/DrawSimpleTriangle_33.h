@@ -283,6 +283,7 @@ public:
 #pragma endregion
 
 		{ // hdrFBO
+			std::cout << "init hdrFBO" << std::endl;
 			glGenFramebuffers(1, &hdrFBO);
 			glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 			// create 2 floating point color buffers (1 for normal rendering, other for brightness threshold values)
@@ -316,6 +317,7 @@ public:
 		}
 
 		{ // 用于画面模糊的 FBO // ping-pong-framebuffer for blurring
+			std::cout << "init pingpongFBO" << std::endl;
 			glGenFramebuffers(2, pingpongFBO);
 			glGenTextures(2, pingpongColorbuffers);
 			for (unsigned int i = 0; i < 2; i++)
@@ -385,7 +387,8 @@ public:
 	virtual void OnPreRender(float deltaTime) {
 		this->deltaTime = deltaTime;
 
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
@@ -430,6 +433,7 @@ public:
 			glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glm::mat4 model = glm::mat4(1.0f);
+			// 画箱子并把高光部分的片段输出到 colorBuffers[1]
 			shader.use();
 			shader.setMat4("projection", projection);
 			shader.setMat4("view", view);
@@ -464,20 +468,20 @@ public:
 
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(-1.0f, -1.0f, 2.0));
-			model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+			model = glm::rotate(model, 60.0f, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 			shader.setMat4("model", model);
 			renderCube();
 
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(0.0f, 2.7f, 4.0));
-			model = glm::rotate(model, glm::radians(23.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+			model = glm::rotate(model, 23.0f, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 			model = glm::scale(model, glm::vec3(1.25));
 			shader.setMat4("model", model);
 			renderCube();
 
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(-2.0f, 1.0f, -3.0));
-			model = glm::rotate(model, glm::radians(124.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+			model = glm::rotate(model, 124.0f, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 			shader.setMat4("model", model);
 			renderCube();
 
@@ -487,6 +491,7 @@ public:
 			shader.setMat4("model", model);
 			renderCube();
 
+			// 画光源并把高光部分的片段输出到 colorBuffers[1]
 			// finally show all the light sources as bright cubes
 			shaderLight.use();
 			shaderLight.setMat4("projection", projection);
@@ -515,8 +520,9 @@ public:
 				glBindTexture(GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongColorbuffers[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
 				renderQuad();
 				horizontal = !horizontal;
-				if (first_iteration)
+				if (first_iteration) {
 					first_iteration = false;
+				}
 			}
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -667,6 +673,7 @@ public:
 			if (key == GLFW_KEY_F) {
 				useSpotLight = !useSpotLight;
 				std::cout << "OnKeyCallback, useSpotLight:" << useSpotLight << std::endl;
+				bloom = useSpotLight;
 			}
 			if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
 				effectType = key - GLFW_KEY_0;
@@ -699,6 +706,19 @@ public:
 		}
 		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
 			pCamera->ProcessKeyboard(DOWN, deltaTime, speedUp);
+		}
+		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+			exposure += 0.001f;
+			std::cout << "OnProcessInput, exposure:" << exposure << std::endl;
+		}
+		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+			if (exposure > 0.0f) {
+				exposure -= 0.001f;
+			}
+			else {
+				exposure = 0.0f;
+			}
+			std::cout << "OnProcessInput, exposure:" << exposure << std::endl;
 		}
 	}
 

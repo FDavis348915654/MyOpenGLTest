@@ -495,7 +495,7 @@ public:
 		RenderCube();
 		model = glm::mat4();
 		model = glm::translate(model, glm::vec3(-1.5f, 2.0f, -3.0));
-		model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+		model = glm::rotate(model, 60.0f, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 		model = glm::scale(model, glm::vec3(0.75f));
 		shader.setMat4("model", model);
 		RenderCube();

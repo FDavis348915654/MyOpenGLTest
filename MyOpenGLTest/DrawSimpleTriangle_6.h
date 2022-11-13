@@ -149,14 +149,14 @@ public:
 		//	vec = trans * vec;
 		//	std::cout << vec.x << vec.y << vec.z << std::endl;
 
-		//	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		//	trans = glm::rotate(trans, 90.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 		//	trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
 		//}
 
 		//GLfloat angle = 90.0f;
 		//GLfloat scale = 0.5f;
 		//glm::mat4 trans;
-		////trans = glm::rotate(trans, glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
+		////trans = glm::rotate(trans, angle, glm::vec3(0.0f, 0.0f, 1.0f));
 		//trans = glm::rotate(trans, angle, glm::vec3(0.0f, 0.0f, 1.0f));
 		//trans = glm::scale(trans, glm::vec3(scale, scale, scale));
 
@@ -182,7 +182,7 @@ public:
 			//GLfloat scale = 0.5f;
 			//glm::mat4 trans;
 			////trans = glm::rotate(trans, glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
-			//trans = glm::rotate(trans, angle, glm::vec3(0.0f, 0.0f, 1.0f)); // 有些 glm 库是直接传角度的
+			//trans = glm::rotate(trans, angle, glm::vec3(0.0f, 0.0f, 1.0f)); // 有些 glm 库是直接传角度的, 不需要包 glm::radians(angle)
 			//trans = glm::scale(trans, glm::vec3(scale, scale, scale));
 
 			// 测试二
