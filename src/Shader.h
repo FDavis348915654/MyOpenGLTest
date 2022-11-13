@@ -81,6 +81,7 @@ private:
 	// ±àÒë¶¥µã¡¢Æ¬¶Î×ÅÉ«Æ÷
 	void ComplieVertexFragmentShader(const char* vertexPath, const char* fragmentPath)
 	{
+		printf("Shader, begin complie, vertexPath: %s, fragmentPath: %s\n", vertexPath, fragmentPath);
 		// 1. retrieve the vertex/fragment source code from filePath
 		std::string vertexCode;
 		std::string fragmentCode;
@@ -132,12 +133,13 @@ private:
 		// delete the shaders as they're linked into our program now and no longer necessary
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
-		printf("Shader, link, vertexPath: %s, fragmentPath: %s\n", vertexPath, fragmentPath);
+		printf("Shader, link success, vertexPath: %s, fragmentPath: %s\n", vertexPath, fragmentPath);
 	}
 
 	// ±àÒë¶¥µã¡¢Æ¬¶Î×ÅÉ«Æ÷
 	void ComplieVertexGeometryFragmentShader(const char* vertexPath, const char* geometryPath, const char* fragmentPath)
 	{
+		printf("Shader, begin complie, vertexPath: %s, geometryPath: %s, fragmentPath: %s\n", vertexPath, geometryPath, fragmentPath);
 		// 1. retrieve the vertex/fragment source code from filePath
 		std::string vertexCode;
 		std::string geometryCode;
@@ -204,7 +206,7 @@ private:
 		glDeleteShader(vertex);
 		glDeleteShader(geometry);
 		glDeleteShader(fragment);
-		printf("Shader, link, vertexPath: %s, geometryPath: %s, fragmentPath: %s\n", vertexPath, geometryPath, fragmentPath);
+		printf("Shader, link success, vertexPath: %s, geometryPath: %s, fragmentPath: %s\n", vertexPath, geometryPath, fragmentPath);
 	}
 
 	// utility function for checking shader compilation/linking errors.
