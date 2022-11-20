@@ -43,6 +43,7 @@
 #include "../MyOpenGLTest/DrawSimpleTriangle_31.h" // 视差贴图
 #include "../MyOpenGLTest/DrawSimpleTriangle_32.h" // HDR
 #include "../MyOpenGLTest/DrawSimpleTriangle_33.h" // 泛光
+#include "../MyOpenGLTest/DrawSimpleTriangle_34.h" // 延迟着色法
 
 // Function prototypes
 // 按键回调
@@ -99,7 +100,8 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_30 obj(WIDTH, HEIGHT); // 法线贴图
 //DrawSimpleTriangle_31 obj(WIDTH, HEIGHT); // 视差贴图
 //DrawSimpleTriangle_32 obj(WIDTH, HEIGHT); // HDR
-DrawSimpleTriangle_33 obj(WIDTH, HEIGHT); // 泛光
+//DrawSimpleTriangle_33 obj(WIDTH, HEIGHT); // 泛光
+DrawSimpleTriangle_34 obj(WIDTH, HEIGHT); // 延迟着色法
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
