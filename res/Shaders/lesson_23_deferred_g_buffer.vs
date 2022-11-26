@@ -1,6 +1,6 @@
 #version 330 core
 
-// 延迟着色法
+// 延迟着色法(记录顶点坐标、法线、漫反射颜色、镜面高光)
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;

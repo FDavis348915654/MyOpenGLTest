@@ -1,6 +1,6 @@
 #version 330 core
 
-// 延迟着色法
+// 延迟着色法(光源计算)
 
 out vec4 FragColor;
 
@@ -11,7 +11,7 @@ uniform sampler2D gNormal;
 uniform sampler2D gAlbedoSpec;
 
 struct Light {
-    vec3 Postion;
+    vec3 Position;
     vec3 Color;
 
     float Linear;
@@ -31,16 +31,16 @@ void main() {
     vec3 lighting = Diffuse * 0.1;
     vec3 viewDir = normalize(viewPos - FragPos);
     for (int i = 0; i < NR_LIGHTS; i++) {
-        vec3 lightDir = normalize(lights[i].Postion - FragPos);
+        vec3 lightDir = normalize(lights[i].Position - FragPos);
         vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * lights[i].Color;
         vec3 halfwayDir = normalize(lightDir + viewDir);
         float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
         vec3 specular = lights[i].Color * spec * Specular;
-        float distance = length(lights[i].Postion - FragPos);
+        float distance = length(lights[i].Position - FragPos);
         float attenuation = 1.0 / (1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
         diffuse *= attenuation;
         specular *= attenuation;
-        lighting += diffuse * specular;
+        lighting += (diffuse + specular);
     }
     FragColor = vec4(lighting, 1.0);
 }
