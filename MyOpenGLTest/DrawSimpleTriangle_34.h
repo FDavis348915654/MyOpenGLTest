@@ -358,7 +358,7 @@ public:
 		//glEnable(GL_MULTISAMPLE);
 		//glDisable(GL_MULTISAMPLE);
 
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
 
 		//glEnable(GL_PROGRAM_POINT_SIZE);
 		//glPointSize(10.5f);
