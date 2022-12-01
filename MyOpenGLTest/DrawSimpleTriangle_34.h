@@ -221,7 +221,6 @@ public:
 #pragma endregion
 
 		{
-			stbi_set_flip_vertically_on_load(false);
 			// ±àÒë×ÅÉ«Æ÷
 			shaderGeometryPass = Shader("../res/Shaders/lesson_23_deferred_g_buffer.vs", "../res/Shaders/lesson_23_deferred_g_buffer.fs");
 			shaderLightingPass = Shader("../res/Shaders/lesson_23_deferred.vs", "../res/Shaders/lesson_23_deferred.fs");
@@ -351,8 +350,8 @@ public:
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glEnable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// MSAA
 		//glEnable(GL_MULTISAMPLE);
@@ -434,81 +433,81 @@ public:
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
 
-			//{
-			//	// 2. lighting pass: calculate lighting by iterating over a screen filled quad pixel-by-pixel using the gbuffer's content.
-			//	// shaderLightingPass: lesson_23_deferred.vs/.fs
-			//	// -----------------------------------------------------------------------------------------------------------------------
-			//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			//	shaderLightingPass.use();
-			//	glActiveTexture(GL_TEXTURE0);
-			//	glBindTexture(GL_TEXTURE_2D, gPosition);
-			//	glActiveTexture(GL_TEXTURE1);
-			//	glBindTexture(GL_TEXTURE_2D, gNormal);
-			//	glActiveTexture(GL_TEXTURE2);
-			//	glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
-			//	// shader configuration
-			//	// --------------------
-			//	//shaderLightingPass.use();
-			//	shaderLightingPass.setInt("gPosition", 0);
-			//	shaderLightingPass.setInt("gNormal", 1);
-			//	shaderLightingPass.setInt("gAlbedoSpec", 2);
-			//	// send light relevant uniforms
-			//	for (unsigned int i = 0; i < lightPositions.size(); i++)
-			//	{
-			//		shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
-			//		shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
-			//		// update attenuation parameters and calculate radius
-			//		const float linear = 0.7f;
-			//		const float quadratic = 1.8f;
-			//		shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Linear", linear);
-			//		shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Quadratic", quadratic);
-			//	}
-			//	shaderLightingPass.setVec3("viewPos", pCamera->Position);
-			//	// finally render quad
-			//	renderQuad();
-			//}
-
-			{ // fbo debug
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			{
+				// 2. lighting pass: calculate lighting by iterating over a screen filled quad pixel-by-pixel using the gbuffer's content.
+				// shaderLightingPass: lesson_23_deferred.vs/.fs
+				// -----------------------------------------------------------------------------------------------------------------------
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				shaderFboDebug.use();
+				shaderLightingPass.use();
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, gPosition);
-				//glBindTexture(GL_TEXTURE_2D, gNormal);
-				//glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
-				shaderFboDebug.setInt("fboAttachment", 0);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, gNormal);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+				// shader configuration
+				// --------------------
+				//shaderLightingPass.use();
+				shaderLightingPass.setInt("gPosition", 0);
+				shaderLightingPass.setInt("gNormal", 1);
+				shaderLightingPass.setInt("gAlbedoSpec", 2);
+				// send light relevant uniforms
+				for (unsigned int i = 0; i < lightPositions.size(); i++)
+				{
+					shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
+					shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
+					// update attenuation parameters and calculate radius
+					const float linear = 0.7f;
+					const float quadratic = 1.8f;
+					shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Linear", linear);
+					shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Quadratic", quadratic);
+				}
+				shaderLightingPass.setVec3("viewPos", pCamera->Position);
+				// finally render quad
 				renderQuad();
 			}
 
-			//{
-			//	// 2.5. copy content of geometry's depth buffer to default framebuffer's depth buffer
-			//	// ----------------------------------------------------------------------------------
-			//	glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
-			//	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // write to default framebuffer
-			//	// blit to default framebuffer. Note that this may or may not work as the internal formats of both the FBO and default framebuffer have to match.
-			//	// the internal formats are implementation defined. This works on all of my systems, but if it doesn't on yours you'll likely have to write to the 		
-			//	// depth buffer in another shader stage (or somehow see to match the default framebuffer's internal format with the FBO's internal format).
-			//	glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			//{ // fbo debug
 			//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			//	shaderFboDebug.use();
+			//	glActiveTexture(GL_TEXTURE0);
+			//	glBindTexture(GL_TEXTURE_2D, gPosition);
+			//	//glBindTexture(GL_TEXTURE_2D, gNormal);
+			//	//glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+			//	shaderFboDebug.setInt("fboAttachment", 0);
+			//	renderQuad();
 			//}
 
-			//{
-			//	// 3. render lights on top of scene
-			//	// shaderLightBox: lesson_23_deferred_light_box.vs/.fs
-			//	// --------------------------------
-			//	shaderLightBox.use();
-			//	shaderLightBox.setMat4("projection", projection);
-			//	shaderLightBox.setMat4("view", view);
-			//	for (unsigned int i = 0; i < lightPositions.size(); i++)
-			//	{
-			//		model = glm::mat4(1.0f);
-			//		model = glm::translate(model, lightPositions[i]);
-			//		model = glm::scale(model, glm::vec3(0.125f));
-			//		shaderLightBox.setMat4("model", model);
-			//		shaderLightBox.setVec3("lightColor", lightColors[i]);
-			//		renderCube();
-			//	}
-			//}
+			{
+				// 2.5. copy content of geometry's depth buffer to default framebuffer's depth buffer
+				// ----------------------------------------------------------------------------------
+				glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // write to default framebuffer
+				// blit to default framebuffer. Note that this may or may not work as the internal formats of both the FBO and default framebuffer have to match.
+				// the internal formats are implementation defined. This works on all of my systems, but if it doesn't on yours you'll likely have to write to the 		
+				// depth buffer in another shader stage (or somehow see to match the default framebuffer's internal format with the FBO's internal format).
+				glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			}
+
+			{
+				// 3. render lights on top of scene
+				// shaderLightBox: lesson_23_deferred_light_box.vs/.fs
+				// --------------------------------
+				shaderLightBox.use();
+				shaderLightBox.setMat4("projection", projection);
+				shaderLightBox.setMat4("view", view);
+				for (unsigned int i = 0; i < lightPositions.size(); i++)
+				{
+					model = glm::mat4(1.0f);
+					model = glm::translate(model, lightPositions[i]);
+					model = glm::scale(model, glm::vec3(0.125f));
+					shaderLightBox.setMat4("model", model);
+					shaderLightBox.setVec3("lightColor", lightColors[i]);
+					renderCube();
+				}
+			}
 		}
 	}
 
