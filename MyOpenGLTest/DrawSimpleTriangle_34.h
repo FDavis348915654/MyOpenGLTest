@@ -358,6 +358,7 @@ public:
 		//glDisable(GL_MULTISAMPLE);
 
 		//glEnable(GL_CULL_FACE);
+		//glDisable(GL_CULL_FACE);
 
 		//glEnable(GL_PROGRAM_POINT_SIZE);
 		//glPointSize(10.5f);
@@ -413,7 +414,7 @@ public:
 		if (true) {
 			glm::mat4 model = glm::mat4(1.0f);
 
-			{
+			if (true) {
 				// 1. geometry pass: render scene's geometry/color data into gbuffer
 				// -----------------------------------------------------------------
 				glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -433,7 +434,7 @@ public:
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
 
-			{
+			if (true) {
 				// 2. lighting pass: calculate lighting by iterating over a screen filled quad pixel-by-pixel using the gbuffer's content.
 				// shaderLightingPass: lesson_23_deferred.vs/.fs
 				// -----------------------------------------------------------------------------------------------------------------------
@@ -467,19 +468,19 @@ public:
 				renderQuad();
 			}
 
-			//{ // fbo debug
-			//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			//	shaderFboDebug.use();
-			//	glActiveTexture(GL_TEXTURE0);
-			//	glBindTexture(GL_TEXTURE_2D, gPosition);
-			//	//glBindTexture(GL_TEXTURE_2D, gNormal);
-			//	//glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
-			//	shaderFboDebug.setInt("fboAttachment", 0);
-			//	renderQuad();
-			//}
+			if (false) { // fbo debug
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				shaderFboDebug.use();
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, gPosition);
+				//glBindTexture(GL_TEXTURE_2D, gNormal);
+				//glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+				shaderFboDebug.setInt("fboAttachment", 0);
+				renderQuad();
+			}
 
-			{
+			if (true) {
 				// 2.5. copy content of geometry's depth buffer to default framebuffer's depth buffer
 				// ----------------------------------------------------------------------------------
 				glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
