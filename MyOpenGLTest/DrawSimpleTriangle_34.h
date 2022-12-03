@@ -79,8 +79,10 @@ public:
 #pragma region "这节课用到的变量"
 	Shader shaderGeometryPass;
 	Shader shaderLightingPass;
+	Shader shaderLightingPassVolumes;
 	Shader shaderLightBox;
 	Shader shaderFboDebug;
+	Shader tempShaderLightingPass; // 将会赋值 shaderLightingPass 或者 shaderLightingPassVolumes
 
 	Model backpack;
 	std::vector<glm::vec3> objectPositions;
@@ -224,6 +226,7 @@ public:
 			// 编译着色器
 			shaderGeometryPass = Shader("../res/Shaders/lesson_23_deferred_g_buffer.vs", "../res/Shaders/lesson_23_deferred_g_buffer.fs");
 			shaderLightingPass = Shader("../res/Shaders/lesson_23_deferred.vs", "../res/Shaders/lesson_23_deferred.fs");
+			shaderLightingPassVolumes = Shader("../res/Shaders/lesson_23_deferred_volumes.vs", "../res/Shaders/lesson_23_deferred_volumes.fs");
 			shaderLightBox = Shader("../res/Shaders/lesson_23_deferred_light_box.vs", "../res/Shaders/lesson_23_deferred_light_box.fs");
 			shaderFboDebug = Shader("../res/Shaders/lesson_23_deferred_fbo_debug.vs", "../res/Shaders/lesson_23_deferred_fbo_debug.fs");
 
@@ -435,11 +438,18 @@ public:
 			}
 
 			if (true) {
+				// 是否使用光体积优化
+				if (true) {
+					tempShaderLightingPass = shaderLightingPassVolumes;
+				}
+				else {
+					tempShaderLightingPass = shaderLightingPass;
+				}
 				// 2. lighting pass: calculate lighting by iterating over a screen filled quad pixel-by-pixel using the gbuffer's content.
 				// shaderLightingPass: lesson_23_deferred.vs/.fs
 				// -----------------------------------------------------------------------------------------------------------------------
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				shaderLightingPass.use();
+				tempShaderLightingPass.use();
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, gPosition);
 				glActiveTexture(GL_TEXTURE1);
@@ -448,22 +458,29 @@ public:
 				glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
 				// shader configuration
 				// --------------------
-				//shaderLightingPass.use();
-				shaderLightingPass.setInt("gPosition", 0);
-				shaderLightingPass.setInt("gNormal", 1);
-				shaderLightingPass.setInt("gAlbedoSpec", 2);
+				tempShaderLightingPass.setInt("gPosition", 0);
+				tempShaderLightingPass.setInt("gNormal", 1);
+				tempShaderLightingPass.setInt("gAlbedoSpec", 2);
 				// send light relevant uniforms
 				for (unsigned int i = 0; i < lightPositions.size(); i++)
 				{
-					shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
-					shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
+					tempShaderLightingPass.setVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
+					tempShaderLightingPass.setVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
 					// update attenuation parameters and calculate radius
 					const float linear = 0.7f;
 					const float quadratic = 1.8f;
-					shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Linear", linear);
-					shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Quadratic", quadratic);
+					tempShaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Linear", linear);
+					tempShaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Quadratic", quadratic);
+
+#pragma region "光体积相关参数"
+					const float constant = 1.0f; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
+					const float maxBrightness = std::fmaxf(std::fmaxf(lightColors[i].r, lightColors[i].g), lightColors[i].b);
+					float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
+					tempShaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Radius", radius);
+#pragma endregion
+
 				}
-				shaderLightingPass.setVec3("viewPos", pCamera->Position);
+				tempShaderLightingPass.setVec3("viewPos", pCamera->Position);
 				// finally render quad
 				renderQuad();
 			}
