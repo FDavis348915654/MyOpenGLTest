@@ -360,7 +360,7 @@ public:
 		//glEnable(GL_MULTISAMPLE);
 		//glDisable(GL_MULTISAMPLE);
 
-		//glEnable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
 		//glDisable(GL_CULL_FACE);
 
 		//glEnable(GL_PROGRAM_POINT_SIZE);
@@ -413,7 +413,7 @@ public:
 		}
 #pragma endregion
 
-		// 延迟着色法(不含光体积)
+		// 延迟着色法
 		if (true) {
 			glm::mat4 model = glm::mat4(1.0f);
 
@@ -439,7 +439,7 @@ public:
 
 			if (true) {
 				// 是否使用光体积优化
-				if (true) {
+				if (false) {
 					tempShaderLightingPass = shaderLightingPassVolumes;
 				}
 				else {
