@@ -44,6 +44,7 @@
 #include "../MyOpenGLTest/DrawSimpleTriangle_32.h" // HDR
 #include "../MyOpenGLTest/DrawSimpleTriangle_33.h" // 泛光
 #include "../MyOpenGLTest/DrawSimpleTriangle_34.h" // 延迟着色法
+#include "../MyOpenGLTest/DrawSimpleTriangle_35.h" // SSAO
 
 // Function prototypes
 // 按键回调
@@ -101,7 +102,8 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_31 obj(WIDTH, HEIGHT); // 视差贴图
 //DrawSimpleTriangle_32 obj(WIDTH, HEIGHT); // HDR
 //DrawSimpleTriangle_33 obj(WIDTH, HEIGHT); // 泛光
-DrawSimpleTriangle_34 obj(WIDTH, HEIGHT); // 延迟着色法
+//DrawSimpleTriangle_34 obj(WIDTH, HEIGHT); // 延迟着色法
+DrawSimpleTriangle_35 obj(WIDTH, HEIGHT); // SSAO
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
@@ -295,4 +297,9 @@ void ShowMaxVertex()
 	GLint nrAttributes;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 	printf("Maximun nr of vertext attributes supported: %d\n", nrAttributes);
+}
+
+float lerp(float a, float b, float f)
+{
+	return a + f * (b - a);
 }
