@@ -11,6 +11,9 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H 
+
 // GLFW
 #include <GLFW/glfw3.h>
 
