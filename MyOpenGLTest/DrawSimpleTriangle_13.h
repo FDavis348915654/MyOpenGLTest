@@ -551,5 +551,5 @@ public:
 		this->screenWidth = width;
 		this->screenHeight = height;
 		aspect = (GLfloat)width / (GLfloat)height;
-	};
+	}
 };

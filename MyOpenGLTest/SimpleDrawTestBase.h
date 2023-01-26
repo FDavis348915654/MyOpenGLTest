@@ -18,10 +18,12 @@ public:
 
 	virtual void OnMouseCallback(GLFWwindow* window, double xpos, double ypos) {}
 
-	virtual void OnScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {};
+	virtual void OnScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {}
 
-	virtual void OnFrameBufferSizeChanged(GLFWwindow* window, int width, int height) {};
+	virtual void OnFrameBufferSizeChanged(GLFWwindow* window, int width, int height) {}
 
-	virtual bool IsUseMSAA() { return false; };
+	virtual bool IsUseMSAA() { return false; }
+
+	virtual bool IsHideMouse() { return true; }
 };
 
