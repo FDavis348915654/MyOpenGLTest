@@ -260,10 +260,10 @@ public:
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				// 储存字符供之后使用
 				Character character = {
-					texture,
-					glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-					glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-					face->glyph->advance.x
+					texture, // TextureID; // 字形纹理的ID
+					glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows), // Size; // 字形大小
+					glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top), // Bearing; // 从基准线到字形左部/顶部的偏移值
+					face->glyph->advance.x // Advance; // 原点距下一个字形原点的距离
 				};
 				Characters.insert(std::pair<GLchar, Character>(c, character));
 			}
