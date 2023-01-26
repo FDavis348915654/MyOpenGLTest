@@ -79,10 +79,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;assimpd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;assimpd.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -157,6 +158,7 @@
     <ClCompile Include="DrawSimpleTriangle_33.cpp" />
     <ClCompile Include="DrawSimpleTriangle_34.cpp" />
     <ClCompile Include="DrawSimpleTriangle_35.cpp" />
+    <ClCompile Include="DrawSimpleTriangle_36.cpp" />
     <ClCompile Include="DrawSimpleTriangle_4.cpp" />
     <ClCompile Include="DrawSimpleTriangle_5.cpp" />
     <ClCompile Include="DrawSimpleTriangle_6.cpp" />
@@ -204,6 +206,7 @@
     <ClInclude Include="DrawSimpleTriangle_33.h" />
     <ClInclude Include="DrawSimpleTriangle_34.h" />
     <ClInclude Include="DrawSimpleTriangle_35.h" />
+    <ClInclude Include="DrawSimpleTriangle_36.h" />
     <ClInclude Include="DrawSimpleTriangle_4.h" />
     <ClInclude Include="DrawSimpleTriangle_5.h" />
     <ClInclude Include="DrawSimpleTriangle_6.h" />

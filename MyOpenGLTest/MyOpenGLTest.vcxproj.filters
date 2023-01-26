@@ -135,6 +135,9 @@
     <ClCompile Include="DrawSimpleTriangle_35.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DrawSimpleTriangle_36.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ThirdPartyLibs\Libs\assimpd.dll">
@@ -263,6 +266,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DrawSimpleTriangle_35.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawSimpleTriangle_36.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
