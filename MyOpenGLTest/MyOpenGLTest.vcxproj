@@ -159,16 +159,21 @@
     <ClCompile Include="DrawSimpleTriangle_34.cpp" />
     <ClCompile Include="DrawSimpleTriangle_35.cpp" />
     <ClCompile Include="DrawSimpleTriangle_36.cpp" />
+    <ClCompile Include="DrawSimpleTriangle_37.cpp" />
     <ClCompile Include="DrawSimpleTriangle_4.cpp" />
     <ClCompile Include="DrawSimpleTriangle_5.cpp" />
     <ClCompile Include="DrawSimpleTriangle_6.cpp" />
     <ClCompile Include="DrawSimpleTriangle_7.cpp" />
     <ClCompile Include="DrawSimpleTriangle_8.cpp" />
     <ClCompile Include="DrawSimpleTriangle_9.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="resource_manager.cpp" />
+    <ClCompile Include="shader.cpp" />
     <ClCompile Include="SimpleDrawTestBase.cpp" />
     <ClCompile Include="stb_image_output.cpp" />
+    <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ThirdPartyLibs\Libs\assimpd.dll" />
@@ -207,15 +212,20 @@
     <ClInclude Include="DrawSimpleTriangle_34.h" />
     <ClInclude Include="DrawSimpleTriangle_35.h" />
     <ClInclude Include="DrawSimpleTriangle_36.h" />
+    <ClInclude Include="DrawSimpleTriangle_37.h" />
     <ClInclude Include="DrawSimpleTriangle_4.h" />
     <ClInclude Include="DrawSimpleTriangle_5.h" />
     <ClInclude Include="DrawSimpleTriangle_6.h" />
     <ClInclude Include="DrawSimpleTriangle_7.h" />
     <ClInclude Include="DrawSimpleTriangle_8.h" />
     <ClInclude Include="DrawSimpleTriangle_9.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="resource_manager.h" />
+    <ClInclude Include="shader.h" />
     <ClInclude Include="SimpleDrawTestBase.h" />
+    <ClInclude Include="texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

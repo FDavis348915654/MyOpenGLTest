@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Game2D">
+      <UniqueIdentifier>{07c076bf-752a-4547-9eac-c9d201c3fa64}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\hello.cpp">
@@ -136,6 +139,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DrawSimpleTriangle_36.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawSimpleTriangle_37.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>Game2D</Filter>
+    </ClCompile>
+    <ClCompile Include="shader.cpp">
+      <Filter>Game2D</Filter>
+    </ClCompile>
+    <ClCompile Include="resource_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -269,6 +287,21 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DrawSimpleTriangle_36.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawSimpleTriangle_37.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>Game2D</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>Game2D</Filter>
+    </ClInclude>
+    <ClInclude Include="resource_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
