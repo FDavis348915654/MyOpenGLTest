@@ -138,14 +138,14 @@ public:
 		};
 
 		// 编译着色器
-		shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry.gs", "../res/Shaders/lesson_12_geometry.fs"); // 基础
-		//shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_test.gs", "../res/Shaders/lesson_12_geometry.fs"); // 把点拉长
-		shader[1] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry_build_house.gs", "../res/Shaders/lesson_12_geometry.fs"); // 基础房子
-		shader[2] = Shader("../res/Shaders/lesson_12_geometry_build_house_color.vs", "../res/Shaders/lesson_12_geometry_build_house_color.gs", "../res/Shaders/lesson_12_geometry_build_house_color.fs"); // 带颜色房子
+		shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry.fs", "../res/Shaders/lesson_12_geometry.gs"); // 基础
+		//shader[0] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry.fs", "../res/Shaders/lesson_12_geometry_test.gs"); // 把点拉长
+		shader[1] = Shader("../res/Shaders/lesson_12_geometry.vs", "../res/Shaders/lesson_12_geometry.fs", "../res/Shaders/lesson_12_geometry_build_house.gs"); // 基础房子
+		shader[2] = Shader("../res/Shaders/lesson_12_geometry_build_house_color.vs", "../res/Shaders/lesson_12_geometry_build_house_color.fs", "../res/Shaders/lesson_12_geometry_build_house_color.gs"); // 带颜色房子
 		shader[3] = Shader("../res/Shaders/lesson_10_cubemaps.vs", "../res/Shaders/lesson_10_cubemaps.fs"); // 天空盒
-		shader[4] = Shader("../res/Shaders/lesson_12_geometry_explode.vs", "../res/Shaders/lesson_12_geometry_explode.gs", "../res/Shaders/lesson_12_geometry_explode.fs"); // 模型 爆炸效果
+		shader[4] = Shader("../res/Shaders/lesson_12_geometry_explode.vs", "../res/Shaders/lesson_12_geometry_explode.fs", "../res/Shaders/lesson_12_geometry_explode.gs"); // 模型 爆炸效果
 		shader[5] = Shader("../res/Shaders/lesson_10_cubemaps_4.vs", "../res/Shaders/lesson_10_cubemaps_4_test.fs"); // 模型 只绘制了漫反射纹理
-		shader[6] = Shader("../res/Shaders/lesson_12_geometry_fur.vs", "../res/Shaders/lesson_12_geometry_fur.gs", "../res/Shaders/lesson_12_geometry_fur.fs"); // 模型 只绘制法线
+		shader[6] = Shader("../res/Shaders/lesson_12_geometry_fur.vs", "../res/Shaders/lesson_12_geometry_fur.fs", "../res/Shaders/lesson_12_geometry_fur.gs"); // 模型 只绘制法线
 		// 生成 VBO
 		glGenBuffers(10, VBO);
 		// 创建 EBO

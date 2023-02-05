@@ -16,11 +16,11 @@
     <Filter Include="Game2D">
       <UniqueIdentifier>{07c076bf-752a-4547-9eac-c9d201c3fa64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{ec9480e7-cc1a-42cf-84ad-03308a9f8c61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\hello.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DrawSimpleTriangle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -34,12 +34,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DrawSimpleTriangle_5.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="stb_image_output.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleDrawTestBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DrawSimpleTriangle_6.cpp">
@@ -67,12 +61,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DrawSimpleTriangle_14.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DrawSimpleTriangle_15.cpp">
@@ -144,17 +132,29 @@
     <ClCompile Include="DrawSimpleTriangle_37.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="texture.cpp">
       <Filter>Game2D</Filter>
     </ClCompile>
-    <ClCompile Include="shader.cpp">
+    <ClCompile Include="Game.cpp">
       <Filter>Game2D</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\hello.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleDrawTestBase.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image_output.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
     <ClCompile Include="resource_manager.cpp">
-      <Filter>源文件</Filter>
+      <Filter>Game2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -163,9 +163,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\Shader.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="DrawSimpleTriangle.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -181,12 +178,6 @@
     <ClInclude Include="DrawSimpleTriangle_5.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\stb_image.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleDrawTestBase.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DrawSimpleTriangle_6.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -198,9 +189,6 @@
     </ClInclude>
     <ClInclude Include="DrawSimpleTriangle_9.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Camera.h">
-      <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="DrawSimpleTriangle_10.h">
       <Filter>头文件</Filter>
@@ -215,12 +203,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DrawSimpleTriangle_14.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DrawSimpleTriangle_15.h">
@@ -292,17 +274,32 @@
     <ClInclude Include="DrawSimpleTriangle_37.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="texture.h">
       <Filter>Game2D</Filter>
     </ClInclude>
-    <ClInclude Include="shader.h">
+    <ClInclude Include="Game.h">
       <Filter>Game2D</Filter>
     </ClInclude>
     <ClInclude Include="resource_manager.h">
-      <Filter>头文件</Filter>
+      <Filter>Game2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Camera.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Shader.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\stb_image.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleDrawTestBase.h">
+      <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
