@@ -171,6 +171,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="SimpleDrawTestBase.cpp" />
+    <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="stb_image_output.cpp" />
     <ClCompile Include="texture.cpp" />
   </ItemGroup>
@@ -223,6 +224,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="resource_manager.h" />
     <ClInclude Include="SimpleDrawTestBase.h" />
+    <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

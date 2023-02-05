@@ -23,6 +23,7 @@
 #include "stb_image.h"
 #include "SimpleDrawTestBase.h"
 #include "Camera.h"
+#include "Game.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -51,13 +52,14 @@ public:
 	float deltaTime = 0.0f;
 
 #pragma region "这节课用到的变量"
-
+	Game game;
 #pragma endregion
 
 	DrawSimpleTriangle_37(GLuint screenWidth, GLuint screenHeight) {
 		this->SCR_WIDTH = screenWidth;
 		this->SCR_HEIGHT = screenHeight;
 		aspect = (GLfloat)screenWidth / (GLfloat)screenHeight;
+		game = Game(screenWidth, screenHeight);
 	}
 
 	virtual void OnInitRender(GLFWwindow* window) {
@@ -67,7 +69,7 @@ public:
 		stbi_set_flip_vertically_on_load(true);
 
 		{ // 这节课用到的代码
-			
+			game.Init();
 		}
 
 		// 开启深度测试
@@ -105,7 +107,8 @@ public:
 
 		// 2D游戏
 		if (true) {
-
+			game.Update(this->deltaTime);
+			game.Render();
 		}
 	}
 
@@ -152,6 +155,10 @@ public:
 		}
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 			//std::cout << "OnProcessInput, exposure:" << exposure << std::endl;
+		}
+		// 2D游戏
+		if (true) {
+			game.ProcessInput(this->deltaTime);
 		}
 	}
 

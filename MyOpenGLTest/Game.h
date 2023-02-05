@@ -36,6 +36,7 @@ public:
 	GLboolean Keys[1024];
 	GLuint Width, Height;
 	// 构造函数/析构函数
+	Game();
 	Game(GLuint width, GLuint height);
 	~Game();
 	// 初始化游戏状态（加载所有的着色器/纹理/关卡）

@@ -156,6 +156,9 @@
     <ClCompile Include="resource_manager.cpp">
       <Filter>Game2D</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteRenderer.cpp">
+      <Filter>Game2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ThirdPartyLibs\Libs\assimpd.dll">
@@ -300,6 +303,9 @@
     </ClInclude>
     <ClInclude Include="SimpleDrawTestBase.h">
       <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteRenderer.h">
+      <Filter>Game2D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
