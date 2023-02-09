@@ -53,6 +53,12 @@ void ResourceManager::Clear()
 
 Shader ResourceManager::loadShaderFromFile(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile)
 {
+	if (nullptr == gShaderFile) {
+		printf("Shader, begin complie, vShaderFile: %s, fShaderFile: %s\n", vShaderFile, fShaderFile);
+	}
+	else {
+		printf("Shader, begin complie, vShaderFile: %s, fShaderFile: %s, geometryPath: %s\n", vShaderFile, fShaderFile, gShaderFile);
+	}
 	// 1. retrieve the vertex/fragment source code from filePath
 	std::string vertexCode;
 	std::string fragmentCode;
@@ -92,6 +98,12 @@ Shader ResourceManager::loadShaderFromFile(const char *vShaderFile, const char *
 	// 2. now create shader object from source code
 	Shader shader;
 	shader.Compile(vShaderCode, fShaderCode, gShaderFile != nullptr ? gShaderCode : nullptr);
+	if (nullptr == gShaderFile) {
+		printf("Shader, link success, vShaderFile: %s, fShaderFile: %s\n", vShaderFile, fShaderFile);
+	}
+	else {
+		printf("Shader, link success, vShaderFile: %s, fShaderFile: %s, gShaderFile: %s\n", vShaderFile, fShaderFile, gShaderFile);
+	}
 	return shader;
 }
 

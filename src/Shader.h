@@ -30,6 +30,11 @@ public:
 	{
 		glUseProgram(ID);
 	}
+	Shader &Use()
+	{
+		use();
+		return *this;
+	}
 	// utility uniform functions
 	// ------------------------------------------------------------------------
 	void setBool(const std::string &name, bool value) const
@@ -74,12 +79,12 @@ public:
 	// note: geometry source code is optional
 	void Compile(const char *vertexSource, const char *fragmentSource, const char *geometrySource = nullptr)
 	{
-		if (geometrySource != nullptr) {
-			printf("Shader, begin complie, vertexSource: %s, fragmentSource: %s, geometrySource: %s\n", vertexSource, fragmentSource, geometrySource);
-		}
-		else {
-			printf("Shader, begin complie, vertexSource: %s, fragmentSource: %s\n", vertexSource, fragmentSource);
-		}
+		//if (geometrySource != nullptr) {
+		//	printf("Shader, begin complie, vertexSource: %s, fragmentSource: %s, geometrySource: %s\n", vertexSource, fragmentSource, geometrySource);
+		//}
+		//else {
+		//	printf("Shader, begin complie, vertexSource: %s, fragmentSource: %s\n", vertexSource, fragmentSource);
+		//}
 		unsigned int sVertex, sFragment, gShader;
 		// vertex Shader
 		sVertex = glCreateShader(GL_VERTEX_SHADER);
@@ -114,18 +119,80 @@ public:
 		if (geometrySource != nullptr) {
 			glDeleteShader(gShader);
 		}
-		if (geometrySource != nullptr) {
-			printf("Shader, link success, vertexSource: %s, fragmentSource: %s, geometrySource: %s\n", vertexSource, fragmentSource, geometrySource);
+		//if (geometrySource != nullptr) {
+		//	printf("Shader, link success, vertexSource: %s, fragmentSource: %s, geometrySource: %s\n", vertexSource, fragmentSource, geometrySource);
+		//}
+		//else {
+		//	printf("Shader, link success, vertexSource: %s, fragmentSource: %s\n", vertexSource, fragmentSource);
+		//}
+	}
+
+	// utility functions
+	void SetFloat(const char *name, float value, bool useShader = false) {
+		if (useShader) {
+			this->Use();
 		}
-		else {
-			printf("Shader, link success, vertexSource: %s, fragmentSource: %s\n", vertexSource, fragmentSource);
+		setFloat(name, value);
+	}
+	void SetInteger(const char *name, int value, bool useShader = false) {
+		if (useShader) {
+			this->Use();
 		}
+		setInt(name, value);
+	}
+	void SetVector2f(const char *name, float x, float y, bool useShader = false) {
+		if (useShader) {
+			this->Use();
+		}
+		setVec2(name, x, y);
+	}
+	void SetVector2f(const char *name, const glm::vec2 &value, bool useShader = false) {
+		if (useShader) {
+			this->Use();
+		}
+		setVec2(name, value);
+	}
+	void SetVector3f(const char *name, float x, float y, float z, bool useShader = false) {
+		if (useShader) {
+			this->Use();
+		}
+		setVec3(name, x, y, z);
+	}
+	void SetVector3f(const char *name, const glm::vec3 &value, bool useShader = false) {
+		if (useShader) {
+			this->Use();
+		}
+		setVec3(name, value);
+	}
+	void SetVector4f(const char *name, float x, float y, float z, float w, bool useShader = false) {
+		if (useShader) {
+			this->Use();
+		}
+		glUniform4f(glGetUniformLocation(ID, name), x, y, z, w);
+	}
+	void SetVector4f(const char *name, const glm::vec4 &value, bool useShader = false) {
+		if (useShader) {
+			this->Use();
+		}
+		glUniform4f(glGetUniformLocation(ID, name), value.x, value.y, value.z, value.w);
+	}
+	void SetMatrix4(const char *name, const glm::mat4 &matrix, bool useShader = false) {
+		if (useShader) {
+			this->Use();
+		}
+		setMat4(name, matrix);
 	}
 
 private:
 	// ±àÒë¶¥µã¡¢Æ¬¶Î×ÅÉ«Æ÷
 	void ComplieVertexGeometryFragmentShader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr)
 	{
+		if (nullptr == geometryPath) {
+			printf("Shader, begin complie, vertexPath: %s, fragmentPath: %s\n", vertexPath, fragmentPath);
+		}
+		else {
+			printf("Shader, begin complie, vertexPath: %s, fragmentPath: %s, geometryPath: %s\n", vertexPath, fragmentPath, geometryPath);
+		}
 		// 1. retrieve the vertex/fragment source code from filePath
 		std::string vertexCode;
 		std::string fragmentCode;
@@ -177,6 +244,12 @@ private:
 		}
 
 		Compile(vShaderCode, fShaderCode, gShaderCode);
+		if (nullptr == geometryPath) {
+			printf("Shader, link success, vertexPath: %s, fragmentPath: %s\n", vertexPath, fragmentPath);
+		}
+		else {
+			printf("Shader, link success, vertexPath: %s, fragmentPath: %s, geometryPath: %s\n", vertexPath, fragmentPath, geometryPath);
+		}
 	}
 
 	// utility function for checking shader compilation/linking errors.
