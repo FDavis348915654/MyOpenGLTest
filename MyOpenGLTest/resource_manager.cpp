@@ -14,10 +14,12 @@
 
 #include "stb_image.h"
 
+// º”‘ÿÕº∆¨
+unsigned int loadTexture(unsigned int textureID, char const * path, GLint textureWrapS, GLint textureWrapT, bool isSRGB);
+
 // Instantiate static variables
 std::map<std::string, Texture2D>    ResourceManager::Textures;
 std::map<std::string, Shader>       ResourceManager::Shaders;
-
 
 Shader ResourceManager::LoadShader(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile, std::string name)
 {
@@ -107,21 +109,42 @@ Shader ResourceManager::loadShaderFromFile(const char *vShaderFile, const char *
 	return shader;
 }
 
-Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
+Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha, bool isSRGB)
 {
-	// create texture object
-	Texture2D texture;
-	if (alpha)
+	//{
+	//	// create texture object
+	//	Texture2D texture;
+	//	loadTexture(texture.ID, file, GL_REPEAT, GL_REPEAT, false);
+	//	return texture;
+	//}
+
 	{
-		texture.Internal_Format = GL_RGBA;
-		texture.Image_Format = GL_RGBA;
+		Texture2D texture;
+		//if (alpha)
+		//{
+		//	texture.Internal_Format = GL_RGBA;
+		//	texture.Image_Format = GL_RGBA;
+		//}
+		// load image
+		int width, height, nrChannels;
+		unsigned char* data = stbi_load(file, &width, &height, &nrChannels, 0);
+		if (nrChannels == 1) {
+			texture.Internal_Format = GL_RED;
+			texture.Image_Format = GL_RED;
+		}
+		else if (nrChannels == 3) {
+			texture.Internal_Format = isSRGB ? GL_SRGB : GL_RGB;
+			texture.Image_Format = GL_RGB;
+		}
+		else if (nrChannels == 4) {
+			texture.Internal_Format = isSRGB ? GL_SRGB_ALPHA : GL_RGBA;
+			texture.Image_Format = GL_RGBA;
+		}
+		loadTexture(texture.ID, file, GL_REPEAT, GL_REPEAT, false);
+		// now generate texture
+		texture.Generate(width, height, data);
+		// and finally free image data
+		stbi_image_free(data);
+		return texture;
 	}
-	// load image
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load(file, &width, &height, &nrChannels, 0);
-	// now generate texture
-	texture.Generate(width, height, data);
-	// and finally free image data
-	stbi_image_free(data);
-	return texture;
 }

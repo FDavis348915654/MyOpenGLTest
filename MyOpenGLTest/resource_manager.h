@@ -43,6 +43,6 @@ private:
 	// loads and generates a shader from file
 	static Shader    loadShaderFromFile(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile = nullptr);
 	// loads a single texture from file
-	static Texture2D loadTextureFromFile(const char *file, bool alpha);
+	static Texture2D loadTextureFromFile(const char *file, bool alpha, bool isSRGB = false);
 };
 

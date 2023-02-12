@@ -66,15 +66,15 @@ public:
 		glfwSetWindowTitle(window, "DrawSimpleTriangle_37");
 
 		// 加载的图像默认上下翻转
-		stbi_set_flip_vertically_on_load(true);
+		//stbi_set_flip_vertically_on_load(true);
 
 		{ // 这节课用到的代码
 			game.Init();
 		}
 
 		// 开启深度测试
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
+		//glEnable(GL_DEPTH_TEST);
+		//glDepthFunc(GL_LESS);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -83,7 +83,7 @@ public:
 		//glEnable(GL_MULTISAMPLE);
 		//glDisable(GL_MULTISAMPLE);
 
-		//glEnable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
 		//glDisable(GL_CULL_FACE);
 
 		//glEnable(GL_PROGRAM_POINT_SIZE);
@@ -96,8 +96,8 @@ public:
 	virtual void OnPreRender(float deltaTime) {
 		this->deltaTime = deltaTime;
 
-		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
