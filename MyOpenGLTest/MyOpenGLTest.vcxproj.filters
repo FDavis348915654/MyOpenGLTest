@@ -156,7 +156,10 @@
     <ClCompile Include="resource_manager.cpp">
       <Filter>Game2D</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteRenderer.cpp">
+    <ClCompile Include="game_object.cpp">
+      <Filter>Game2D</Filter>
+    </ClCompile>
+    <ClCompile Include="sprite_renderer.cpp">
       <Filter>Game2D</Filter>
     </ClCompile>
   </ItemGroup>
@@ -304,7 +307,10 @@
     <ClInclude Include="SimpleDrawTestBase.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteRenderer.h">
+    <ClInclude Include="game_object.h">
+      <Filter>Game2D</Filter>
+    </ClInclude>
+    <ClInclude Include="sprite_renderer.h">
       <Filter>Game2D</Filter>
     </ClInclude>
   </ItemGroup>

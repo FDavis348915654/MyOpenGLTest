@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "resource_manager.h"
-#include "SpriteRenderer.h"
+#include "sprite_renderer.h"
 // GLFW
 #include <GLFW/glfw3.h>
 
