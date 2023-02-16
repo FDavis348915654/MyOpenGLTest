@@ -20,6 +20,7 @@
 #include "stb_image.h"
 #include "SimpleDrawTestBase.h"
 #include "Camera.h"
+#include "game_level.h"
 
 // 代表了游戏的当前状态
 enum GameState {
@@ -28,13 +29,23 @@ enum GameState {
 	GAME_WIN
 };
 
+// 初始化挡板的大小
+const glm::vec2 PLAYER_SIZE(100, 20);
+// 初始化当班的速率
+const GLfloat PLAYER_VELOCITY(500.0f);
+
 class Game
 {
 public:
 	// 游戏状态
 	GameState State;
 	GLboolean Keys[1024];
+	GLboolean KeysProcessed[1024];
 	GLuint Width, Height;
+
+	std::vector<GameLevel> Levels;
+	GLuint Level;
+
 	// 构造函数/析构函数
 	Game();
 	Game(GLuint width, GLuint height);

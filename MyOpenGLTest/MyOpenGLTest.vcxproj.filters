@@ -162,6 +162,9 @@
     <ClCompile Include="sprite_renderer.cpp">
       <Filter>Game2D</Filter>
     </ClCompile>
+    <ClCompile Include="game_level.cpp">
+      <Filter>Game2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ThirdPartyLibs\Libs\assimpd.dll">
@@ -311,6 +314,9 @@
       <Filter>Game2D</Filter>
     </ClInclude>
     <ClInclude Include="sprite_renderer.h">
+      <Filter>Game2D</Filter>
+    </ClInclude>
+    <ClInclude Include="game_level.h">
       <Filter>Game2D</Filter>
     </ClInclude>
   </ItemGroup>

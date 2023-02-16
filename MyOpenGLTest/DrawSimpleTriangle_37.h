@@ -129,6 +129,16 @@ public:
 				std::cout << "OnKeyCallback, effectType:" << effectType << std::endl;
 			}
 		}
+		if (key >= 0 && key < 1024)
+		{
+			if (action == GLFW_PRESS)
+				game.Keys[key] = true;
+			else if (action == GLFW_RELEASE)
+			{
+				game.Keys[key] = false;
+				game.KeysProcessed[key] = false;
+			}
+		}
 	}
 
 	virtual void OnProcessInput(GLFWwindow* window) {
