@@ -4,6 +4,7 @@
 #include <sstream>
 #include <map>
 #include <random>
+#include <tuple>
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -29,6 +30,15 @@ enum GameState {
 	GAME_MENU,
 	GAME_WIN
 };
+
+enum class Direction {
+	UP,
+	RIGHT,
+	DOWN,
+	LEFT
+};
+
+typedef std::tuple<GLboolean, Direction, glm::vec2> Collision;
 
 // 初始化挡板的大小
 const glm::vec2 PLAYER_SIZE(100, 20);
@@ -62,4 +72,9 @@ public:
 	void ProcessInput(GLfloat dt);
 	void Update(GLfloat dt);
 	void Render();
+	void DoCollisions();
+
+	// Reset
+	void ResetLevel();
+	void ResetPlayer();
 };

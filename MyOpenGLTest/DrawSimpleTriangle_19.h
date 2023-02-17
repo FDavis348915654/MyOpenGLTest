@@ -379,22 +379,22 @@ public:
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-			camera->ProcessKeyboard(FORWARD, deltaTime, speedUp);
+			camera->ProcessKeyboard(Camera_Movement::FORWARD, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-			camera->ProcessKeyboard(BACKWARD, deltaTime, speedUp);
+			camera->ProcessKeyboard(Camera_Movement::BACKWARD, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			camera->ProcessKeyboard(LEFT, deltaTime, speedUp);
+			camera->ProcessKeyboard(Camera_Movement::LEFT, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-			camera->ProcessKeyboard(RIGHT, deltaTime, speedUp);
+			camera->ProcessKeyboard(Camera_Movement::RIGHT, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-			camera->ProcessKeyboard(UP, deltaTime, speedUp);
+			camera->ProcessKeyboard(Camera_Movement::UP, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-			camera->ProcessKeyboard(DOWN, deltaTime, speedUp);
+			camera->ProcessKeyboard(Camera_Movement::DOWN, deltaTime, speedUp);
 		}
 	}
 

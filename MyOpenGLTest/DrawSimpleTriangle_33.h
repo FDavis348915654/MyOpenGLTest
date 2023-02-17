@@ -690,22 +690,22 @@ public:
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-			pCamera->ProcessKeyboard(FORWARD, deltaTime, speedUp);
+			pCamera->ProcessKeyboard(Camera_Movement::FORWARD, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-			pCamera->ProcessKeyboard(BACKWARD, deltaTime, speedUp);
+			pCamera->ProcessKeyboard(Camera_Movement::BACKWARD, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			pCamera->ProcessKeyboard(LEFT, deltaTime, speedUp);
+			pCamera->ProcessKeyboard(Camera_Movement::LEFT, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-			pCamera->ProcessKeyboard(RIGHT, deltaTime, speedUp);
+			pCamera->ProcessKeyboard(Camera_Movement::RIGHT, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-			pCamera->ProcessKeyboard(UP, deltaTime, speedUp);
+			pCamera->ProcessKeyboard(Camera_Movement::UP, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-			pCamera->ProcessKeyboard(DOWN, deltaTime, speedUp);
+			pCamera->ProcessKeyboard(Camera_Movement::DOWN, deltaTime, speedUp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 			exposure += 0.001f;
