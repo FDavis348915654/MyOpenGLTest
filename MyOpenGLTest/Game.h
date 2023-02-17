@@ -21,6 +21,7 @@
 #include "SimpleDrawTestBase.h"
 #include "Camera.h"
 #include "game_level.h"
+#include "ball_object.h"
 
 // 代表了游戏的当前状态
 enum GameState {
@@ -33,6 +34,11 @@ enum GameState {
 const glm::vec2 PLAYER_SIZE(100, 20);
 // 初始化当班的速率
 const GLfloat PLAYER_VELOCITY(500.0f);
+
+// 初始化球的速度
+const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
+// 球的半径
+const GLfloat BALL_RADIUS = 12.5f;
 
 class Game
 {

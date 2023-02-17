@@ -7,6 +7,7 @@
 
 SpriteRenderer  *Renderer;
 GameObject *Player;
+BallObject *Ball;
 
 Game::Game() {
 
@@ -52,10 +53,13 @@ void Game::Init() {
 		this->Height - PLAYER_SIZE.y
 	);
 	Player = new GameObject(playerPos, PLAYER_SIZE, ResourceManager::GetTexture("paddle"));
+	glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x / 2 - BALL_RADIUS, -BALL_RADIUS * 2);
+	Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY,
+		ResourceManager::GetTexture("face"));
 }
 
 void Game::Update(float dt) {
-
+	Ball->Move(dt, this->Width);
 }
 
 void Game::ProcessInput(float dt) {
@@ -65,12 +69,20 @@ void Game::ProcessInput(float dt) {
 		// ÒÆ¶¯µ²°å
 		if (this->Keys[GLFW_KEY_A])
 		{
-			Player->Position.x = std::max(Player->Position.x - velocity, 0.0f);
+			float dx = std::max(Player->Position.x - velocity, 0.0f) - Player->Position.x;
+			Player->Position.x += dx;
+			if (Ball->Stuck)
+				Ball->Position.x += dx;
 		}
 		if (this->Keys[GLFW_KEY_D])
 		{
-			Player->Position.x = std::min(Player->Position.x + velocity, this->Width - Player->Size.x);
+			float dx = std::min(Player->Position.x + velocity, this->Width - Player->Size.x) - Player->Position.x;
+			Player->Position.x += dx;
+			if (Ball->Stuck)
+				Ball->Position.x += dx;
 		}
+		if (this->Keys[GLFW_KEY_SPACE])
+			Ball->Stuck = false;
 	}
 }
 
@@ -85,5 +97,6 @@ void Game::Render() {
 		// »æÖÆ¹Ø¿¨
 		this->Levels[this->Level].Draw(*Renderer);
 		Player->Draw(*Renderer);
+		Ball->Draw(*Renderer);
 	}
 }

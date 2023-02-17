@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\hello.cpp" />
+    <ClCompile Include="ball_object.cpp" />
     <ClCompile Include="DrawSimpleTriangle.cpp" />
     <ClCompile Include="DrawSimpleTriangle_10.cpp" />
     <ClCompile Include="DrawSimpleTriangle_11.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="..\src\Camera.h" />
     <ClInclude Include="..\src\Shader.h" />
     <ClInclude Include="..\src\stb_image.h" />
+    <ClInclude Include="ball_object.h" />
     <ClInclude Include="DrawSimpleTriangle.h" />
     <ClInclude Include="DrawSimpleTriangle_10.h" />
     <ClInclude Include="DrawSimpleTriangle_11.h" />
