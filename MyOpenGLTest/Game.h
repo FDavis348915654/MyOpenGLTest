@@ -23,6 +23,7 @@
 #include "Camera.h"
 #include "game_level.h"
 #include "ball_object.h"
+#include "particle_generator.h"
 
 // 代表了游戏的当前状态
 enum GameState {

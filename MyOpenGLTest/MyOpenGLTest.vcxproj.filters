@@ -168,6 +168,9 @@
     <ClCompile Include="ball_object.cpp">
       <Filter>Game2D</Filter>
     </ClCompile>
+    <ClCompile Include="particle_generator.cpp">
+      <Filter>Game2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ThirdPartyLibs\Libs\assimpd.dll">
@@ -323,6 +326,9 @@
       <Filter>Game2D</Filter>
     </ClInclude>
     <ClInclude Include="ball_object.h">
+      <Filter>Game2D</Filter>
+    </ClInclude>
+    <ClInclude Include="particle_generator.h">
       <Filter>Game2D</Filter>
     </ClInclude>
   </ItemGroup>

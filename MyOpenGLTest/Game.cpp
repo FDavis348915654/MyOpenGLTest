@@ -8,6 +8,7 @@
 SpriteRenderer  *Renderer;
 GameObject *Player;
 BallObject *Ball;
+ParticleGenerator *Particles;
 
 GLboolean CheckCollision(GameObject &one, GameObject &two);
 Collision CheckCollision(BallObject &one, GameObject &two); // AABB - Circle collision
@@ -28,11 +29,14 @@ Game::~Game() {
 void Game::Init() {
 	// 加载着色器
 	ResourceManager::LoadShader("../res/Shaders/lesson_26_sprite.vs", "../res/Shaders/lesson_26_sprite.fs", nullptr, "sprite");
+	ResourceManager::LoadShader("../res/Shaders/lesson_26_particle.vs", "../res/Shaders/lesson_26_particle.fs", nullptr, "particle");
 	// 配置着色器, 投影矩阵
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width),
 		static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
 	ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
 	ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
+	ResourceManager::GetShader("particle").Use().SetInteger("sprite", 0);
+	ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
 	// 设置专用于渲染的控制
 	Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
 	// 加载纹理
@@ -41,6 +45,7 @@ void Game::Init() {
 	ResourceManager::LoadTexture("../res/Texture/block.png", GL_FALSE, "block");
 	ResourceManager::LoadTexture("../res/Texture/block_solid.png", GL_FALSE, "block_solid");
 	ResourceManager::LoadTexture("../res/Texture/paddle.png", true, "paddle");
+	ResourceManager::LoadTexture("../res/Texture/particle.png", GL_TRUE, "particle");
 	// 加载关卡
 	GameLevel one; one.Load("../res/levels/one.lvl", this->Width, this->Height * 0.5);
 	GameLevel two; two.Load("../res/levels/two.lvl", this->Width, this->Height * 0.5);
@@ -60,6 +65,12 @@ void Game::Init() {
 	glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x / 2 - BALL_RADIUS, -BALL_RADIUS * 2);
 	Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY,
 		ResourceManager::GetTexture("face"));
+	// 加载粒子生成器
+	Particles = new ParticleGenerator(
+		ResourceManager::GetShader("particle"),
+		ResourceManager::GetTexture("particle"),
+		500
+	);
 }
 
 void Game::Update(float dt) {
@@ -73,6 +84,9 @@ void Game::Update(float dt) {
 		this->ResetLevel();
 		this->ResetPlayer();
 	}
+
+	// Update particles
+	Particles->Update(dt, *Ball, 2, glm::vec2(Ball->Radius / 2));
 }
 
 void Game::ProcessInput(float dt) {
@@ -110,6 +124,7 @@ void Game::Render() {
 		// 绘制关卡
 		this->Levels[this->Level].Draw(*Renderer);
 		Player->Draw(*Renderer);
+		Particles->Draw();
 		Ball->Draw(*Renderer);
 	}
 }
