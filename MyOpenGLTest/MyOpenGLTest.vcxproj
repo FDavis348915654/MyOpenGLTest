@@ -173,6 +173,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="particle_generator.cpp" />
+    <ClCompile Include="post_processor.cpp" />
     <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="SimpleDrawTestBase.cpp" />
     <ClCompile Include="sprite_renderer.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="particle_generator.h" />
+    <ClInclude Include="post_processor.h" />
     <ClInclude Include="resource_manager.h" />
     <ClInclude Include="SimpleDrawTestBase.h" />
     <ClInclude Include="sprite_renderer.h" />
