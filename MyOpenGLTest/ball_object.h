@@ -25,6 +25,8 @@ public:
 	// Ball state	
 	GLfloat   Radius;
 	GLboolean Stuck;
+	// Îü¸½, ´©Í¸
+	bool    Sticky, PassThrough;
 	// Constructor(s)
 	BallObject();
 	BallObject(glm::vec2 pos, GLfloat radius, glm::vec2 velocity, Texture2D sprite);

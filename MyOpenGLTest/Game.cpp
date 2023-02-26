@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <cmath>
 
+bool TestLevel = true;
 SpriteRenderer  *Renderer;
 GameObject *Player;
 BallObject *Ball;
@@ -15,6 +16,8 @@ GLfloat ShakeTime = 0.0f;
 GLboolean CheckCollision(GameObject &one, GameObject &two);
 Collision CheckCollision(BallObject &one, GameObject &two); // AABB - Circle collision
 Direction VectorDirection(glm::vec2 target);
+void ActivatePowerUp(PowerUp &powerUp);
+GLboolean IsOtherPowerUpActive(std::vector<PowerUp> &powerUps, std::string type);
 
 Game::Game() {
 
@@ -53,6 +56,12 @@ void Game::Init() {
 	ResourceManager::LoadTexture("../res/Texture/block_solid.png", GL_FALSE, "block_solid");
 	ResourceManager::LoadTexture("../res/Texture/paddle.png", true, "paddle");
 	ResourceManager::LoadTexture("../res/Texture/particle.png", GL_TRUE, "particle");
+	ResourceManager::LoadTexture("../res/Texture/powerup_speed.png", true, "powerup_speed");
+	ResourceManager::LoadTexture("../res/Texture/powerup_sticky.png", true, "powerup_sticky");
+	ResourceManager::LoadTexture("../res/Texture/powerup_increase.png", true, "powerup_increase");
+	ResourceManager::LoadTexture("../res/Texture/powerup_confuse.png", true, "powerup_confuse");
+	ResourceManager::LoadTexture("../res/Texture/powerup_chaos.png", true, "powerup_chaos");
+	ResourceManager::LoadTexture("../res/Texture/powerup_passthrough.png", true, "powerup_passthrough");
 	// 加载关卡
 	GameLevel one; one.Load("../res/levels/one.lvl", this->Width, this->Height * 0.5);
 	GameLevel two; two.Load("../res/levels/two.lvl", this->Width, this->Height * 0.5);
@@ -62,7 +71,7 @@ void Game::Init() {
 	this->Levels.push_back(two);
 	this->Levels.push_back(three);
 	this->Levels.push_back(four);
-	this->Level = 1;
+	this->Level = 2;
 
 	glm::vec2 playerPos = glm::vec2(
 		this->Width / 2 - PLAYER_SIZE.x / 2,
@@ -87,14 +96,20 @@ void Game::Update(float dt) {
 	// 检测碰撞
 	DoCollisions();
 
-	if (Ball->Position.y >= this->Height) // 球是否接触底部边界？
+	if (Ball->Position.y >= this->Height && !TestLevel) // 球是否接触底部边界？
 	{
 		this->ResetLevel();
 		this->ResetPlayer();
 	}
+	// 测试时边界反弹
+	if (TestLevel && Ball->Position.y + Ball->Radius * 2 > this->Height) {
+		Ball->Velocity.y = -1 * abs(Ball->Velocity.y);
+	}
 
 	// Update particles
 	Particles->Update(dt, *Ball, 2, glm::vec2(Ball->Radius / 2));
+	// update PowerUps
+	this->UpdatePowerUps(dt);
 
 	// Reduce shake time
 	if (ShakeTime > 0.0f)
@@ -110,14 +125,14 @@ void Game::ProcessInput(float dt) {
 	{
 		GLfloat velocity = PLAYER_VELOCITY * dt;
 		// 移动挡板
-		if (this->Keys[GLFW_KEY_A])
+		if (this->Keys[GLFW_KEY_A] || this->Keys[GLFW_KEY_LEFT])
 		{
 			float dx = std::max(Player->Position.x - velocity, 0.0f) - Player->Position.x;
 			Player->Position.x += dx;
 			if (Ball->Stuck)
 				Ball->Position.x += dx;
 		}
-		if (this->Keys[GLFW_KEY_D])
+		if (this->Keys[GLFW_KEY_D] || this->Keys[GLFW_KEY_RIGHT])
 		{
 			float dx = std::min(Player->Position.x + velocity, this->Width - Player->Size.x) - Player->Position.x;
 			Player->Position.x += dx;
@@ -133,6 +148,7 @@ void Game::Render() {
 	//Renderer->DrawSprite(ResourceManager::GetTexture("face"), glm::vec2(200.0f, 200.0f), glm::vec2(300.0f, 400.0f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	if (this->State == GAME_ACTIVE)
 	{
+		// 后处理: 这个函数放在最前面
 		Effects->BeginRender();
 		// 绘制背景
 		Renderer->DrawSprite(ResourceManager::GetTexture("background"),
@@ -143,6 +159,12 @@ void Game::Render() {
 		Player->Draw(*Renderer);
 		Particles->Draw();
 		Ball->Draw(*Renderer);
+		for (PowerUp &powerUp : this->PowerUps) {
+			if (!powerUp.Destroyed) {
+				powerUp.Draw(*Renderer);
+			}
+		}
+		// 后处理: 相关函数放在最后面
 		Effects->EndRender();
 		Effects->Render(glfwGetTime());
 	}
@@ -157,8 +179,10 @@ void Game::DoCollisions() {
 			if (std::get<0>(collision)) // 如果collision 是 true
 			{
 				// 如果砖块不是实心就销毁砖块
-				if (!box.IsSolid)
+				if (!box.IsSolid) {
 					box.Destroyed = GL_TRUE;
+					this->SpawnPowerUps(box);
+				}
 				else {
 					// if block is solid, enable shake effect
 					ShakeTime = 0.05f;
@@ -167,25 +191,27 @@ void Game::DoCollisions() {
 				// 碰撞处理
 				Direction dir = std::get<1>(collision);
 				glm::vec2 diff_vector = std::get<2>(collision);
-				if (dir == Direction::LEFT || dir == Direction::RIGHT) // 水平方向碰撞
-				{
-					Ball->Velocity.x = -Ball->Velocity.x; // 反转水平速度
-					// 重定位
-					GLfloat penetration = Ball->Radius - std::abs(diff_vector.x);
-					if (dir == Direction::LEFT)
-						Ball->Position.x += penetration; // 将球右移
-					else
-						Ball->Position.x -= penetration; // 将球左移
-				}
-				else // 垂直方向碰撞
-				{
-					Ball->Velocity.y = -Ball->Velocity.y; // 反转垂直速度
-					// 重定位
-					GLfloat penetration = Ball->Radius - std::abs(diff_vector.y);
-					if (dir == Direction::UP)
-						Ball->Position.y -= penetration; // 将球上移
-					else
-						Ball->Position.y += penetration; // 将球下移
+				if (!(Ball->PassThrough && !box.IsSolid)) {
+					if (dir == Direction::LEFT || dir == Direction::RIGHT) // 水平方向碰撞
+					{
+						Ball->Velocity.x = -Ball->Velocity.x; // 反转水平速度
+						// 重定位
+						GLfloat penetration = Ball->Radius - std::abs(diff_vector.x);
+						if (dir == Direction::LEFT)
+							Ball->Position.x += penetration; // 将球右移
+						else
+							Ball->Position.x -= penetration; // 将球左移
+					}
+					else // 垂直方向碰撞
+					{
+						Ball->Velocity.y = -Ball->Velocity.y; // 反转垂直速度
+						// 重定位
+						GLfloat penetration = Ball->Radius - std::abs(diff_vector.y);
+						if (dir == Direction::UP)
+							Ball->Position.y -= penetration; // 将球上移
+						else
+							Ball->Position.y += penetration; // 将球下移
+					}
 				}
 			}
 
@@ -197,12 +223,28 @@ void Game::DoCollisions() {
 				GLfloat distance = (Ball->Position.x + Ball->Radius) - centerBoard;
 				GLfloat percentage = distance / (Player->Size.x / 2);
 				// 依据结果移动
-				GLfloat strength = 2.0f;
+				GLfloat strength = 3.0f;
 				glm::vec2 oldVelocity = Ball->Velocity;
 				Ball->Velocity.x = INITIAL_BALL_VELOCITY.x * percentage * strength;
 				//Ball->Velocity.y = -Ball->Velocity.y;
 				Ball->Velocity.y = -1 * abs(Ball->Velocity.y);
 				Ball->Velocity = glm::normalize(Ball->Velocity) * glm::length(oldVelocity);
+				Ball->Stuck = Ball->Sticky;
+			}
+		}
+	}
+
+	for (PowerUp &powerUp : this->PowerUps)
+	{
+		if (!powerUp.Destroyed)
+		{
+			if (powerUp.Position.y >= this->Height)
+				powerUp.Destroyed = GL_TRUE;
+			if (CheckCollision(*Player, powerUp))
+			{   // 道具与挡板接触，激活它！
+				ActivatePowerUp(powerUp);
+				powerUp.Destroyed = GL_TRUE;
+				powerUp.Activated = GL_TRUE;
 			}
 		}
 	}
@@ -284,4 +326,122 @@ void Game::ResetPlayer()
 	Player->Size = PLAYER_SIZE;
 	Player->Position = glm::vec2(this->Width / 2 - PLAYER_SIZE.x / 2, this->Height - PLAYER_SIZE.y);
 	Ball->Reset(Player->Position + glm::vec2(PLAYER_SIZE.x / 2 - BALL_RADIUS, -(BALL_RADIUS * 2)), INITIAL_BALL_VELOCITY);
+}
+
+GLboolean ShouldSpawn(GLuint chance)
+{
+	GLuint random = rand() % chance;
+	return random == 0;
+}
+
+void Game::SpawnPowerUps(GameObject &block)
+{
+	if (ShouldSpawn(5)) // 1/75的几率
+		this->PowerUps.push_back(PowerUp("speed", glm::vec3(0.5f, 0.5f, 1.0f), 0.0f, block.Position, ResourceManager::GetTexture("powerup_speed")));
+	if (ShouldSpawn(25))
+		this->PowerUps.push_back(PowerUp("sticky", glm::vec3(1.0f, 0.5f, 1.0f), 20.0f, block.Position, ResourceManager::GetTexture("powerup_sticky")));
+	if (ShouldSpawn(15))
+		this->PowerUps.push_back(PowerUp("pass-through", glm::vec3(0.5f, 1.0f, 0.5f), 10.0f, block.Position, ResourceManager::GetTexture("powerup_passthrough")));
+	if (ShouldSpawn(30)) // if (ShouldSpawn(75))
+		this->PowerUps.push_back(PowerUp("pad-size-increase", glm::vec3(1.0f, 0.6f, 0.4), 0.0f, block.Position, ResourceManager::GetTexture("powerup_increase")));
+	if (ShouldSpawn(75)) // 负面道具
+		this->PowerUps.push_back(PowerUp("confuse", glm::vec3(1.0f, 0.3f, 0.3f), 15.0f, block.Position, ResourceManager::GetTexture("powerup_confuse")));
+	if (ShouldSpawn(65)) // 负面道具
+		this->PowerUps.push_back(PowerUp("chaos", glm::vec3(0.9f, 0.25f, 0.25f), 15.0f, block.Position, ResourceManager::GetTexture("powerup_chaos")));
+}
+
+void ActivatePowerUp(PowerUp &powerUp)
+{
+	// 根据道具类型发动道具
+	if (powerUp.Type == "speed")
+	{
+		Ball->Velocity *= 1.2;
+	}
+	else if (powerUp.Type == "sticky")
+	{
+		Ball->Sticky = GL_TRUE;
+		Player->Color = glm::vec3(1.0f, 0.5f, 1.0f);
+	}
+	else if (powerUp.Type == "pass-through")
+	{
+		Ball->PassThrough = GL_TRUE;
+		Ball->Color = glm::vec3(1.0f, 0.5f, 0.5f);
+	}
+	else if (powerUp.Type == "pad-size-increase")
+	{
+		Player->Size.x += 50;
+	}
+	else if (powerUp.Type == "confuse")
+	{
+		if (!Effects->Chaos)
+			Effects->Confuse = GL_TRUE; // 只在chaos未激活时生效，chaos同理
+	}
+	else if (powerUp.Type == "chaos")
+	{
+		if (!Effects->Confuse)
+			Effects->Chaos = GL_TRUE;
+	}
+}
+
+void Game::UpdatePowerUps(GLfloat dt)
+{
+	for (PowerUp &powerUp : this->PowerUps)
+	{
+		powerUp.Position += powerUp.Velocity * dt;
+		if (powerUp.Activated)
+		{
+			powerUp.Duration -= dt;
+
+			if (powerUp.Duration <= 0.0f)
+			{
+				// 之后会将这个道具移除
+				powerUp.Activated = GL_FALSE;
+				// 停用效果
+				if (powerUp.Type == "sticky")
+				{
+					if (!IsOtherPowerUpActive(this->PowerUps, "sticky"))
+					{   // 仅当没有其他sticky效果处于激活状态时重置，以下同理
+						Ball->Sticky = GL_FALSE;
+						Player->Color = glm::vec3(1.0f);
+					}
+				}
+				else if (powerUp.Type == "pass-through")
+				{
+					if (!IsOtherPowerUpActive(this->PowerUps, "pass-through"))
+					{
+						Ball->PassThrough = GL_FALSE;
+						Ball->Color = glm::vec3(1.0f);
+					}
+				}
+				else if (powerUp.Type == "confuse")
+				{
+					if (!IsOtherPowerUpActive(this->PowerUps, "confuse"))
+					{
+						Effects->Confuse = GL_FALSE;
+					}
+				}
+				else if (powerUp.Type == "chaos")
+				{
+					if (!IsOtherPowerUpActive(this->PowerUps, "chaos"))
+					{
+						Effects->Chaos = GL_FALSE;
+					}
+				}
+			}
+		}
+	}
+	this->PowerUps.erase(std::remove_if(this->PowerUps.begin(), this->PowerUps.end(),
+		[](const PowerUp &powerUp) { return powerUp.Destroyed && !powerUp.Activated; }
+	), this->PowerUps.end());
+}
+
+GLboolean IsOtherPowerUpActive(std::vector<PowerUp> &powerUps, std::string type)
+{
+	for (const PowerUp &powerUp : powerUps)
+	{
+		if (powerUp.Activated)
+			if (powerUp.Type == type)
+				return GL_TRUE;
+	}
+	return GL_FALSE;
 }

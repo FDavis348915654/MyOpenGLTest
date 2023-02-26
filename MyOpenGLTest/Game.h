@@ -25,6 +25,7 @@
 #include "ball_object.h"
 #include "particle_generator.h"
 #include "post_processor.h"
+#include "power_up.h"
 
 // 代表了游戏的当前状态
 enum GameState {
@@ -63,6 +64,7 @@ public:
 
 	std::vector<GameLevel> Levels;
 	GLuint Level;
+	std::vector<PowerUp> PowerUps;
 
 	// 构造函数/析构函数
 	Game();
@@ -79,4 +81,8 @@ public:
 	// Reset
 	void ResetLevel();
 	void ResetPlayer();
+
+	// Powerups
+	void SpawnPowerUps(GameObject &block);
+	void UpdatePowerUps(GLfloat dt);
 };
