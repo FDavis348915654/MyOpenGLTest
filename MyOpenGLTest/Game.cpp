@@ -4,6 +4,8 @@
 // GLFW
 #include <GLFW/glfw3.h>
 #include <cmath>
+#include <irrklang/irrKlang.h>
+using namespace irrklang;
 
 bool TestLevel = true;
 SpriteRenderer  *Renderer;
@@ -12,6 +14,7 @@ BallObject *Ball;
 ParticleGenerator *Particles;
 PostProcessor *Effects;
 GLfloat ShakeTime = 0.0f;
+ISoundEngine *SoundEngine = NULL;
 
 GLboolean CheckCollision(GameObject &one, GameObject &two);
 Collision CheckCollision(BallObject &one, GameObject &two); // AABB - Circle collision
@@ -33,9 +36,14 @@ Game::~Game() {
 	delete Ball;
 	delete Particles;
 	delete Effects;
+	if (SoundEngine) {
+		SoundEngine->drop();
+		SoundEngine = NULL;
+	}
 }
 
 void Game::Init() {
+	SoundEngine = createIrrKlangDevice();
 	// 加载着色器
 	ResourceManager::LoadShader("../res/Shaders/lesson_26_sprite.vs", "../res/Shaders/lesson_26_sprite.fs", nullptr, "sprite");
 	ResourceManager::LoadShader("../res/Shaders/lesson_26_particle.vs", "../res/Shaders/lesson_26_particle.fs", nullptr, "particle");
@@ -88,6 +96,8 @@ void Game::Init() {
 		500
 	);
 	Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
+	// 播放背景音乐
+	SoundEngine->play2D("../res/audio/breakout.mp3", GL_TRUE);
 }
 
 void Game::Update(float dt) {
@@ -182,11 +192,13 @@ void Game::DoCollisions() {
 				if (!box.IsSolid) {
 					box.Destroyed = GL_TRUE;
 					this->SpawnPowerUps(box);
+					SoundEngine->play2D("../res/audio/bleep.mp3", GL_FALSE);
 				}
 				else {
 					// if block is solid, enable shake effect
 					ShakeTime = 0.05f;
 					Effects->Shake = GL_TRUE;
+					SoundEngine->play2D("../res/audio/solid.wav", GL_FALSE);
 				}
 				// 碰撞处理
 				Direction dir = std::get<1>(collision);
@@ -230,6 +242,8 @@ void Game::DoCollisions() {
 				Ball->Velocity.y = -1 * abs(Ball->Velocity.y);
 				Ball->Velocity = glm::normalize(Ball->Velocity) * glm::length(oldVelocity);
 				Ball->Stuck = Ball->Sticky;
+
+				SoundEngine->play2D("../res/audio/bleep.wav", GL_FALSE);
 			}
 		}
 	}
@@ -245,6 +259,7 @@ void Game::DoCollisions() {
 				ActivatePowerUp(powerUp);
 				powerUp.Destroyed = GL_TRUE;
 				powerUp.Activated = GL_TRUE;
+				SoundEngine->play2D("../res/audio/powerup.wav", GL_FALSE);
 			}
 		}
 	}
