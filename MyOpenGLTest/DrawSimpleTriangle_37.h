@@ -52,14 +52,19 @@ public:
 	float deltaTime = 0.0f;
 
 #pragma region "这节课用到的变量"
-	Game game;
+	Game *game = NULL;
 #pragma endregion
 
 	DrawSimpleTriangle_37(GLuint screenWidth, GLuint screenHeight) {
 		this->SCR_WIDTH = screenWidth;
 		this->SCR_HEIGHT = screenHeight;
 		aspect = (GLfloat)screenWidth / (GLfloat)screenHeight;
-		game = Game(screenWidth, screenHeight);
+		game = new Game(screenWidth, screenHeight);
+	}
+
+	~DrawSimpleTriangle_37() {
+		delete game;
+		game = NULL;
 	}
 
 	virtual void OnInitRender(GLFWwindow* window) {
@@ -69,7 +74,7 @@ public:
 		//stbi_set_flip_vertically_on_load(true);
 
 		{ // 这节课用到的代码
-			game.Init();
+			game->Init();
 		}
 
 		// 开启深度测试
@@ -107,8 +112,8 @@ public:
 
 		// 2D游戏
 		if (true) {
-			game.Update(this->deltaTime);
-			game.Render();
+			game->Update(this->deltaTime);
+			game->Render();
 		}
 	}
 
@@ -132,11 +137,11 @@ public:
 		if (key >= 0 && key < 1024)
 		{
 			if (action == GLFW_PRESS)
-				game.Keys[key] = true;
+				game->Keys[key] = true;
 			else if (action == GLFW_RELEASE)
 			{
-				game.Keys[key] = false;
-				game.KeysProcessed[key] = false;
+				game->Keys[key] = false;
+				game->KeysProcessed[key] = false;
 			}
 		}
 	}
@@ -168,7 +173,7 @@ public:
 		}
 		// 2D游戏
 		if (true) {
-			game.ProcessInput(this->deltaTime);
+			game->ProcessInput(this->deltaTime);
 		}
 	}
 

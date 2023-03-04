@@ -15,6 +15,7 @@ ParticleGenerator *Particles;
 PostProcessor *Effects;
 GLfloat ShakeTime = 0.0f;
 ISoundEngine *SoundEngine = NULL;
+TextRenderer *Text;
 
 GLboolean CheckCollision(GameObject &one, GameObject &two);
 Collision CheckCollision(BallObject &one, GameObject &two); // AABB - Circle collision
@@ -22,11 +23,7 @@ Direction VectorDirection(glm::vec2 target);
 void ActivatePowerUp(PowerUp &powerUp);
 GLboolean IsOtherPowerUpActive(std::vector<PowerUp> &powerUps, std::string type);
 
-Game::Game() {
-
-}
-
-Game::Game(GLuint width, GLuint height) : State(GAME_ACTIVE), Keys(), KeysProcessed(), Width(width), Height(height) {
+Game::Game(GLuint width, GLuint height) : State(GAME_MENU), Keys(), KeysProcessed(), Width(width), Height(height) {
 
 }
 
@@ -36,6 +33,7 @@ Game::~Game() {
 	delete Ball;
 	delete Particles;
 	delete Effects;
+	delete Text;
 	if (SoundEngine) {
 		SoundEngine->drop();
 		SoundEngine = NULL;
@@ -79,7 +77,7 @@ void Game::Init() {
 	this->Levels.push_back(two);
 	this->Levels.push_back(three);
 	this->Levels.push_back(four);
-	this->Level = 2;
+	this->Level = 1;
 
 	glm::vec2 playerPos = glm::vec2(
 		this->Width / 2 - PLAYER_SIZE.x / 2,
@@ -96,6 +94,9 @@ void Game::Init() {
 		500
 	);
 	Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
+	Text = new TextRenderer(this->Width, this->Height);
+	Text->Load("../res/fonts/OCRAEXT.TTF", 24);
+
 	// 播放背景音乐
 	SoundEngine->play2D("../res/audio/breakout.mp3", GL_TRUE);
 }
@@ -108,7 +109,13 @@ void Game::Update(float dt) {
 
 	if (Ball->Position.y >= this->Height && !TestLevel) // 球是否接触底部边界？
 	{
-		this->ResetLevel();
+		--this->Lives;
+		// 玩家是否已失去所有生命值? : 游戏结束
+		if (this->Lives == 0)
+		{
+			this->ResetLevel();
+			this->State = GAME_MENU;
+		}
 		this->ResetPlayer();
 	}
 	// 测试时边界反弹
@@ -127,6 +134,14 @@ void Game::Update(float dt) {
 		ShakeTime -= dt;
 		if (ShakeTime <= 0.0f)
 			Effects->Shake = GL_FALSE;
+	}
+
+	if (this->State == GAME_ACTIVE && this->Levels[this->Level].IsCompleted())
+	{
+		this->ResetLevel();
+		this->ResetPlayer();
+		Effects->Chaos = GL_TRUE;
+		this->State = GAME_WIN;
 	}
 }
 
@@ -152,11 +167,45 @@ void Game::ProcessInput(float dt) {
 		if (this->Keys[GLFW_KEY_SPACE])
 			Ball->Stuck = false;
 	}
+
+	if (this->State == GAME_MENU)
+	{
+		if (this->Keys[GLFW_KEY_ENTER] && !this->KeysProcessed[GLFW_KEY_ENTER])
+		{
+			this->State = GAME_ACTIVE;
+			this->KeysProcessed[GLFW_KEY_ENTER] = GL_TRUE;
+		}
+		if ((this->Keys[GLFW_KEY_W] || this->Keys[GLFW_KEY_UP]) && !(this->KeysProcessed[GLFW_KEY_W] && this->KeysProcessed[GLFW_KEY_UP]))
+		{
+			this->Level = (this->Level + 1) % 4;
+			this->KeysProcessed[GLFW_KEY_W] = GL_TRUE;
+			this->KeysProcessed[GLFW_KEY_UP] = GL_TRUE;
+		}
+		if ((this->Keys[GLFW_KEY_S] || this->Keys[GLFW_KEY_DOWN]) && !(this->KeysProcessed[GLFW_KEY_S] && this->KeysProcessed[GLFW_KEY_DOWN]))
+		{
+			if (this->Level > 0)
+				--this->Level;
+			else
+				this->Level = 3;
+			this->KeysProcessed[GLFW_KEY_S] = GL_TRUE;
+			this->KeysProcessed[GLFW_KEY_DOWN] = GL_TRUE;
+		}
+	}
+
+	if (this->State == GAME_WIN)
+	{
+		if (this->Keys[GLFW_KEY_ENTER])
+		{
+			this->KeysProcessed[GLFW_KEY_ENTER] = GL_TRUE;
+			Effects->Chaos = GL_FALSE;
+			this->State = GAME_MENU;
+		}
+	}
 }
 
 void Game::Render() {
 	//Renderer->DrawSprite(ResourceManager::GetTexture("face"), glm::vec2(200.0f, 200.0f), glm::vec2(300.0f, 400.0f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	if (this->State == GAME_ACTIVE)
+	if (this->State == GAME_ACTIVE || this->State == GAME_MENU)
 	{
 		// 后处理: 这个函数放在最前面
 		Effects->BeginRender();
@@ -174,9 +223,29 @@ void Game::Render() {
 				powerUp.Draw(*Renderer);
 			}
 		}
+
 		// 后处理: 相关函数放在最后面
 		Effects->EndRender();
 		Effects->Render(glfwGetTime());
+
+		std::stringstream ss; ss << this->Lives;
+		Text->RenderText("Lives:" + ss.str(), 5.0f, 5.0f, 1.0f);
+	}
+
+	if (this->State == GAME_WIN)
+	{
+		Text->RenderText(
+			"You WON!!!", 320.0, Height / 2 - 20.0, 1.0, glm::vec3(0.0, 1.0, 0.0)
+		);
+		Text->RenderText(
+			"Press ENTER to retry or ESC to quit", 130.0, Height / 2, 1.0, glm::vec3(1.0, 1.0, 0.0)
+		);
+	}
+
+	if (this->State == GAME_MENU)
+	{
+		Text->RenderText("Press ENTER to start", 250.0f, Height / 2, 1.0f);
+		Text->RenderText("Press W or S to select level", 245.0f, Height / 2 + 20.0f, 0.75f);
 	}
 }
 
@@ -333,6 +402,8 @@ void Game::ResetLevel()
 		this->Levels[2].Load("levels/three.lvl", this->Width, this->Height * 0.5f);
 	else if (this->Level == 3)
 		this->Levels[3].Load("levels/four.lvl", this->Width, this->Height * 0.5f);
+
+	this->Lives = 3;
 }
 
 void Game::ResetPlayer()

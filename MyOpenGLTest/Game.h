@@ -26,6 +26,7 @@
 #include "particle_generator.h"
 #include "post_processor.h"
 #include "power_up.h"
+#include "text_renderer.h"
 
 // 代表了游戏的当前状态
 enum GameState {
@@ -65,9 +66,9 @@ public:
 	std::vector<GameLevel> Levels;
 	GLuint Level;
 	std::vector<PowerUp> PowerUps;
+	GLuint Lives;
 
 	// 构造函数/析构函数
-	Game();
 	Game(GLuint width, GLuint height);
 	~Game();
 	// 初始化游戏状态（加载所有的着色器/纹理/关卡）
