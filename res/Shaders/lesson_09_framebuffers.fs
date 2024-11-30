@@ -36,6 +36,14 @@ vec3 GetKernelEffect(float[9] kernel) {
 	return col;
 }
 
+float near = 0.1;
+float far = 100.0;
+
+float LinearizeDepth(float depth) {
+	float z = depth * 2.0 - 1.0; // back to NDC
+	return (2.0 * near * far) / (far + near - z * (far - near));
+}
+
 void main()
 {
 	if (1 == effectType) { // 反相
@@ -74,6 +82,20 @@ void main()
 			1.0, 1.0, 1.0
 		);
 		FragColor = vec4(GetKernelEffect(kernel), 1.0);
+	}
+	else if (7 == effectType) { // test // 核效果(模糊)
+		// float depth = LinearizeDepth(gl_FragCoord.z);
+		// float scale = 1.0 / depth;
+		// float kernel[9] = float[](
+		// 	1.0 / 16 * scale, 2.0 / 16 * scale, 1.0 / 16 * scale,
+		// 	2.0 / 16 * scale, 4.0 / 16 * scale, 2.0 / 16 * scale,
+		// 	1.0 / 16 * scale, 2.0 / 16 * scale, 1.0 / 16 * scale
+		// );
+		// FragColor = vec4(GetKernelEffect(kernel), 1.0);
+
+		float depth = LinearizeDepth(gl_FragCoord.z) / far * 3; // 为了演示除以 far
+		vec3 result = vec3(depth); // 显示线性深度值
+		FragColor = vec4(result, 1.0);
 	}
 	else {
 		FragColor = texture(texture_diffuse1, TexCoords);

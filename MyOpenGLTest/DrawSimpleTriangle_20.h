@@ -57,7 +57,11 @@ public:
 	GLfloat lastY = 300.0f;
 	GLboolean firstMouse = true;
 
+	// 是否使用灯光
 	bool useSpotLight = true;
+
+	// 是否使用帧缓冲
+	bool useFrameBuffer = true;
 
 	float deltaTime = 0.0f;
 
@@ -137,6 +141,7 @@ public:
 			1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
 			1.0f,  0.5f,  0.0f,  1.0f,  1.0f
 		};
+		// 直接使用 NDC 的四角坐标
 		float quadVertices[] = {
 			// positions   // texCoords
 			-1.0f,  1.0f,  0.0f, 1.0f,
@@ -319,121 +324,131 @@ public:
 		char str[256];
 		//std::cout << "call OnRender()" << std::endl;
 
-		// 第一处理阶段(Pass)
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 我们现在不使用模板缓冲
-		glEnable(GL_DEPTH_TEST);
+		{ // 第一处理阶段(Pass)
+			// test, 不使用帧缓冲
+			if (useFrameBuffer) {
+				glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			}
+			else {
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			}
+			//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 我们现在不使用模板缓冲
+			glEnable(GL_DEPTH_TEST);
 
-		glm::mat4 view = camera->GetViewMatrix();
-		glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
+			glm::mat4 view = camera->GetViewMatrix();
+			glm::mat4 projection = glm::perspective(camera->Zoom, aspect, 0.1f, 100.0f);
 
-		{ // floor
-			glDisable(GL_CULL_FACE);
-			shader[0].use();
-			shader[0].setMat4("view", view);
-			shader[0].setMat4("projection", projection);
-			glBindVertexArray(VAO[1]);
-			glBindTexture(GL_TEXTURE_2D, texture[1]);
-			shader[0].setInt("texture_diffuse1", 0);
-			glm::mat4 model = glm::mat4(1.0f);
-			shader[0].setMat4("model", model);
+			{ // floor
+				glDisable(GL_CULL_FACE);
+				shader[0].use();
+				shader[0].setMat4("view", view);
+				shader[0].setMat4("projection", projection);
+				glBindVertexArray(VAO[1]);
+				glBindTexture(GL_TEXTURE_2D, texture[1]);
+				shader[0].setInt("texture_diffuse1", 0);
+				glm::mat4 model = glm::mat4(1.0f);
+				shader[0].setMat4("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+				glEnable(GL_CULL_FACE);
+			}
+
+			{ // cubes
+				shader[0].use();
+				shader[0].setMat4("view", view);
+				shader[0].setMat4("projection", projection);
+				glm::mat4 model = glm::mat4(1.0f);
+				glBindVertexArray(VAO[0]);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture[0]);
+				shader[0].setInt("texture_diffuse1", 0);
+				model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
+				shader[0].setMat4("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(2.0f, 0.001f, 0.0f));
+				shader[0].setMat4("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
+
+			if (true) { // grass
+				glDisable(GL_CULL_FACE);
+				std::vector<glm::vec3> vegetation;
+				vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
+				vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
+				vegetation.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
+				vegetation.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
+				vegetation.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
+				shader[1].use();
+				shader[1].setMat4("view", view);
+				shader[1].setMat4("projection", projection);
+				glBindVertexArray(VAO[2]);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture[2]);
+				shader[1].setInt("texture_diffuse1", 0);
+				glm::mat4 model = glm::mat4(1.0f);
+				for (unsigned int i = 0; i < vegetation.size(); i++) {
+					model = glm::mat4(1.0f);
+					model = glm::translate(model, vegetation[i]);
+					shader[1].setMat4("model", model);
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+				}
+				glEnable(GL_CULL_FACE);
+			}
+
+			if (true) { // window
+				glDisable(GL_CULL_FACE);
+				std::vector<glm::vec3> windows;
+				windows.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
+				windows.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
+				windows.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
+				windows.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
+				windows.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
+				shader[2].use();
+				shader[2].setMat4("view", view);
+				shader[2].setMat4("projection", projection);
+				glBindVertexArray(VAO[2]);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture[3]);
+				shader[2].setInt("texture_diffuse1", 0);
+				glm::mat4 model = glm::mat4(1.0f);
+				std::map<float, glm::vec3> sorted;
+				// 半透明物体需按举例排序渲染, 先渲染远处的
+				for (unsigned int i = 0; i < windows.size(); i++) {
+					float distance = glm::length(camera->Position - windows[i]);
+					sorted[distance] = windows[i];
+				}
+				for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
+					model = glm::mat4(1.0f);
+					model = glm::translate(model, it->second);
+					shader[2].setMat4("model", model);
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+				}
+				// 如果不排序, 那么靠近相机的玻璃就会覆盖远离相机的玻璃
+				//for (unsigned int i = 0; i < windows.size(); i++) {
+				//	model = glm::mat4(1.0f);
+				//	model = glm::translate(model, windows[i]);
+				//	shader[1].setMat4("model", model);
+				//	glDrawArrays(GL_TRIANGLES, 0, 6);
+				//}
+				glEnable(GL_CULL_FACE);
+			}
+		}
+
+		// 第二处理阶段(Pass)
+		if (useFrameBuffer) {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0); // 返回默认
+			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			shader[3].use();
+			shader[3].setInt("effectType", effectType);
+			glBindVertexArray(VAO[3]);
+			glDisable(GL_DEPTH_TEST);
+			glBindTexture(GL_TEXTURE_2D, texColorBuffer);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
-			glEnable(GL_CULL_FACE);
 		}
-
-		{ // cubes
-			shader[0].use();
-			shader[0].setMat4("view", view);
-			shader[0].setMat4("projection", projection);
-			glm::mat4 model = glm::mat4(1.0f);
-			glBindVertexArray(VAO[0]);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture[0]);
-			shader[0].setInt("texture_diffuse1", 0);
-			model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
-			shader[0].setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(2.0f, 0.001f, 0.0f));
-			shader[0].setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-
-		if (true) { // grass
-			glDisable(GL_CULL_FACE);
-			std::vector<glm::vec3> vegetation;
-			vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
-			vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
-			vegetation.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
-			vegetation.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
-			vegetation.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
-			shader[1].use();
-			shader[1].setMat4("view", view);
-			shader[1].setMat4("projection", projection);
-			glBindVertexArray(VAO[2]);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture[2]);
-			shader[1].setInt("texture_diffuse1", 0);
-			glm::mat4 model = glm::mat4(1.0f);
-			for (unsigned int i = 0; i < vegetation.size(); i++) {
-				model = glm::mat4(1.0f);
-				model = glm::translate(model, vegetation[i]);
-				shader[1].setMat4("model", model);
-				glDrawArrays(GL_TRIANGLES, 0, 6);
-			}
-			glEnable(GL_CULL_FACE);
-		}
-
-		if (false) { // window
-			glDisable(GL_CULL_FACE);
-			std::vector<glm::vec3> windows;
-			windows.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
-			windows.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
-			windows.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
-			windows.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
-			windows.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
-			shader[2].use();
-			shader[2].setMat4("view", view);
-			shader[2].setMat4("projection", projection);
-			glBindVertexArray(VAO[2]);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture[3]);
-			shader[2].setInt("texture_diffuse1", 0);
-			glm::mat4 model = glm::mat4(1.0f);
-			std::map<float, glm::vec3> sorted;
-			// 半透明物体需按举例排序渲染, 先渲染远处的
-			for (unsigned int i = 0; i < windows.size(); i++) {
-				float distance = glm::length(camera->Position - windows[i]);
-				sorted[distance] = windows[i];
-			}
-			for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
-				model = glm::mat4(1.0f);
-				model = glm::translate(model, it->second);
-				shader[2].setMat4("model", model);
-				glDrawArrays(GL_TRIANGLES, 0, 6);
-			}
-			// 如果不排序, 那么靠近相机的玻璃就会覆盖远离相机的玻璃
-			//for (unsigned int i = 0; i < windows.size(); i++) {
-			//	model = glm::mat4(1.0f);
-			//	model = glm::translate(model, windows[i]);
-			//	shader[1].setMat4("model", model);
-			//	glDrawArrays(GL_TRIANGLES, 0, 6);
-			//}
-			glEnable(GL_CULL_FACE);
-		}
-
-		// 第二处理阶段
-		glBindFramebuffer(GL_FRAMEBUFFER, 0); // 返回默认
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		shader[3].use();
-		shader[3].setInt("effectType", effectType);
-		glBindVertexArray(VAO[3]);
-		glDisable(GL_DEPTH_TEST);
-		glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 
 	virtual void OnOverRender() {
@@ -442,6 +457,7 @@ public:
 		delete camera;
 	}
 
+	// 按键响应回调
 	virtual void OnKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 		if (action == GLFW_PRESS)
 		{
@@ -451,9 +467,13 @@ public:
 			if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
 				effectType = key - GLFW_KEY_0;
 			}
+			if (key == GLFW_KEY_B) {
+				useFrameBuffer = !useFrameBuffer;
+			}
 		}
 	}
 
+	// 在 update 中执行, 每帧都会执行
 	virtual void OnProcessInput(GLFWwindow* window) {
 		bool speedUp = false;
 		// 加速
