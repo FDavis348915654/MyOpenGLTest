@@ -252,11 +252,11 @@ public:
 			shader[0].setInt("texture_diffuse1", 0);
 			model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
 			shader[0].setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制第一个箱子
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(2.0f, 0.001f, 0.0f));
 			shader[0].setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制第二个箱子
 		}
 
 		glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // 模板值不等于 1 的时候测试通过
@@ -267,17 +267,18 @@ public:
 			shader[1].use();
 			shader[1].setMat4("view", view);
 			shader[1].setMat4("projection", projection);
+			shader[1].setVec3("outlineColor", 1.0f, 0.3f, 0.3f); // 设置一个描边颜色
 			glm::mat4 model = glm::mat4(1.0f);
 			glBindVertexArray(VAO[0]);
 			model = glm::translate(model, glm::vec3(-1.0f, 0.001f, -1.0f));
 			model = glm::scale(model, glm::vec3(scale, scale, scale));
 			shader[1].setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制第一个箱子
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(2.0f, 0.001f, 0.0f));
 			model = glm::scale(model, glm::vec3(scale, scale, scale));
 			shader[1].setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制第二个箱子
 		}
 		glEnable(GL_DEPTH_TEST); // 启用深度缓冲
 		glStencilMask(0xFF); // 每一位写入模板缓冲时都保持原样

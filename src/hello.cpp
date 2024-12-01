@@ -91,7 +91,7 @@ float lastFrame = 0.0f;
 //DrawSimpleTriangle_17 obj(WIDTH, HEIGHT); // 模板测试
 //DrawSimpleTriangle_18 obj(WIDTH, HEIGHT); // 混合
 //DrawSimpleTriangle_19 obj(WIDTH, HEIGHT); // 面剔除
-DrawSimpleTriangle_20 obj(WIDTH, HEIGHT); // 帧缓冲
+//DrawSimpleTriangle_20 obj(WIDTH, HEIGHT); // 帧缓冲
 //DrawSimpleTriangle_21 obj(WIDTH, HEIGHT); // 立方体贴图
 //DrawSimpleTriangle_22 obj(WIDTH, HEIGHT); // 高级 GLSL
 //DrawSimpleTriangle_23 obj(WIDTH, HEIGHT); // 几何着色器
@@ -109,7 +109,7 @@ DrawSimpleTriangle_20 obj(WIDTH, HEIGHT); // 帧缓冲
 //DrawSimpleTriangle_35 obj(WIDTH, HEIGHT); // SSAO
 //DrawSimpleTriangle_36 obj(WIDTH, HEIGHT); // 文本渲染
 //DrawSimpleTriangle_37 obj(WIDTH, HEIGHT); // 2D游戏
-//FogTest obj(WIDTH, HEIGHT); // 迷雾测试
+FogTest obj(WIDTH, HEIGHT); // 迷雾测试
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
