@@ -350,17 +350,17 @@ public:
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // 常规混合
 	}
 
 	virtual void OnRender() {
 		char str[256];
 		//std::cout << "call OnRender()" << std::endl;
 
-		{ // 画出阴影并写入帧缓冲
+		{ // 画出阴影并写入帧缓冲, fogLight
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // 注意, 这里的 alpha 也重置为 0
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 我们现在不使用模板缓冲
 			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_CULL_FACE);
@@ -376,12 +376,12 @@ public:
 			fogLights.push_back(glm::vec3(-0.5f, 0.0f + (tweenValue - 0.2f), -2.3f));
 			fogLights.push_back(glm::vec3(1.0f, 0.0f, -0.6f));
 
-			shader[5].use();
+			shader[5].use(); // fogLight
 			shader[5].setMat4("view", view);
 			shader[5].setMat4("projection", projection);
-			glBindVertexArray(VAO[4]);
+			glBindVertexArray(VAO[4]); // 竖直摆放的面片
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture[4]);
+			glBindTexture(GL_TEXTURE_2D, texture[4]); // awesomeface.png
 			shader[5].setInt("texture_diffuse1", 0);
 			glm::mat4 model = glm::mat4(1.0f);
 			for (unsigned int i = 0; i < fogLights.size(); i++) {
@@ -492,14 +492,15 @@ public:
 			}
 		}
 
-		if (0 == effectType) { // 将阴影画到场景中
+		if (9 != effectType) { // 将阴影画到场景中
 			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_CULL_FACE);
 
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
 
-			shader[4].use();
+			shader[4].use(); // fog
+			shader[4].setInt("effectType", effectType);
 			glBindVertexArray(VAO[3]); // 绘制全屏矩形
 			glBindTexture(GL_TEXTURE_2D, texColorBuffer);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -508,7 +509,7 @@ public:
 		//// test, 绘制帧缓冲的内容
 		//if (useFrameBuffer) {
 		//	glBindFramebuffer(GL_FRAMEBUFFER, 0); // 返回默认
-		//	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		//	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		//	glClear(GL_COLOR_BUFFER_BIT);
 
 		//	shader[3].use();
@@ -519,13 +520,13 @@ public:
 		//	glDrawArrays(GL_TRIANGLES, 0, 6);
 		//}
 
-		//// test, 绘制帧缓冲的内容(迷雾)
+		//// test, 绘制帧缓冲的内容(迷雾), fog
 		//if (useFrameBuffer) {
 		//	glBindFramebuffer(GL_FRAMEBUFFER, 0); // 返回默认
 		//	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		//	glClear(GL_COLOR_BUFFER_BIT);
 
-		//	shader[4].use();
+		//	shader[4].use(); // fog
 		//	shader[4].setInt("effectType", effectType);
 		//	glBindVertexArray(VAO[3]);
 		//	glDisable(GL_DEPTH_TEST);
