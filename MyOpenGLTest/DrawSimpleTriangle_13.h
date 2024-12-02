@@ -49,6 +49,9 @@ public:
 	GLfloat lastY = 300.0f;
 	GLboolean firstMouse = true;
 
+	// 是否使用灯光
+	bool useSpotLight = true;
+
 	float deltaTime = 0.0f;
 
 	DrawSimpleTriangle_13(GLuint screenWidth, GLuint screenHeight) {
@@ -195,7 +198,7 @@ public:
 			glm::mat4 model;
 			model = glm::translate(model, lightPos);
 			model = glm::scale(model, glm::vec3(0.2));
-			shader[0].use();
+			shader[0].use(); // 显示光源的小白块 lesson_01_color_light
 			glBindVertexArray(VAO[0]);
 			shader[0].setMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
 			shader[0].setMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
@@ -206,7 +209,7 @@ public:
 
 		// 绘制 box // 聚光软化
 		if (true) {
-			shader[5].use();
+			shader[5].use(); // lesson_04_light_casters_spotlight_soft
 
 			shader[5].setInt("material.diffuse", 0);
 			glActiveTexture(GL_TEXTURE0);
@@ -232,6 +235,7 @@ public:
 			shader[5].setVec3("light.ambient", ambientColor);
 			shader[5].setVec3("light.diffuse", diffuseColor);
 			shader[5].setVec3("light.specular", glm::vec3(1.0f));
+			shader[5].setBool("useSpotLight", useSpotLight);
 
 			glm::vec3 cubePositions[] = {
 				glm::vec3(0.0f,  0.0f,  0.0f),
@@ -497,6 +501,16 @@ public:
 		/*	glDeleteVertexArrays(3, VAO);
 			glDeleteBuffers(3, VBO);*/
 		delete camera;
+	}
+
+	// 按键响应回调
+	virtual void OnKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode) {
+		if (action == GLFW_PRESS)
+		{
+			if (key == GLFW_KEY_F) {
+				useSpotLight = !useSpotLight;
+			}
+		}
 	}
 
 	virtual void OnProcessInput(GLFWwindow* window) {
