@@ -39,6 +39,8 @@ vec3 GetKernelEffect(float[9] kernel) {
 	return col;
 }
 
+const float lowAlpha = 0.03;
+
 void main()
 {
 	if (1 == effectType) { // 核效果(模糊)
@@ -48,10 +50,10 @@ void main()
 			1.0 / 16, 2.0 / 16, 1.0 / 16
 		);
 		vec3 color = GetKernelEffect(kernel);
-		FragColor = vec4(fogColor, color.r);
+		FragColor = vec4(fogColor, color.r + lowAlpha);
 	}
 	else {
 		vec4 texColor = texture(texture_diffuse1, TexCoords);
-		FragColor = vec4(fogColor, texColor.r); // 正常绘制
+		FragColor = vec4(fogColor, texColor.r + lowAlpha); // 正常绘制
 	}
 }
